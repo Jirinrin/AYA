@@ -1,35 +1,35 @@
-const U = require('./Util');
-const repl = require('repl');
-const fs = require('fs');
-const readline = require('readline');
+import * as U from './Util';
+import * as repl from 'repl';
+import * as fs from 'fs';
+import { createInterface } from 'readline';
+import E from './ENV';
 
-const rl = readline.createInterface({
+createInterface
+const rl = createInterface({
   input: process.stdin,
   output: process.stdout
 });
-let folder;
-let r;
+let r: repl.REPLServer;
 
-function changeDirectory(newFolderName) {
+function changeDirectory(newFolderName: string) {
   if (fs.existsSync(newFolderName)) {
-    folder = newFolderName;
+    E.folder = newFolderName;
     U.setFolder(newFolderName);
   }
   else
-    console.log('provided folder name appears to be invalid');
+    console.error('provided folder name appears to be invalid');
 }
 
 
-function evall(func) {
-  /**
-   * @param {string} args
-   */
-  return (args) => {
+function evall(func: Function, envFolderFirstArg: boolean = false) {
+  const initialArgs = envFolderFirstArg ? 
+    [ E.folder ] : [];
+  return (args: string) => {
     const argsArray = 
       args
         .split(',,')
         .map(arg => eval(arg));
-    func(...argsArray);
+    func(...initialArgs, ...argsArray);
     r.clearBufferedCommand();
   };
 }
@@ -38,37 +38,33 @@ function evall(func) {
 function startRepl() {
   r = repl.start();
 
-  r.defineCommand('commands', () => {
-    console.log(r.commands);
-  });
-
   r.defineCommand('cd', {
     help: 'change current directory',
     action: (newFolderName) => changeDirectory(newFolderName)
   })
   r.defineCommand('folder', {
     help: 'print current folder',
-    action: () => console.log(folder)
+    action: () => console.log(E.folder)
   })
 
   r.defineCommand('fee', {
     help: 'for every entry in folder execute callback {$1: (fileName: string) => void}',
-    action: evall((callback) => U.forEveryEntry(folder, callback))
+    action: evall(U.forEveryEntry, true)
   });
   
   r.defineCommand('eer', {
     help: 'rename every entry in folder using {$1: (fileName: string) => string}',
-    action: evall(U.everyEntryRename)
+    action: evall(U.everyEntryRename, true)
   });
 
   r.defineCommand('eehtm', {
     help: 'for every entry in folder rename to {$2: string} if it matches {$1: regex}`',
-    action: evall(U.everyEntryHasToMatch)
+    action: evall(U.everyEntryHasToMatch, true)
   });
   
   r.defineCommand('eehti', {
     help: 'for every entry in folder rename if it includes string you provide`',
-    action: evall(U.everyEntryHasToInclude)
+    action: evall(U.everyEntryHasToInclude, true)
   });
 }
 
