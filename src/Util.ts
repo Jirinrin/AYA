@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-let folder;
-function setFolder(path) {
+let folder: string;
+export function setFolder(path) {
   folder = path;
 }
 
@@ -21,7 +21,7 @@ function renameFile(containerFolder, fileName, newFileName) {
 /**
  * @param {(fileName: string) => void} callback 
  */
-function forEveryEntry(containerFolder, callback) {
+export function forEveryEntry(containerFolder, callback) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
     return;
@@ -40,7 +40,7 @@ function forEveryEntryDeep() {
 /**
  * @param {(fileName: string) => string} renameCallback
  */
-function everyEntryRename(renameCallback) {
+export function everyEntryRename(renameCallback) {
   forEveryEntry(folder, (fileName) => {
     renameFile(folder, fileName, renameCallback(fileName));
   });
@@ -50,7 +50,7 @@ function everyEntryRename(renameCallback) {
  * @param {RegExp} exp: thing to try to match
  * @param {string} put: thing to put before the fileName
  */
-function everyEntryHasToMatch(exp, put) {
+export function everyEntryHasToMatch(exp, put) {
   forEveryEntry(folder, (fileName) => {
     if (!fileName.toLowerCase().match(exp)) {
       renameFile(folder, fileName, `${put} - ${fileName}`);
@@ -61,15 +61,10 @@ function everyEntryHasToMatch(exp, put) {
 /**
  * @param {string} part: thing that every filename has to include
  */
-function everyEntryHasToInclude(part) {
+export function everyEntryHasToInclude(part) {
   forEveryEntry(folder, (fileName) => {
     if (!fileName.toLowerCase().includes(part.toLowerCase())) {
       renameFile(folder, fileName, `${part} - ${fileName}`)
     }
   });
 }
-
-module.exports = {
-  setFolder, 
-  forEveryEntry, everyEntryRename, everyEntryHasToInclude, everyEntryHasToMatch
-};

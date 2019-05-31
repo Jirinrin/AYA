@@ -10,10 +10,6 @@ const rl = readline.createInterface({
 let folder;
 let r;
 
-const str = 'siejfei';
-str.replace()
-
-
 function changeDirectory(newFolderName) {
   if (fs.existsSync(newFolderName)) {
     folder = newFolderName;
@@ -76,12 +72,9 @@ function startRepl() {
   });
 }
 
-
 rl.question('What folder\n', (answer) => {
   changeDirectory(answer);
   rl.close();
 
   startRepl();
 });
-
-

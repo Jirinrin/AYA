@@ -1,0 +1,9 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "es5",
+  }
+}
