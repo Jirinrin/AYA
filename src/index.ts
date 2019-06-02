@@ -48,7 +48,7 @@ function startRepl() {
   })
 
   r.defineCommand('fee', {
-    help: 'for every entry in folder execute callback {$1: (fileName: string) => void}',
+    help: 'for every entry in folder execute callback {$1: (entry: Dirent) => void}',
     action: evall(U.forEveryEntry, true)
   });
   

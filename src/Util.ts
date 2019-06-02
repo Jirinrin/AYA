@@ -19,15 +19,16 @@ function renameFile(containerFolder: string, fileName: string, newFileName: stri
 
 // UTIL
 
-export function forEveryEntry(folder: string, callback: (fileName: string) => void) {
+export function forEveryEntry(folder: string, callback: (ent: fs.Dirent) => void) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
     return;
   }
-  const files = fs.readdirSync(folder);
-  files.forEach((fileName) => {
-    console.log(fileName);
-    callback(fileName);
+  fs.readdir(folder, { withFileTypes: true }, (err, files) => {
+    files.forEach((ent) => {
+      console.log(path.join(folder, ent.name));
+      callback(ent);
+    });
   });
 }
 
@@ -36,8 +37,8 @@ export function forEveryEntry(folder: string, callback: (fileName: string) => vo
 // }
 
 export function everyEntryRename(folder: string, renameCallback: (fileName: string) => string) {
-  forEveryEntry(folder, (fileName) => {
-    renameFile(folder, fileName, renameCallback(fileName));
+  forEveryEntry(folder, (ent) => {
+    renameFile(folder, ent.name, renameCallback(ent.name));
   });
 }  
 
@@ -46,9 +47,9 @@ export function everyEntryRename(folder: string, renameCallback: (fileName: stri
  * @param put: thing to put before the fileName
  */
 export function everyEntryHasToMatch(folder: string, exp: RegExp, put: string) {
-  forEveryEntry(folder, (fileName) => {
-    if (!fileName.toLowerCase().match(exp)) {
-      renameFile(folder, fileName, `${put} - ${fileName}`);
+  forEveryEntry(folder, (ent) => {
+    if (!ent.name.toLowerCase().match(exp)) {
+      renameFile(folder, ent.name, `${put} - ${ent}`);
     }
   });
 }
@@ -57,9 +58,9 @@ export function everyEntryHasToMatch(folder: string, exp: RegExp, put: string) {
  * @param part: thing that every filename has to include
  */
 export function everyEntryHasToInclude(folder: string, part: string) {
-  forEveryEntry(folder, (fileName) => {
-    if (!fileName.toLowerCase().includes(part.toLowerCase())) {
-      renameFile(folder, fileName, `${part} - ${fileName}`)
+  forEveryEntry(folder, (ent) => {
+    if (!ent.name.toLowerCase().includes(part.toLowerCase())) {
+      renameFile(folder, ent.name, `${part} - ${ent}`)
     }
   });
 }
