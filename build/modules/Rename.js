@@ -6,6 +6,8 @@ var module = {
     everyEntryRename: function (iterator) { return ({
         abbrev: 'eer',
         help: 'rename every entry in folder using {$1: (fileName: string) => string}',
+        // TODO: add option to only rename base name (so don't regard extension if applicable and then append it at the end)
+        // TODO: add option to only rename directory <> file names
         run: function (renameCallback) {
             iterator(ENV_1.default.folder, function (folder, ent) {
                 var newName = renameCallback(ent.name);

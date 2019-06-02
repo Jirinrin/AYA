@@ -6,6 +6,8 @@ const module: RawFactoryModule = {
   everyEntryRename: (iterator: FileIteratorFunction) => ({
     abbrev: 'eer',
     help: 'rename every entry in folder using {$1: (fileName: string) => string}',
+    // TODO: add option to only rename base name (so don't regard extension if applicable and then append it at the end)
+    // TODO: add option to only rename directory <> file names
     run: (renameCallback: (fileName: string) => string) => {
       iterator(ENV.folder, (folder, ent) => {
         const newName = renameCallback(ent.name);
