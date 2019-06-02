@@ -4,8 +4,7 @@ import * as path from 'path';
 export function renameFile(containerFolder: string, fileName: string, newFileName: string) {
   if (fs.existsSync(path.join(containerFolder, newFileName))) {
     let i = 1;
-    const ext = path.extname(newFileName);
-    const baseName = ext ? newFileName.split(ext)[0] : newFileName;
+    const [baseName, ext] = splitFileName(newFileName);
     while (i < 100) {
       const newNewFileName = `${baseName} (${i})${ext}`;
       if (!fs.existsSync(path.join(containerFolder, newNewFileName))) {
@@ -21,4 +20,10 @@ export function renameFile(containerFolder: string, fileName: string, newFileNam
     path.join(containerFolder, newFileName),
     () => {},
   );
+}
+
+export function splitFileName(fileName: string): [string, string] {
+  const ext = path.extname(fileName);
+  const baseName = ext ? fileName.split(ext)[0] : fileName;
+  return [baseName, ext];
 }

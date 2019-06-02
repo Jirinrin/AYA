@@ -1,17 +1,33 @@
-import { renameFile } from './Util';
+import { renameFile, splitFileName } from './Util';
 import ENV from '../ENV';
 import { RawFactoryModule, FileIteratorFunction } from '../types';
+
+export type EntityType = 'file' | 'directory';
+interface RenameOptions {
+  skipEntType?: EntityType;
+  skipExt?: boolean;
+}
 
 const module: RawFactoryModule = {
   everyEntryRename: (iterator: FileIteratorFunction) => ({
     abbrev: 'eer',
-    help: 'rename every entry in folder using {$1: (fileName: string) => string}',
-    // TODO: add option to only rename base name (so don't regard extension if applicable and then append it at the end)
-    // TODO: add option to only rename directory <> file names
-    run: (renameCallback: (fileName: string) => string) => {
+    help: 'Rename every entry in folder using {$1: (fileName: string) => string}. You may supply {$2: {skipEntType: "file"|"directory", skipExt: boolean}}',
+    run: (renameCallback: (fileName: string) => string, {skipEntType, skipExt}: RenameOptions = {}) => {
       iterator(ENV.folder, (folder, ent) => {
-        const newName = renameCallback(ent.name);
-        if (ent.name !== newName) {
+        
+        let newName: string;
+        if (skipExt) {
+          const [baseName, ext] = splitFileName(ent.name);
+          newName = renameCallback(baseName) + ext;
+        } else {
+          newName = renameCallback(ent.name);
+        }
+
+        if (
+          ent.name !== newName && 
+          !(ent.isDirectory() && skipEntType === 'directory') && 
+          !(ent.isFile() && skipEntType === 'file')
+        ) {
           console.log(`Renaming ${ent.name} to ${newName}`);
           renameFile(folder, ent.name, newName);
         }
