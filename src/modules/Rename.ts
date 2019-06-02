@@ -6,21 +6,36 @@ export type EntityType = 'file' | 'directory';
 interface RenameOptions {
   skipEntType?: EntityType;
   skipExt?: boolean;
+  musicFiles?: boolean; // Only rename music files, exposing metadata of the files
 }
 
 const module: RawFactoryModule = {
   everyEntryRename: (iterator: FileIteratorFunction) => ({
     abbrev: 'eer',
-    help: 'Rename every entry in folder using {$1: (fileName: string) => string}. You may supply {$2: {skipEntType: "file"|"directory", skipExt: boolean}}',
-    run: (renameCallback: (fileName: string) => string, {skipEntType, skipExt}: RenameOptions = {}) => {
+    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType: "file"|"directory", skipExt: boolean, musicFiles: boolean}}',
+    run: (
+      renameCallback: (fileName: string, metadata?: Object) => string, 
+      {skipEntType, skipExt, musicFiles}: RenameOptions = {}
+    ) => {
       iterator(ENV.folder, (folder, ent) => {
-        
+        let metadata: any = {};
+        if (musicFiles) {
+          metadata.mm = (ent as any).mm;
+          if (!metadata.mm) {
+            return;
+          }
+        }
+
         let newName: string;
-        if (skipExt) {
-          const [baseName, ext] = splitFileName(ent.name);
-          newName = renameCallback(baseName) + ext;
-        } else {
-          newName = renameCallback(ent.name);
+        try {
+          if (skipExt) {
+            const [baseName, ext] = splitFileName(ent.name);
+            newName = renameCallback(baseName, metadata) + ext;
+          } else {
+            newName = renameCallback(ent.name, metadata);
+          }
+        } catch {
+          return;
         }
 
         if (

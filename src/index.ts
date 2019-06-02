@@ -26,6 +26,7 @@ function evall(func: Function) {
 function startRepl() {
   r = repl.start();
 
+  // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
     help: 'change current directory',
     action: (newFolderName) => U.changeDirectory(newFolderName),
@@ -33,6 +34,10 @@ function startRepl() {
   r.defineCommand('set-depth', {
     help: 'set recursion depth for deep functions to {$1: number}',
     action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
+  });
+  r.defineCommand('toggle-mm', {
+    help: 'toggle access to music metadata',
+    action: () => U.setEnvVar('musicMetadata', !ENV.musicMetadata),
   });
   Object.keys(ENV).forEach((key) => {
     r.defineCommand(key, {
