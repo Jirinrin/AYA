@@ -1,8 +1,8 @@
 import E from './ENV';
+import C from './CONST';
 import * as fs from 'fs';
 import * as path from 'path';
 
-let folder: string;
 export function setFolder(path: string) {
   E.folder = path;
 }
@@ -32,9 +32,25 @@ export function forEveryEntry(folder: string, callback: (ent: fs.Dirent) => void
   });
 }
 
-// function forEveryEntryDeep() {
-
-// }
+function forEveryEntryDeep(
+  folder: string, 
+  callback: (ent: fs.Dirent) => void,
+  depth: number = C.DEFAULT_DEEP_DEPTH,
+) {
+  forEveryEntry(folder, (ent) => {
+    callback(ent);
+    if (depth <= 0) {
+      return;
+    }
+    if (ent.isDirectory()) {
+      forEveryEntryDeep(
+        path.join(folder, ent.name),
+        callback,
+        depth - 1,
+      );
+    }
+  });
+}
 
 export function everyEntryRename(folder: string, renameCallback: (fileName: string) => string) {
   forEveryEntry(folder, (ent) => {
