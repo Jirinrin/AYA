@@ -1,65 +1,59 @@
-var U = require('./Util');
-var repl = require('repl');
-var fs = require('fs');
-var readline = require('readline');
-var rl = readline.createInterface({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var U = require("./IndexUtil");
+var repl = require("repl");
+var readline_1 = require("readline");
+var modules_1 = require("./modules");
+var ENV_1 = require("./ENV");
+var rl = readline_1.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-var folder;
 var r;
-function changeDirectory(newFolderName) {
-    if (fs.existsSync(newFolderName)) {
-        folder = newFolderName;
-        U.setFolder(newFolderName);
-    }
-    else
-        console.log('provided folder name appears to be invalid');
-}
 function evall(func) {
-    /**
-     * @param {string} args
-     */
     return function (args) {
         var argsArray = args
             .split(',,')
             .map(function (arg) { return eval(arg); });
         func.apply(void 0, argsArray);
-        r.clearBufferedCommand();
+        r.clearBufferedCommand(); /// Doesn't seem to do much
     };
 }
 function startRepl() {
     r = repl.start();
-    r.defineCommand('commands', function () {
-        console.log(r.commands);
-    });
     r.defineCommand('cd', {
         help: 'change current directory',
-        action: function (newFolderName) { return changeDirectory(newFolderName); }
+        action: function (newFolderName) { return U.changeDirectory(newFolderName); },
     });
-    r.defineCommand('folder', {
-        help: 'print current folder',
-        action: function () { return console.log(folder); }
+    r.defineCommand('set-depth', {
+        help: 'set recursion depth for deep functions to {$1: number}',
+        action: function (newDepth) { return U.setEnvVar('recursionDepth', Number(newDepth)); },
+    });
+    Object.keys(ENV_1.default).forEach(function (key) {
+        r.defineCommand(key, {
+            help: "print current value of " + key,
+            action: function () { return console.log(ENV_1.default[key]); },
+        });
     });
     r.defineCommand('fee', {
-        help: 'for every entry in folder execute callback {$1: (fileName: string) => void}',
-        action: evall(function (callback) { return U.forEveryEntry(folder, callback); })
+        help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
+        action: evall(function (callback) { return U.forEveryEntry(ENV_1.default.folder, callback); }),
     });
-    r.defineCommand('eer', {
-        help: 'rename every entry in folder using {$1: (fileName: string) => string}',
-        action: evall(U.everyEntryRename)
+    r.defineCommand('fee-deep', {
+        help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void} - does this recursively until the set depth',
+        action: evall(function (callback) { return U.forEveryEntryDeep(ENV_1.default.folder, callback); }),
     });
-    r.defineCommand('eehtm', {
-        help: 'for every entry in folder rename to {$2: string} if it matches {$1: regex}`',
-        action: evall(U.everyEntryHasToMatch)
-    });
-    r.defineCommand('eehti', {
-        help: 'for every entry in folder rename if it includes string you provide`',
-        action: evall(U.everyEntryHasToInclude)
+    modules_1.default.forEach(function (mod) {
+        mod.forEach(function (op) {
+            r.defineCommand(op.abbrev, {
+                help: "" + op.help,
+                action: evall(op.run),
+            });
+        });
     });
 }
 rl.question('What folder\n', function (answer) {
-    changeDirectory(answer);
+    U.changeDirectory(answer);
     rl.close();
     startRepl();
 });
