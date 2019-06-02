@@ -1,8 +1,9 @@
-import * as U from './Util';
+import * as U from './IndexUtil';
 import * as repl from 'repl';
 import * as fs from 'fs';
 import { createInterface } from 'readline';
 import E from './ENV';
+import * as M from './modules';
 
 createInterface
 const rl = createInterface({
@@ -54,17 +55,17 @@ function startRepl() {
   
   r.defineCommand('eer', {
     help: 'rename every entry in folder using {$1: (fileName: string) => string}',
-    action: evall(U.everyEntryRename, true)
+    action: evall(M.everyEntryRename, true)
   });
 
   r.defineCommand('eehtm', {
     help: 'for every entry in folder rename to {$2: string} if it matches {$1: regex}`',
-    action: evall(U.everyEntryHasToMatch, true)
+    action: evall(M.everyEntryHasToMatch, true)
   });
   
   r.defineCommand('eehti', {
     help: 'for every entry in folder rename if it includes string you provide`',
-    action: evall(U.everyEntryHasToInclude, true)
+    action: evall(M.everyEntryHasToInclude, true)
   });
 }
 
