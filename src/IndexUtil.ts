@@ -1,16 +1,25 @@
-import E from './ENV';
 import C from './CONST';
 import * as fs from 'fs';
 import * as path from 'path';
+import { FileIteratorCallback } from './types';
+import ENV from './ENV';
 
-export function setFolder(path: string) {
-  E.folder = path;
+export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[K]) {
+  ENV[key] = value;
+}
+
+export function changeDirectory(newFolderName: string) {
+  if (fs.existsSync(newFolderName)) {
+    setEnvVar('folder', newFolderName);
+  } else {
+    console.error('provided folder name appears to be invalid');
+  }
 }
 
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
  */
-export function forEveryEntry(folder: string, callback: (folder: string, ent: fs.Dirent) => void) {
+export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
     return;
@@ -26,10 +35,10 @@ export function forEveryEntry(folder: string, callback: (folder: string, ent: fs
   });
 }
 
-function forEveryEntryDeep(
+export function forEveryEntryDeep(
   folder: string, 
-  callback: (folder: string, ent: fs.Dirent) => void,
-  depth: number = C.DEFAULT_DEEP_DEPTH,
+  callback: FileIteratorCallback,
+  depth: number = ENV.recursionDepth,
 ) {
   forEveryEntry(folder, (deepFolder, ent) => {
     callback(deepFolder, ent);
@@ -37,7 +46,7 @@ function forEveryEntryDeep(
       return;
     }
     if (ent.isDirectory()) {
-      forEveryEntryDeep(
+      return forEveryEntryDeep(
         path.join(deepFolder, ent.name),
         callback,
         depth - 1,

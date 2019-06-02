@@ -1,10 +1,8 @@
 import * as U from './IndexUtil';
 import * as repl from 'repl';
-import * as fs from 'fs';
 import { createInterface } from 'readline';
-import E from './ENV';
 import Modules from './modules';
-import { Operation } from './types';
+import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
 
 const rl = createInterface({
@@ -12,15 +10,6 @@ const rl = createInterface({
   output: process.stdout
 });
 let r: repl.REPLServer;
-
-function changeDirectory(newFolderName: string) {
-  if (fs.existsSync(newFolderName)) {
-    E.folder = newFolderName;
-    U.setFolder(newFolderName);
-  } else {
-    console.error('provided folder name appears to be invalid');
-  }
-}
 
 
 function evall(func: Function) {
@@ -30,25 +19,35 @@ function evall(func: Function) {
         .split(',,')
         .map(arg => eval(arg));
     func(...argsArray);
-    r.clearBufferedCommand();
+    r.clearBufferedCommand(); /// Doesn't seem to do much
   };
 }
-
 
 function startRepl() {
   r = repl.start();
 
   r.defineCommand('cd', {
     help: 'change current directory',
-    action: (newFolderName) => changeDirectory(newFolderName),
+    action: (newFolderName) => U.changeDirectory(newFolderName),
   })
-  r.defineCommand('folder', {
-    help: 'print current folder',
-    action: () => console.log(E.folder),
-  })
+  r.defineCommand('set-depth', {
+    help: 'set recursion depth for deep functions to {$1: number}',
+    action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
+  });
+  Object.keys(ENV).forEach((key) => {
+    r.defineCommand(key, {
+      help: `print current value of ${key}`,
+      action: () => console.log(ENV[key]),
+    })
+  });
+  
   r.defineCommand('fee', {
     help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: evall((callback: (folder: string, ent: fs.Dirent) => void) => U.forEveryEntry(ENV.folder, callback)),
+    action: evall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
+  });
+  r.defineCommand('fee-deep', {
+    help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void} - does this recursively until the set depth',
+    action: evall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
   });
 
   Modules.forEach((mod) => {
@@ -62,7 +61,7 @@ function startRepl() {
 }
 
 rl.question('What folder\n', (answer) => {
-  changeDirectory(answer);
+  U.changeDirectory(answer);
   rl.close();
 
   startRepl();

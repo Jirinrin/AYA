@@ -1,4 +1,5 @@
 // Editable
 export default {
-  folder: undefined,
+  folder: undefined as string,
+  recursionDepth: 3,
 };
