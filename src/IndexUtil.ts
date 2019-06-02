@@ -7,7 +7,10 @@ export function setFolder(path: string) {
   E.folder = path;
 }
 
-export function forEveryEntry(folder: string, callback: (ent: fs.Dirent) => void) {
+/**
+ * @param folder Is not useful when calling this directly (0 layers deep)
+ */
+export function forEveryEntry(folder: string, callback: (folder: string, ent: fs.Dirent) => void) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
     return;
@@ -18,24 +21,24 @@ export function forEveryEntry(folder: string, callback: (ent: fs.Dirent) => void
     }
     files.forEach((ent) => {
       console.log(path.join(folder, ent.name));
-      callback(ent);
+      callback(folder, ent);
     });
   });
 }
 
 function forEveryEntryDeep(
   folder: string, 
-  callback: (ent: fs.Dirent) => void,
+  callback: (folder: string, ent: fs.Dirent) => void,
   depth: number = C.DEFAULT_DEEP_DEPTH,
 ) {
-  forEveryEntry(folder, (ent) => {
-    callback(ent);
+  forEveryEntry(folder, (deepFolder, ent) => {
+    callback(deepFolder, ent);
     if (depth <= 0) {
       return;
     }
     if (ent.isDirectory()) {
       forEveryEntryDeep(
-        path.join(folder, ent.name),
+        path.join(deepFolder, ent.name),
         callback,
         depth - 1,
       );

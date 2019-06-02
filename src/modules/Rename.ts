@@ -8,8 +8,8 @@ const module: RawModule = {
     abbrev: 'eer',
     help: 'rename every entry in folder using {$1: (fileName: string) => string}',
     run: (renameCallback: (fileName: string) => string) => {
-      forEveryEntry(ENV.folder, (ent) => {
-        renameFile(ENV.folder, ent.name, renameCallback(ent.name));
+      forEveryEntry(ENV.folder, (folder, ent) => {
+        renameFile(folder, ent.name, renameCallback(ent.name));
       });
     }
   },
@@ -22,9 +22,9 @@ const module: RawModule = {
      * @param put: thing to put before the fileName
      */
     run: (exp: RegExp, put: string) => {
-      forEveryEntry(ENV.folder, (ent) => {
+      forEveryEntry(ENV.folder, (folder, ent) => {
         if (!ent.name.toLowerCase().match(exp)) {
-          renameFile(ENV.folder, ent.name, `${put} - ${ent}`);
+          renameFile(folder, ent.name, `${put} - ${ent}`);
         }
       });
     }
@@ -37,9 +37,9 @@ const module: RawModule = {
      * @param part: thing that every filename has to include
      */
     run: (part: string) => {
-      forEveryEntry(ENV.folder, (ent) => {
+      forEveryEntry(ENV.folder, (folder, ent) => {
         if (!ent.name.toLowerCase().includes(part.toLowerCase())) {
-          renameFile(ENV.folder, ent.name, `${part} - ${ent}`)
+          renameFile(folder, ent.name, `${part} - ${ent}`)
         }
       });
     }

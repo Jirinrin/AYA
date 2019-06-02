@@ -17,9 +17,9 @@ function changeDirectory(newFolderName: string) {
   if (fs.existsSync(newFolderName)) {
     E.folder = newFolderName;
     U.setFolder(newFolderName);
-  }
-  else
+  } else {
     console.error('provided folder name appears to be invalid');
+  }
 }
 
 
@@ -46,10 +46,9 @@ function startRepl() {
     help: 'print current folder',
     action: () => console.log(E.folder),
   })
-
   r.defineCommand('fee', {
-    help: 'for every entry in folder execute callback {$1: (entry: Dirent) => void}',
-    action: evall((callback: (ent: fs.Dirent) => void) => U.forEveryEntry(ENV.folder, callback)),
+    help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
+    action: evall((callback: (folder: string, ent: fs.Dirent) => void) => U.forEveryEntry(ENV.folder, callback)),
   });
 
   Modules.forEach((mod) => {
@@ -60,7 +59,6 @@ function startRepl() {
       });
     });
   });
-  // modules.foreach:
 }
 
 rl.question('What folder\n', (answer) => {
