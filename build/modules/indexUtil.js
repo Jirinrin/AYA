@@ -19,7 +19,7 @@ function makeDeepOperation(maker) {
     var rawOp = maker(IndexUtil_1.forEveryEntryDeep);
     return {
         abbrev: rawOp.abbrev + "-deep",
-        help: rawOp.help + " - You may supply the {recursionDepth: number} as last argument",
+        help: rawOp.help + " - But recursively for the set depth",
         run: rawOp.run,
     };
 }

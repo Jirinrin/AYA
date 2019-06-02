@@ -5,8 +5,7 @@ var path = require("path");
 function renameFile(containerFolder, fileName, newFileName) {
     if (fs.existsSync(path.join(containerFolder, newFileName))) {
         var i = 1;
-        var ext = path.extname(newFileName);
-        var baseName = ext ? newFileName.split(ext)[0] : newFileName;
+        var _a = splitFileName(newFileName), baseName = _a[0], ext = _a[1];
         while (i < 100) {
             var newNewFileName = baseName + " (" + i + ")" + ext;
             if (!fs.existsSync(path.join(containerFolder, newNewFileName))) {
@@ -19,3 +18,9 @@ function renameFile(containerFolder, fileName, newFileName) {
     fs.rename(path.join(containerFolder, fileName), path.join(containerFolder, newFileName), function () { });
 }
 exports.renameFile = renameFile;
+function splitFileName(fileName) {
+    var ext = path.extname(fileName);
+    var baseName = ext ? fileName.split(ext)[0] : fileName;
+    return [baseName, ext];
+}
+exports.splitFileName = splitFileName;

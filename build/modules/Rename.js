@@ -5,13 +5,21 @@ var ENV_1 = require("../ENV");
 var module = {
     everyEntryRename: function (iterator) { return ({
         abbrev: 'eer',
-        help: 'rename every entry in folder using {$1: (fileName: string) => string}',
-        // TODO: add option to only rename base name (so don't regard extension if applicable and then append it at the end)
-        // TODO: add option to only rename directory <> file names
-        run: function (renameCallback) {
+        help: 'Rename every entry in folder using {$1: (fileName: string) => string}. You may supply {$2: {skipEntType: "file"|"directory", skipExt: boolean}}',
+        run: function (renameCallback, _a) {
+            var _b = _a === void 0 ? {} : _a, skipEntType = _b.skipEntType, skipExt = _b.skipExt;
             iterator(ENV_1.default.folder, function (folder, ent) {
-                var newName = renameCallback(ent.name);
-                if (ent.name !== newName) {
+                var newName;
+                if (skipExt) {
+                    var _a = Util_1.splitFileName(ent.name), baseName = _a[0], ext = _a[1];
+                    newName = renameCallback(baseName) + ext;
+                }
+                else {
+                    newName = renameCallback(ent.name);
+                }
+                if (ent.name !== newName &&
+                    !(ent.isDirectory() && skipEntType === 'directory') &&
+                    !(ent.isFile() && skipEntType === 'file')) {
                     console.log("Renaming " + ent.name + " to " + newName);
                     Util_1.renameFile(folder, ent.name, newName);
                 }
