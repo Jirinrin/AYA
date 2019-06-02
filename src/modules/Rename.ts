@@ -8,7 +8,11 @@ const module: RawFactoryModule = {
     help: 'rename every entry in folder using {$1: (fileName: string) => string}',
     run: (renameCallback: (fileName: string) => string) => {
       iterator(ENV.folder, (folder, ent) => {
-        renameFile(folder, ent.name, renameCallback(ent.name));
+        const newName = renameCallback(ent.name);
+        if (ent.name !== newName) {
+          console.log(`Renaming ${ent.name} to ${newName}`);
+          renameFile(folder, ent.name, newName);
+        }
       });
     }
   }),
