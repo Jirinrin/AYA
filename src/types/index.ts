@@ -23,3 +23,5 @@ export interface RawFactoryModule {
 }
 
 export type Module = Operation[];
+
+export * from './music';

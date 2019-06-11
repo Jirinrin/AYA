@@ -23,7 +23,7 @@ Misc guidance:
   native: undefined,
   common: { 
     track: { no: 6, of: null },
-    disk: { no: 1, of: null },
+    disk:  { no: 1, of: null },
     title: 'Harakirish mind (feat. Numb\'n\'dub)(Riku Remix)',
     album: 'minority room EP',
     albumartist: 'Yukiyanagi',
