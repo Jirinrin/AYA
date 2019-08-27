@@ -83,4 +83,3 @@ const module: RawFactoryModule = {
 }
 
 export default module;
-

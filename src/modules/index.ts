@@ -23,7 +23,7 @@ const factoryModules: Module[] = [
 
 const modules: Module[] = [
   ...normalModules,
-  ...factoryModules
+  ...factoryModules,
 ];
 
 
