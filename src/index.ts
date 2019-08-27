@@ -35,10 +35,10 @@ function startRepl() {
     help: 'set recursion depth for deep functions to {$1: number}',
     action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
   });
-  r.defineCommand('toggle-mm', {
-    help: 'toggle access to music metadata',
-    action: () => U.setEnvVar('musicMetadata', !ENV.musicMetadata),
-  });
+  // r.defineCommand('toggle-mm', {
+  //   help: 'toggle access to music metadata',
+  //   action: () => U.setEnvVar('musicMetadata', !ENV.musicMetadata),
+  // });
   Object.keys(ENV).forEach((key) => {
     r.defineCommand(key, {
       help: `print current value of ${key}`,
