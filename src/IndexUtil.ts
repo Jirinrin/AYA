@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { FileIteratorCallback } from './types';
 import ENV from './ENV';
+import C from './CONST';
 import { getMusicFileMetadata, putMusicMetadataOnEntity } from './modules/Music';
 
 export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[K]) {
@@ -29,7 +30,7 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
       console.error(err);
     }
     files.forEach(async (ent) => {
-      if (ENV.musicMetadata) {
+      if (C.musicMetadata) {
         ent = await putMusicMetadataOnEntity(folder, ent);
       }
       callback(folder, ent);
