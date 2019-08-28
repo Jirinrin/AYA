@@ -5,17 +5,18 @@ import { RawFactoryModule, FileIteratorFunction } from '../types';
 export type EntityType = 'file' | 'directory';
 interface RenameOptions {
   skipEntType?: EntityType;
-  skipExt?: boolean;
+  includeExt?: boolean;
   musicFiles?: boolean; // Only rename music files, exposing metadata of the files
+  imageFiles?: boolean; // Only rename image files, exposing exif metadata of the files
 }
 
 const module: RawFactoryModule = {
   everyEntryRename: (iterator: FileIteratorFunction) => ({
     abbrev: 'eer',
-    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType: "file"|"directory", skipExt: boolean, musicFiles: boolean}}',
+    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType: "file"|"directory", includeExt: boolean, musicFiles: boolean, imageFiles: boolean}}',
     run: (
       renameCallback: (fileName: string, metadata?: Object) => string, 
-      {skipEntType, skipExt, musicFiles}: RenameOptions = {}
+      {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {}
     ) => {
       iterator(ENV.folder, (folder, ent) => {
         let metadata: any = {};
@@ -24,15 +25,20 @@ const module: RawFactoryModule = {
           if (!metadata.mm) {
             return;
           }
+        } else if (imageFiles) {
+          metadata.im = (ent as any).im;
+          if (!metadata.im) {
+            return;
+          }
         }
 
         let newName: string;
         try {
-          if (skipExt) {
+          if (includeExt) {
+            newName = renameCallback(ent.name, metadata);
+          } else {
             const [baseName, ext] = splitFileName(ent.name);
             newName = renameCallback(baseName, metadata) + ext;
-          } else {
-            newName = renameCallback(ent.name, metadata);
           }
         } catch {
           return;
