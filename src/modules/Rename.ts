@@ -13,7 +13,7 @@ interface RenameOptions {
 const module: RawFactoryModule = {
   everyEntryRename: (iterator: FileIteratorFunction) => ({
     abbrev: 'eer',
-    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType: "file"|"directory", includeExt: boolean, musicFiles: boolean, imageFiles: boolean}}',
+    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType?: "file"|"directory", includeExt?: boolean, musicFiles?: boolean, imageFiles?: boolean}}',
     run: (
       renameCallback: (fileName: string, metadata?: Object) => string, 
       {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {}
@@ -41,6 +41,7 @@ const module: RawFactoryModule = {
             newName = renameCallback(baseName, metadata) + ext;
           }
         } catch {
+          console.error(`Could not rename ${ent.name} in ${folder}`);
           return;
         }
 
