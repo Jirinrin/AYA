@@ -30,7 +30,10 @@ function startRepl() {
   r.defineCommand('cd', {
     help: 'change current directory',
     action: (newFolderName) => U.changeDirectory(newFolderName),
-  })
+  r.defineCommand('helpp', {
+    help: 'Get help for specific command',
+    action: (commandName: string) => U.getCommandHelp(r, commandName),
+  });
   r.defineCommand('set-depth', {
     help: 'set recursion depth for deep functions to {$1: number}',
     action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),

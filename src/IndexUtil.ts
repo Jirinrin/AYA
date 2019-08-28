@@ -5,6 +5,7 @@ import ENV from './ENV';
 import C from './CONST';
 import { putMusicMetadataOnEntity } from './modules/Music';
 import { putImageMetadataOnEntity } from './modules/Image';
+import { REPLServer } from 'repl';
 
 export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[K]) {
   ENV[key] = value;
@@ -16,6 +17,14 @@ export function changeDirectory(newFolderName: string) {
   } else {
     console.error('provided folder name appears to be invalid');
   }
+}
+
+export function getCommandHelp(r: REPLServer, commandName: string) {
+  const command = r.commands[commandName];
+  if (command)
+    console.log(`Explanation for .${commandName}:\n  ${command.help}`);
+  else
+    console.error(`Could not find a command named "${commandName}"`);
 }
 
 /**
