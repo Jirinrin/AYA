@@ -28,14 +28,15 @@ function startRepl() {
 
   // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
-    help: 'change current directory',
+    help: 'Change current directory',
     action: (newFolderName) => U.changeDirectory(newFolderName),
+  });
   r.defineCommand('helpp', {
     help: 'Get help for specific command',
     action: (commandName: string) => U.getCommandHelp(r, commandName),
   });
   r.defineCommand('set-depth', {
-    help: 'set recursion depth for deep functions to {$1: number}',
+    help: 'Set recursion depth for deep functions to {$1: number}',
     action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
   });
   // r.defineCommand('toggle-mm', {
@@ -44,17 +45,17 @@ function startRepl() {
   // });
   Object.keys(ENV).forEach((key) => {
     r.defineCommand(key, {
-      help: `print current value of ${key}`,
+      help: `Print current value of ${key}`,
       action: () => console.log(ENV[key]),
     })
   });
   
   r.defineCommand('fee', {
-    help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
+    help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
     action: evall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
   });
   r.defineCommand('fee-deep', {
-    help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
+    help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
     action: evall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
   });
 

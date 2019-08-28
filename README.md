@@ -40,7 +40,7 @@ Misc guidance:
 ent will get property `mm` for you to access
 
 ## TODO
-- Also expose 'path' thingy in for every item callback
+- Also expose 'path' thingy in callback for every item
 - Make sure there are no 'any's in the project: custom types that are based on some other type
 - And clone objects and such
 - In .help for all commands does not show deep versions, only appends `-deep version available`

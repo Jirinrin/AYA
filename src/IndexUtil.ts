@@ -15,7 +15,7 @@ export function changeDirectory(newFolderName: string) {
   if (fs.existsSync(newFolderName)) {
     setEnvVar('folder', newFolderName);
   } else {
-    console.error('provided folder name appears to be invalid');
+    console.error('Provided folder name appears to be invalid. Please set folder name again via .cd');
   }
 }
 
