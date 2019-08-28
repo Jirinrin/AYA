@@ -51,7 +51,7 @@ function startRepl() {
     action: evall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
   });
   r.defineCommand('fee-deep', {
-    help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void} - does this recursively until the set depth',
+    help: 'for every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
     action: evall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
   });
 
