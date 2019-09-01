@@ -38,6 +38,7 @@ const module: RawFactoryModule = {
             newName = renameCallback(ent.name, metadata);
           } else {
             const [baseName, ext] = splitFileName(ent.name);
+            metadata.ext = ext.replace('.', '');
             newName = renameCallback(baseName, metadata) + ext;
           }
         } catch (err) {
