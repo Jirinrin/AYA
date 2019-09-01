@@ -1,15 +1,10 @@
 import * as path from 'path';
 import { Dirent } from 'fs';
-import { ExifImage, ExifData } from 'exif';
+import { exiftool, Tags } from 'exiftool-vendored';
 
-export async function getImageFileMetadata(filePath: string): Promise<ExifData | null> {
+export async function getImageFileMetadata(filePath?: string): Promise<Tags | null> {
   try {
-    return await new Promise((res, rej) => {
-      new ExifImage({ image: filePath }, (err, exifData) => {
-        if (err) rej(err);
-        else     res(exifData);
-      });
-    });
+    return await exiftool.read(filePath);
   } catch {
     return null;
   }
