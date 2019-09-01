@@ -71,17 +71,19 @@ function startRepl() {
 
 function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Promise<void> {
   const triesLeft = repeatTimes - 1;
+
   return new Promise((res, rej) => {
     try {
       rl.question('What folder\n', (answer) => {
         const resolve = rootResolve || res;
-        if (U.changeDirectory(answer) || triesLeft <= 0) {
-          if (!triesLeft)
-            console.log('Max tries were exceeded. Please set the folder via the .cd command');
+
+        if (!triesLeft)
+          console.log('Max tries were exceeded. Please set the folder via the .cd command');
+        if (U.changeDirectory(answer) || triesLeft <= 0)
           resolve();
-        } else {
+        else
           return setFolderRecursive(triesLeft, resolve);
-        }
+
       });
     } catch {
       rej();
