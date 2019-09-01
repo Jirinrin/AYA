@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as mm from 'music-metadata';
-import { Dirent } from 'fs';
-import { ITrackInfo } from '../types';
+import { ITrackInfo, Entry } from '../types';
 
 function formatTrackNo(number: number|string, length = 2): string {
   const strNum: string = '' + number;
@@ -43,9 +42,9 @@ export async function getMusicFileMetadata(filePath: string): Promise<mm.IAudioM
   }
 }
 
-export async function putMusicMetadataOnEntity(folder: string, ent: Dirent): Promise<Dirent> {
+export async function putMusicMetadataOnEntity(folder: string, ent: Entry): Promise<Entry> {
   const mm = await getMusicFileMetadata(path.join(folder, ent.name));
-  (ent as any).mm = mm;
+  ent.mm = mm;
   return ent;
 }
 

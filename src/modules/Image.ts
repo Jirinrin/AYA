@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { Dirent } from 'fs';
 import { exiftool, Tags } from 'exiftool-vendored';
+import { Entry } from '../types';
 
 export async function getImageFileMetadata(filePath?: string): Promise<Tags | null> {
   try {
@@ -10,8 +10,8 @@ export async function getImageFileMetadata(filePath?: string): Promise<Tags | nu
   }
 }
 
-export async function putImageMetadataOnEntity(folder: string, ent: Dirent): Promise<Dirent> {
+export async function putImageMetadataOnEntity(folder: string, ent: Entry): Promise<Entry> {
   const im = await getImageFileMetadata(path.join(folder, ent.name));
-  (ent as any).im = im;
+  ent.im = im;
   return ent;
 }

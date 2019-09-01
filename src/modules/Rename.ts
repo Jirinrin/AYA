@@ -1,6 +1,6 @@
 import { renameFile, splitFileName } from './Util';
 import ENV from '../ENV';
-import { RawFactoryModule, FileIteratorFunction } from '../types';
+import { RawFactoryModule, FileIteratorFunction, FileMetadata } from '../types';
 
 export type EntityType = 'file' | 'directory';
 interface RenameOptions {
@@ -19,14 +19,14 @@ const module: RawFactoryModule = {
       {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {}
     ) => {
       iterator(ENV.folder, (folder, ent) => {
-        let metadata: any = {};
+        let metadata: FileMetadata = {};
         if (musicFiles) {
-          metadata.mm = (ent as any).mm;
+          metadata.mm = ent.mm;
           if (!metadata.mm) {
             return;
           }
         } else if (imageFiles) {
-          metadata.im = (ent as any).im;
+          metadata.im = ent.im;
           if (!metadata.im) {
             return;
           }

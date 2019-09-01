@@ -1,6 +1,16 @@
 import { Dirent } from "fs";
+import { IAudioMetadata } from "music-metadata";
+import { Tags } from "exiftool-vendored";
 
-export type FileIteratorCallback = (folder: string, ent: Dirent) => void;
+export interface FileMetadata {
+  mm?: IAudioMetadata;
+  im?: Tags;
+  ext?: string;
+}
+
+export interface Entry extends Dirent, FileMetadata {}
+
+export type FileIteratorCallback = (folder: string, ent: Entry) => void;
 export type FileIteratorFunction = (folder: string, callback: FileIteratorCallback) => void;
 export enum IterationType {
   'shallow',

@@ -69,7 +69,7 @@ function startRepl() {
   });
 }
 
-function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promise<any> {
+function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promise<void> {
   return new Promise((res, rej) => {
     try {
       rl.question('What folder\n', (answer) => {
