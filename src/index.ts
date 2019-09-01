@@ -69,9 +69,27 @@ function startRepl() {
   });
 }
 
-rl.question('What folder\n', (answer) => {
-  U.changeDirectory(answer);
+function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promise<any> {
+  return new Promise((res, rej) => {
+    try {
+      rl.question('What folder\n', (answer) => {
+        const resolve = rootResolve || res;
+        if (U.changeDirectory(answer) || repeatTimes <= 1) {
+          resolve()
+        } else {
+          return recursiveQuestion(repeatTimes - 1, resolve);
+        }
+      });
+    } catch {
+      rej();
+    }
+  });
+}
+
+recursiveQuestion(3)
+.then(() => {
   rl.close();
 
   startRepl();
-});
+})
+.catch(console.error);

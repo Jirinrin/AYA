@@ -11,11 +11,16 @@ export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[
   ENV[key] = value;
 }
 
-export function changeDirectory(newFolderName: string) {
+/**
+ * @return boolean indicating whether it was succesful
+ */
+export function changeDirectory(newFolderName: string): boolean {
   if (fs.existsSync(newFolderName)) {
     setEnvVar('folder', newFolderName);
+    return true;
   } else {
     console.error('Provided folder name appears to be invalid. Please set folder name again via .cd');
+    return false;
   }
 }
 

@@ -40,9 +40,8 @@ Misc guidance:
 ent will get property `mm` for you to access
 
 ## TODO
-- Also expose 'path' thingy in callback for every item
 - Make sure there are no 'any's in the project: custom types that are based on some other type
 - And clone objects and such
+- Also expose 'path' thingy in callback for every item?
 - In .help for all commands does not show deep versions, only appends `-deep version available`
-- Make getting directory at first into a feedback loop
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
