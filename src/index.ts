@@ -69,7 +69,7 @@ function startRepl() {
   });
 }
 
-function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promise<void> {
+function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Promise<void> {
   const triesLeft = repeatTimes - 1;
   return new Promise((res, rej) => {
     try {
@@ -77,10 +77,10 @@ function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promi
         const resolve = rootResolve || res;
         if (U.changeDirectory(answer) || triesLeft <= 0) {
           if (!triesLeft)
-            console.log('Max tries were exceeded. Please set the folder via the .cd command')
-          resolve()
+            console.log('Max tries were exceeded. Please set the folder via the .cd command');
+          resolve();
         } else {
-          return recursiveQuestion(triesLeft, resolve);
+          return setFolderRecursive(triesLeft, resolve);
         }
       });
     } catch {
@@ -89,7 +89,7 @@ function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promi
   });
 }
 
-recursiveQuestion(10)
+setFolderRecursive(10)
 .then(() => {
   rl.close();
   startRepl();
