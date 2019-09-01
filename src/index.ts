@@ -70,16 +70,17 @@ function startRepl() {
 }
 
 function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promise<void> {
+  const triesLeft = repeatTimes - 1;
   return new Promise((res, rej) => {
     try {
       rl.question('What folder\n', (answer) => {
         const resolve = rootResolve || res;
-        if (U.changeDirectory(answer) || repeatTimes <= 1) {
-          if (repeatTimes <= 1) 
+        if (U.changeDirectory(answer) || triesLeft <= 0) {
+          if (!triesLeft)
             console.log('Max tries were exceeded. Please set the folder via the .cd command')
           resolve()
         } else {
-          return recursiveQuestion(repeatTimes - 1, resolve);
+          return recursiveQuestion(triesLeft, resolve);
         }
       });
     } catch {
