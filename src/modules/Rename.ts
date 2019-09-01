@@ -40,8 +40,9 @@ const module: RawFactoryModule = {
             const [baseName, ext] = splitFileName(ent.name);
             newName = renameCallback(baseName, metadata) + ext;
           }
-        } catch {
-          console.error(`Could not rename ${ent.name} in ${folder}`);
+        } catch (err) {
+          console.error(`Could not rename ${ent.name} in ${folder}. Error:`);
+          console.error(err)
           return;
         }
 
