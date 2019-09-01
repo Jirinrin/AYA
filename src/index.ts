@@ -75,6 +75,8 @@ function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promi
       rl.question('What folder\n', (answer) => {
         const resolve = rootResolve || res;
         if (U.changeDirectory(answer) || repeatTimes <= 1) {
+          if (repeatTimes <= 1) 
+            console.log('Max tries were exceeded. Please set the folder via the .cd command')
           resolve()
         } else {
           return recursiveQuestion(repeatTimes - 1, resolve);
@@ -86,10 +88,9 @@ function recursiveQuestion(repeatTimes: number, rootResolve?: () => void): Promi
   });
 }
 
-recursiveQuestion(3)
+recursiveQuestion(10)
 .then(() => {
   rl.close();
-
   startRepl();
 })
 .catch(console.error);

@@ -19,7 +19,7 @@ export function changeDirectory(newFolderName: string): boolean {
     setEnvVar('folder', newFolderName);
     return true;
   } else {
-    console.error('Provided folder name appears to be invalid. Please set folder name again via .cd');
+    console.error('Provided folder name appears to be invalid. Please try again');
     return false;
   }
 }
