@@ -67,6 +67,16 @@ function startRepl() {
       });
     });
   });
+
+  r.defineCommand('move-to', {
+    help: 'Move items to',
+    action: movePicturesTo,
+  });
+  
+  r.defineCommand('move-fro', {
+    help: 'Move items fro',
+    action: movePicturesFro,
+  });
 }
 
 function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Promise<void> {
