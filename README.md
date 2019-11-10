@@ -44,3 +44,4 @@ ent will get property `mm` for you to access
 - Also expose 'path' thingy in callback for every item?
 - In .help for all commands does not show deep versions, only appends `-deep version available`
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
+- Be able to set default `ENV[var]`s persistently (esp. folder, recursion depth)
