@@ -1,10 +1,9 @@
 import { Dirent } from "fs";
 import { IAudioMetadata } from "music-metadata";
-import { Tags } from "exiftool-vendored";
 
 export interface FileMetadata {
   mm?: IAudioMetadata;
-  im?: Tags;
+  im?: any;
   ext?: string;
 }
 
