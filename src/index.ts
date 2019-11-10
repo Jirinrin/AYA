@@ -4,6 +4,7 @@ import { createInterface } from 'readline';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
+import { movePicturesTo, movePicturesFro } from './PictureOrg';
 
 const rl = createInterface({
   input: process.stdin,
@@ -38,34 +39,6 @@ function startRepl() {
   r.defineCommand('set-depth', {
     help: 'Set recursion depth for deep functions to {$1: number}',
     action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
-  });
-  // r.defineCommand('toggle-mm', {
-  //   help: 'toggle access to music metadata',
-  //   action: () => U.setEnvVar('musicMetadata', !ENV.musicMetadata),
-  // });
-  Object.keys(ENV).forEach((key) => {
-    r.defineCommand(key, {
-      help: `Print current value of ${key}`,
-      action: () => console.log(ENV[key]),
-    })
-  });
-  
-  r.defineCommand('fee', {
-    help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: evall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
-  });
-  r.defineCommand('fee-deep', {
-    help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
-    action: evall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
-  });
-
-  Modules.forEach((mod) => {
-    mod.forEach((op: Operation) => {
-      r.defineCommand(op.abbrev, {
-        help: `${op.help}`,
-        action: evall(op.run),
-      });
-    });
   });
 
   r.defineCommand('move-to', {
