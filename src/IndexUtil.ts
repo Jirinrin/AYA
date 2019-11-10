@@ -4,7 +4,6 @@ import { FileIteratorCallback } from './types';
 import ENV from './ENV';
 import C from './CONST';
 import { putMusicMetadataOnEntity } from './modules/Music';
-import { putImageMetadataOnEntity } from './modules/Image';
 import { REPLServer } from 'repl';
 
 export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[K]) {
@@ -47,9 +46,6 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
     files.forEach(async (ent) => {
       if (C.musicMetadata) {
         ent = await putMusicMetadataOnEntity(folder, ent);
-      }
-      if (C.imageMetadata) {
-        ent = await putImageMetadataOnEntity(folder, ent);
       }
       callback(folder, ent);
     });
