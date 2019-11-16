@@ -25,7 +25,3 @@ Misc fun/useful commands:
 ## How to build exe
 - Have pkg installed (`npm install -g pkg`)
 - Run the "compile" npm script
-
-## TODO
-- Make 'reset' command (clear tags outside of tag folders, make sure pictures in tag folders have the right tag)
-- Add 'are you sure' thing to .reset
