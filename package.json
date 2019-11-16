@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "ts-node src",
-    "compile": "pkg -t node10-win-x64 build\\index.js -o picture-collection-manipulator"
+    "compile": "tsc && pkg -t node10-win-x64 build\\index.js -o picture-collection-manipulator"
   },
   "repository": {
     "type": "git",
