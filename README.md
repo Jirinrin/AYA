@@ -7,6 +7,7 @@ How to use this CLI thingy:
 - apparently tab completion is a thing for commands
 - sometimes / most times after a command is finished executing, you'll need to press Enter so you get to a new line starting with `>` again  
   (most tasks are done asynchronously, and it's too much of a bother to go check properly when everything is finished)
+- if you want you can just press Enter on the first 'what folder' question
 
 Picture manipulation relevant commands:
 - `.move-to`: move tagged pictures to tag folders
