@@ -4,11 +4,16 @@ import C from "./CONST";
 import { Dirent, rename } from "fs";
 import * as path from 'path';
 import { FileIteratorCallback } from "./types";
-import { splitFileName } from "./modules/Util";
+import { splitFileName, renameFile } from "./modules/Util";
 
 function addTag(fileName: string, tag: string): string {
   const [baseName, ext] = splitFileName(fileName);
   return baseName.replace(/__t=.+$/, '') + `__t=${tag}` + ext;
+}
+
+function removeTag(fileName: string): string {
+  const [baseName, ext] = splitFileName(fileName);
+  return baseName.replace(/__t=.+$/, '') + ext;
 }
 
 function extractTag(fileName: string): string|undefined {
@@ -82,4 +87,34 @@ export function config(configName: string) {
   
   console.log(`Moving to pictures with tags ${config.to}`);
   movePicturesTo(config.to);
+}
+
+export function resetTags() {
+  doPerCollection((collectionFolderPath, ent) => {
+    // Remove tags on files in root folders
+    if (ent.isFile()) {
+      const newName = removeTag(ent.name);
+      if (newName !== ent.name) {
+        renameFile(
+          collectionFolderPath,
+          ent.name,
+          newName,
+        );
+      }
+
+    // Ensure tags on files in tag folders match their folder name
+    } else if (ent.isDirectory()) {
+      forEveryEntry(path.join(collectionFolderPath, ent.name), (tagFolderPath, pictureEnt) => {
+        const newName = addTag(pictureEnt.name, ent.name);
+
+        if (newName !== pictureEnt.name) {
+          renameFile(
+            tagFolderPath,
+            pictureEnt.name,
+            newName,
+          );
+        }
+      });
+    }
+  });
 }

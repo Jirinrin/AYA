@@ -14,6 +14,7 @@ Picture manipulation relevant commands:
     - neh (neh is showed, meh is hidden)
     - 0 (both meh and neh are hidden)
 - You can supply an argument after either of these commands to specify pictures with what tag you want to move
+- `.reset-tags`: [USE WITH CAUTION] will make sure that files in root folders have no tags and that files in tag folders have the tag that matches their folder.
 
 ## How to build exe
 - Have pkg installed (`npm install -g pkg`)
@@ -22,3 +23,4 @@ Picture manipulation relevant commands:
 ## TODO
 - Command to get number of files currently 'visisble'
 - Make 'reset' command (clear tags outside of tag folders, make sure pictures in tag folders have the right tag)
+- Add 'are you sure' thing to .reset

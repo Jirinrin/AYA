@@ -5,7 +5,7 @@ import { createInterface } from 'readline';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
-import { movePicturesTo, movePicturesFro, config } from './PictureOrg';
+import { movePicturesTo, movePicturesFro, config, resetTags } from './PictureOrg';
 import * as path from 'path';
 
 const rl = createInterface({
@@ -62,6 +62,11 @@ function startRepl() {
   r.defineCommand('config', {
     help: `Move to/fro to a certain config; available configs: ${Object.keys(C.pictureOrgConfigs)}`,
     action: config,
+  });
+
+  r.defineCommand('reset-tags', {
+    help: '[USE WITH CAUTION] will make sure that files in root folders have no tags and that files in tag folders have the tag that matches their folder',
+    action: resetTags,
   });
 }
 
