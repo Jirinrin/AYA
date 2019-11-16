@@ -65,14 +65,17 @@ export function movePicturesFro(tag?: string|string[]) {
   });
 }
 
-export function doPerCollection(callback: FileIteratorCallback) {
-  forEveryEntry(ENV.folder, (folder, ent: Dirent) => {
+export function doPerCollection(callback: FileIteratorCallback, sync?: boolean) {
+  const forEveryEntryVariant = sync ? forEveryEntrySync : forEveryEntry;
+
+  forEveryEntryVariant(ENV.folder, (folder, ent: Dirent) => {
     if (!ent.isDirectory())
       return;
     
     const collectionFolderPath = path.join(folder, ent.name);
 
-    forEveryEntry(collectionFolderPath, callback);
+    if (sync)
+      forEveryEntryVariant(collectionFolderPath, callback);
   });
 }
 
