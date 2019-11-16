@@ -52,6 +52,20 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
   });
 }
 
+export function forEveryEntrySync(folder: string, callback: FileIteratorCallback) {
+  if (typeof callback !== 'function') {
+    console.error('callback does not appear to be a function');
+    return;
+  }
+  const files = fs.readdirSync(folder, { withFileTypes: true });
+  files.forEach(ent => {
+    if (C.musicMetadata) {
+      console.log('Synchronously putting music metadata on files is not yet supported.');
+    }
+    callback(folder, ent);
+  });
+}
+
 export function forEveryEntryDeep(
   folder: string, 
   callback: FileIteratorCallback,
