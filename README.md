@@ -4,6 +4,7 @@ How to use this CLI thingy:
 - to run a command you need to prefix it with a `.`
 - use `.help` to know all the commands
 - use `.helpp {command}` to get help for a specific command
+- apparently tab completion is a thing for commands
 
 Picture manipulation relevant commands:
 - `.move-to`: move tagged pictures to tag folders

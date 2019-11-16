@@ -50,17 +50,17 @@ function startRepl() {
   });
 
   r.defineCommand('move-to', {
-    help: 'Move items to',
+    help: 'Move tagged pictures to tag folders',
     action: movePicturesTo,
   });
   
   r.defineCommand('move-fro', {
-    help: 'Move items fro',
+    help: 'Move pictures from tag folders to shared folders',
     action: movePicturesFro,
   });
 
   r.defineCommand('config', {
-    help: `Move to/fro to a certain config; available configs: ${Object.keys(C.pictureOrgConfigs)}`,
+    help: `Move to/fro to a certain config. Available configs: ${Object.keys(C.pictureOrgConfigs)}`,
     action: config,
   });
 
