@@ -38,10 +38,6 @@ function startRepl() {
     help: 'Get help for specific command',
     action: (commandName: string) => U.getCommandHelp(r, commandName),
   });
-  r.defineCommand('set-depth', {
-    help: 'Set recursion depth for deep functions to {$1: number}',
-    action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
-  });
   Object.keys(ENV).forEach((key) => {
     r.defineCommand(key, {
       help: `Print current value of ${key}`,

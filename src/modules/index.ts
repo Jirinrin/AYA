@@ -1,5 +1,4 @@
 import { Module, RawModule, RawFactoryModule, IterationType, OperationMaker } from '../types';
-import Rename from './Rename';
 import { makeOperation } from './indexUtil';
 
 const normalModules: Module[] = [
@@ -7,7 +6,6 @@ const normalModules: Module[] = [
 .map((module) => Object.values(module));
 
 const factoryModules: Module[] = [
-  Rename,
 ]
 .reduce((modules: Module[], mod: RawFactoryModule) => {
   return [

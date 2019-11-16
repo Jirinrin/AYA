@@ -3,7 +3,6 @@ import * as path from 'path';
 import { FileIteratorCallback } from './types';
 import ENV from './ENV';
 import C from './CONST';
-import { putMusicMetadataOnEntity } from './modules/Music';
 import { REPLServer } from 'repl';
 
 export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[K]) {
@@ -44,9 +43,6 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
       console.error(err);
     }
     files.forEach(async (ent) => {
-      if (C.musicMetadata) {
-        ent = await putMusicMetadataOnEntity(folder, ent);
-      }
       callback(folder, ent);
     });
   });
@@ -59,9 +55,6 @@ export function forEveryEntrySync(folder: string, callback: FileIteratorCallback
   }
   const files = fs.readdirSync(folder, { withFileTypes: true });
   files.forEach(ent => {
-    if (C.musicMetadata) {
-      console.log('Synchronously putting music metadata on files is not yet supported.');
-    }
     callback(folder, ent);
   });
 }

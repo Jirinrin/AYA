@@ -1,8 +1,6 @@
 import { Dirent } from "fs";
-import { IAudioMetadata } from "music-metadata";
 
 export interface FileMetadata {
-  mm?: IAudioMetadata;
   im?: any;
   ext?: string;
 }
@@ -32,5 +30,3 @@ export interface RawFactoryModule {
 }
 
 export type Module = Operation[];
-
-export * from './music';
