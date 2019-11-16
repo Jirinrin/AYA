@@ -6,6 +6,7 @@ Misc guidance:
 - inputting an object into the CLI needs to be wrapped by `()` parentheses
 - use `.help` to know all the commands
 - edit config in the file `CONST.ts` (TODO: make this a plain file that's editable so you can set it from the terminal)
+- apparently tab completion is a thing for commands
 
 ## Music info available
 ```ts
