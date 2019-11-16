@@ -1,4 +1,4 @@
-import { forEveryEntry } from "./IndexUtil";
+import { forEveryEntry, forEveryEntrySync } from "./IndexUtil";
 import ENV from "./ENV";
 import C from "./CONST";
 import { Dirent, rename } from "fs";
@@ -120,4 +120,15 @@ export function resetTags() {
       });
     }
   });
+}
+
+export function countVisiblePictures() {
+  let count = 0;
+
+  doPerCollection((collectionFolderPath, ent) => {
+    if (ent.isFile())
+      count++;
+  }, true);
+
+  console.log('Visible pictures:', count);
 }

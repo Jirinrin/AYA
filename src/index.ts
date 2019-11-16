@@ -5,7 +5,7 @@ import { createInterface } from 'readline';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
-import { movePicturesTo, movePicturesFro, config, resetTags } from './PictureOrg';
+import { movePicturesTo, movePicturesFro, config, resetTags, countVisiblePictures } from './PictureOrg';
 import * as path from 'path';
 
 const rl = createInterface({
@@ -67,6 +67,11 @@ function startRepl() {
   r.defineCommand('reset-tags', {
     help: '[USE WITH CAUTION] will make sure that files in root folders have no tags and that files in tag folders have the tag that matches their folder',
     action: resetTags,
+  });
+
+  r.defineCommand('count-visible-pictures', {
+    help: 'Allows you to see how large the currently visible (i.e. not stashed away in tag folders) picture collection is',
+    action: countVisiblePictures,
   });
 }
 
