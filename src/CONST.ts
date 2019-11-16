@@ -8,6 +8,7 @@ interface IConst {
 }
 
 const Const: IConst = {
+  defaultToScriptDirectory: true,
   musicMetadata: false,
   imageMetadata: true,
   pictureOrgConfigs: {

@@ -6,6 +6,7 @@ import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
 import { movePicturesTo, movePicturesFro, config } from './PictureOrg';
+import * as path from 'path';
 
 const rl = createInterface({
   input: process.stdin,
@@ -76,9 +77,16 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
           console.log('Max tries were exceeded. Please set the folder via the .cd command');
         if (U.changeDirectory(answer) || triesLeft <= 0)
           resolve();
-        else
-          return setFolderRecursive(triesLeft, resolve);
-
+        else {
+          if (C.defaultToScriptDirectory) {
+            const scriptDir = path.resolve('.');
+            console.log(`Never mind that => using script directory: ${scriptDir}`);
+            U.changeDirectory(scriptDir);
+            resolve();
+          } else {
+            return setFolderRecursive(triesLeft, resolve);
+          }
+        }
       });
     } catch {
       rej();
