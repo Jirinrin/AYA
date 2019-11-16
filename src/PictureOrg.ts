@@ -74,8 +74,7 @@ export function doPerCollection(callback: FileIteratorCallback, sync?: boolean) 
     
     const collectionFolderPath = path.join(folder, ent.name);
 
-    if (sync)
-      forEveryEntryVariant(collectionFolderPath, callback);
+    forEveryEntryVariant(collectionFolderPath, callback);
   });
 }
 
