@@ -24,6 +24,11 @@ function extractTag(fileName: string): string|undefined {
 
 export function movePicturesTo(tag?: string|string[]) {
   const tags: string[]|undefined = tag && (typeof tag === 'string' ? [tag] : tag);
+  
+  if (tags)
+    console.log(`Moving pictures with tags [${tags}] to tag folders...`);
+  else
+    console.log(`Moving all tagged pictures to tag folders...`);
 
   doPerCollection((collectionFolderPath, fileEnt) => {
     if (!fileEnt.isFile())
@@ -47,6 +52,11 @@ export function movePicturesTo(tag?: string|string[]) {
 
 export function movePicturesFro(tag?: string|string[]) {
   const tags: string[]|undefined = tag && (typeof tag === 'string' ? [tag] : tag);
+
+  if (tags)
+    console.log(`Moving fro pictures with tags [${tags}]...`);
+  else
+    console.log(`Moving fro all pictures in tag folders...`);
 
   doPerCollection((collectionFolderPath, tagFolderEnt) => {
     if (!tagFolderEnt.isDirectory())
@@ -84,14 +94,18 @@ export function config(configName: string) {
     console.error(`Could not find config "${configName}". Available config names: ${Object.keys(C.pictureOrgConfigs)}`);
     return;
   }
-  console.log(`Moving fro pictures with tags ${config.fro}`);
+  console.log('Selected config:', configName);
   movePicturesFro(config.fro);
-  
-  console.log(`Moving to pictures with tags ${config.to}`);
   movePicturesTo(config.to);
 }
 
-export function resetTags() {
+export function resetTags(arg) {
+  if (arg !== '--yes') {
+    console.log('This command is dangerous, please run it with the argument "--yes" to execute it');
+    return;
+  }
+
+  console.log('Resetting tags...');
   doPerCollection((collectionFolderPath, ent) => {
     // Remove tags on files in root folders
     if (ent.isFile()) {
@@ -123,6 +137,8 @@ export function resetTags() {
 
 export function countVisiblePictures() {
   let count = 0;
+
+  console.log('Counting visible pictures...');
 
   doPerCollection((collectionFolderPath, ent) => {
     if (ent.isFile())

@@ -85,9 +85,8 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
           resolve();
         else {
           if (C.defaultToScriptDirectory) {
-            const scriptDir = path.resolve('.');
-            console.log(`Never mind that => using script directory: ${scriptDir}`);
-            U.changeDirectory(scriptDir);
+            console.log('Never mind that => using script directory');
+            U.changeDirectory(path.resolve('.'));
             resolve();
           } else {
             return setFolderRecursive(triesLeft, resolve);

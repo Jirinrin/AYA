@@ -15,6 +15,7 @@ export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[
 export function changeDirectory(newFolderName: string): boolean {
   if (fs.existsSync(newFolderName)) {
     setEnvVar('folder', newFolderName);
+    console.log(`The current directory is now "${newFolderName}"`);
     return true;
   } else {
     console.error('Provided folder name appears to be invalid. Please try again');
