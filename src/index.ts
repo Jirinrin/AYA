@@ -1,10 +1,11 @@
 import * as U from './IndexUtil';
+import C from './CONST';
 import * as repl from 'repl';
 import { createInterface } from 'readline';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
-import { movePicturesTo, movePicturesFro } from './PictureOrg';
+import { movePicturesTo, movePicturesFro, config } from './PictureOrg';
 
 const rl = createInterface({
   input: process.stdin,
@@ -49,6 +50,11 @@ function startRepl() {
   r.defineCommand('move-fro', {
     help: 'Move items fro',
     action: movePicturesFro,
+  });
+
+  r.defineCommand('config', {
+    help: `Move to/fro to a certain config; available configs: ${Object.keys(C.pictureOrgConfigs)}`,
+    action: config,
   });
 }
 

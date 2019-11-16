@@ -1,5 +1,6 @@
 import { forEveryEntry } from "./IndexUtil";
 import ENV from "./ENV";
+import C from "./CONST";
 import { Dirent, rename } from "fs";
 import * as path from 'path';
 import { FileIteratorCallback } from "./types";
@@ -16,7 +17,9 @@ function extractTag(fileName: string): string|undefined {
   return match && match[1];
 }
 
-export function movePicturesTo(tag?: string) {
+export function movePicturesTo(tag?: string|string[]) {
+  const tags: string[]|undefined = tag && (typeof tag === 'string' ? [tag] : tag);
+
   doPerCollection((collectionFolderPath, fileEnt) => {
     if (!fileEnt.isFile())
       return;
@@ -25,7 +28,7 @@ export function movePicturesTo(tag?: string) {
     
     if (!currentFileTag)
       return;
-    if (tag && currentFileTag !== tag)
+    if (tags && !tags.includes(currentFileTag))
       return;
 
     // TODO: create tag folder if necessary
@@ -37,11 +40,13 @@ export function movePicturesTo(tag?: string) {
   });
 }
 
-export function movePicturesFro(tag?: string) {
+export function movePicturesFro(tag?: string|string[]) {
+  const tags: string[]|undefined = tag && (typeof tag === 'string' ? [tag] : tag);
+
   doPerCollection((collectionFolderPath, tagFolderEnt) => {
     if (!tagFolderEnt.isDirectory())
       return;
-    if (tag && tagFolderEnt.name !== tag)
+    if (tags && !tags.includes(tagFolderEnt.name))
       return;
 
     forEveryEntry(path.join(collectionFolderPath, tagFolderEnt.name), (tagFolderPath, pictureEnt) => {
@@ -64,4 +69,17 @@ export function doPerCollection(callback: FileIteratorCallback) {
 
     forEveryEntry(collectionFolderPath, callback);
   });
+}
+
+export function config(configName: string) {
+  const config = C.pictureOrgConfigs[configName];
+  if (!config) {
+    console.error(`Could not find config "${configName}". Available config names: ${Object.keys(C.pictureOrgConfigs)}`);
+    return;
+  }
+  console.log(`Moving fro pictures with tags ${config.fro}`);
+  movePicturesFro(config.fro);
+  
+  console.log(`Moving to pictures with tags ${config.to}`);
+  movePicturesTo(config.to);
 }
