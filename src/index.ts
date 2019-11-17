@@ -76,7 +76,7 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
 
   return new Promise((res, rej) => {
     try {
-      rl.question('What folder\n', (answer) => {
+      rl.question(`What folder ${C.defaultToScriptDirectory ? '(type nothing to use the script\'s directory)' : ''} \n`, (answer) => {
         const resolve = rootResolve || res;
 
         if (!triesLeft)
@@ -85,7 +85,7 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
           resolve();
         else {
           if (C.defaultToScriptDirectory) {
-            console.log('Never mind that => using script directory');
+            console.log('...Never mind that => using script directory');
             U.changeDirectory(path.resolve('.'));
             resolve();
           } else {
