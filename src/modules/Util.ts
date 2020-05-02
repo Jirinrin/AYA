@@ -15,10 +15,9 @@ export function renameFile(containerFolder: string, fileName: string, newFileNam
     return new Error('Couldn\'t rename file in 100 incrementing tries');
   }
 
-  fs.rename(
+  fs.renameSync(
     path.join(containerFolder, fileName),
-    path.join(containerFolder, newFileName),
-    () => {},
+    path.join(containerFolder, newFileName)
   );
 }
 
