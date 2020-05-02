@@ -35,7 +35,7 @@ export function getCommandHelp(r: REPLServer, commandName: string) {
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
  */
-export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
+export function forEveryEntryAsync(folder: string, callback: FileIteratorCallback) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
     return;
@@ -46,23 +46,44 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
       return;
     }
     files?.forEach(async (ent) => {
-      if (C.musicMetadata) {
-        ent = await putMusicMetadataOnEntity(folder, ent);
-      }
-      if (C.imageMetadata) {
-        ent = await putImageMetadataOnEntity(folder, ent);
-      }
+      if (C.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
+      if (C.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
       callback(folder, ent);
     });
   });
 }
 
-export function forEveryEntryDeep(
+/**
+ * @param folder Is not useful when calling this directly (0 layers deep)
+ */
+export async function forEveryEntry(folder: string, callback: FileIteratorCallback) {
+  console.info(`Scanning ${folder}...`);
+  try {
+    if (typeof callback !== 'function')
+      throw new Error('callback does not appear to be a function');
+
+    const files = fs.readdirSync(folder, { withFileTypes: true });
+    await Promise.all(
+      files?.map(async (ent) => {
+        if (C.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
+        if (C.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
+        callback(folder, ent);
+      })
+    );
+
+  } catch (err) {
+    console.error('An error occurred:', err);
+  } finally {
+    console.info('Done!');
+  }
+}
+
+export async function forEveryEntryDeep(
   folder: string, 
   callback: FileIteratorCallback,
   depth: number = ENV.recursionDepth,
 ) {
-  forEveryEntry(folder, (deepFolder, ent) => {
+  await forEveryEntry(folder, (deepFolder, ent) => {
     callback(deepFolder, ent);
     if (depth <= 0) {
       return;
@@ -75,4 +96,7 @@ export function forEveryEntryDeep(
       );
     }
   });
+
+  if (depth === ENV.recursionDepth)
+    console.info('Recursive action done!');
 }
