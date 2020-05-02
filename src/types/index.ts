@@ -12,6 +12,7 @@ export interface Entry extends Dirent, FileMetadata {}
 
 export type FileIteratorCallback = (folder: string, ent: Entry) => void;
 export type FileIteratorFunction = (folder: string, callback: FileIteratorCallback) => void;
+export type FileIteratorInitFunction = (callback: FileIteratorCallback) => void;
 export enum IterationType {
   'shallow',
   'deep',
@@ -27,7 +28,7 @@ export interface RawModule {
   [operationName: string]: Operation,
 }
 
-export type OperationMaker = (iterator: FileIteratorFunction) => Operation;
+export type OperationMaker = (iterator: FileIteratorInitFunction) => Operation;
 export interface RawFactoryModule {
   [operationName: string]: OperationMaker,
 }

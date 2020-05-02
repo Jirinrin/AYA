@@ -4,7 +4,7 @@ import { makeOperation } from './indexUtil';
 
 const normalModules: Module[] = [
 ]
-.map((module) => Object.values(module));
+.map((module: RawModule) => Object.values(module));
 
 const factoryModules: Module[] = [
   Rename,
