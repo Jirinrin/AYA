@@ -1,6 +1,6 @@
 interface IConst {
-  musicMetadata: boolean,
-  imageMetadata: boolean,
+  musicMetadata: boolean;
+  imageMetadata: boolean;
 }
 
 const Const: IConst = {

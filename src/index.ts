@@ -74,15 +74,20 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
 
   return new Promise((res, rej) => {
     try {
-      rl.question('What folder\n', (answer) => {
+      rl.question(`What folder (type nothing to use the current working directory)\n`, (answer) => {
         const resolve = rootResolve || res;
 
         if (!triesLeft)
-          console.log('Max tries were exceeded. Please set the folder via the .cd command');
+          return console.log('Max tries were exceeded. Please set the folder via the .cd command');
         if (U.changeDirectory(answer) || triesLeft <= 0)
-          resolve();
-        else
-          return setFolderRecursive(triesLeft, resolve);
+          return resolve();
+        else if (!answer) {
+          console.log('...Never mind that => using cwd');
+          U.changeDirectory(process.cwd());
+          // U.changeDirectory(path.resolve('.'));
+          return resolve();
+        }
+        return setFolderRecursive(triesLeft, resolve);
 
       });
     } catch {
