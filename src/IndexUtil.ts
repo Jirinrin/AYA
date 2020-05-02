@@ -45,7 +45,7 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
       console.error(err);
       return;
     }
-    files.forEach(async (ent) => {
+    files?.forEach(async (ent) => {
       if (C.musicMetadata) {
         ent = await putMusicMetadataOnEntity(folder, ent);
       }
