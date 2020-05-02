@@ -1,5 +1,5 @@
 import { splitFileName, simpleRename } from './Util';
-import { RawFactoryModule, FileMetadata } from '../types';
+import { FileMetadata, RawModule } from '../types';
 
 export type EntityType = 'file' | 'directory';
 interface RenameOptions {
@@ -9,8 +9,8 @@ interface RenameOptions {
   imageFiles?: boolean; // Only rename image files, exposing exif metadata of the files
 }
 
-const Rename: RawFactoryModule = {
-  everyEntryRename: (iterate) => ({
+const Rename: RawModule = {
+  everyEntryRename: iterate => ({
     abbrev: 'eer',
     help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType?: "file"|"directory", includeExt?: boolean, musicFiles?: boolean, imageFiles?: boolean}}',
     run: (

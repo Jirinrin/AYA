@@ -24,13 +24,10 @@ export interface Operation {
   help: string;
   run: Function;
 };
-export interface RawModule {
-  [operationName: string]: Operation,
-}
-
 export type OperationMaker = (iterator: FileIteratorInitFunction) => Operation;
-export interface RawFactoryModule {
-  [operationName: string]: OperationMaker,
+
+export interface RawModule {
+  [operationName: string]: Operation | OperationMaker,
 }
 
 export type Module = Operation[];
