@@ -48,3 +48,5 @@ ent will get property `mm` for you to access
 - Be able to set default `ENV[var]`s persistently (esp. folder, recursion depth)
 - Import stuff from photo collection manipulator branch thing
 - Add "flatten" and "clean"
+- Add chalk colors for readability
+- Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
