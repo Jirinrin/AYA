@@ -62,6 +62,10 @@ function startRepl() {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
     action: evall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
   });
+  r.defineCommand('e', {
+    help: 'Execute (eval) code in the underlying node.js environment',
+    action: eval,
+  });
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
