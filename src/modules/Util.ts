@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export function renameFile(containerFolder: string, fileName: string, newFileName: string) {
+export function renameFile(containerFolder: string, fileName: string, newFileName: string): void {
   if (fs.existsSync(path.join(containerFolder, newFileName))) {
     let i = 1;
     const [baseName, ext] = splitFileName(newFileName);
@@ -12,7 +12,7 @@ export function renameFile(containerFolder: string, fileName: string, newFileNam
       }
       i++;
     }
-    return new Error('Couldn\'t rename file in 100 incrementing tries');
+    throw new Error('Couldn\'t rename file in 100 incrementing tries');
   }
 
   fs.renameSync(

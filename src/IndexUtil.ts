@@ -43,6 +43,7 @@ export function forEveryEntry(folder: string, callback: FileIteratorCallback) {
   fs.readdir(folder, { withFileTypes: true }, (err, files) => {
     if (err) {
       console.error(err);
+      return;
     }
     files.forEach(async (ent) => {
       if (C.musicMetadata) {

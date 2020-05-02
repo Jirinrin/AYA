@@ -53,7 +53,12 @@ const module: RawFactoryModule = {
           !(ent.isFile() && skipEntType === 'file')
         ) {
           console.log(`Renaming ${ent.name} to ${newName}`);
-          renameFile(folder, ent.name, newName);
+          try {
+            renameFile(folder, ent.name, newName);
+            return newName;
+          } catch (err) {
+            console.error(err);
+          }
         }
       });
     }
