@@ -45,13 +45,9 @@ const Rename: RawModule = {
           !(ent.isDirectory() && skipEntType === 'directory') && 
           !(ent.isFile() && skipEntType === 'file')
         ) {
-          try {
-            const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
-            console.log(`Renamed ${ent.name} to ${renamedName}`);
-            return newName;
-          } catch (err) {
-            console.error(err);
-          }
+          const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
+          console.log(`Renamed ${ent.name} to ${renamedName}`);
+          return newName;
         }
       })
   }),

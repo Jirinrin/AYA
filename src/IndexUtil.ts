@@ -68,7 +68,11 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
       files?.map(async (ent) => {
         if (C.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
         if (C.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
-        callback(folder, ent);
+        try { 
+          callback(folder, ent);
+        } catch (err) { 
+          console.error(err);
+        }
       })
     );
 
