@@ -1,8 +1,11 @@
 import { Module, RawModule, RawFactoryModule, IterationType, OperationMaker } from '../types';
-import Rename from './Rename';
 import { makeOperation } from './indexUtil';
 
+import Rename from './Rename';
+import FolderOperations from './FolderOperations';
+
 const normalModules: Module[] = [
+  FolderOperations,
 ]
 .map((module: RawModule) => Object.values(module));
 

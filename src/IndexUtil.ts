@@ -63,7 +63,7 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
     if (typeof callback !== 'function')
       throw new Error('callback does not appear to be a function');
 
-    const files = fs.readdirSync(folder, { withFileTypes: true });
+    const files = getEnts(folder);
     await Promise.all(
       files?.map(async (ent) => {
         if (C.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
@@ -100,4 +100,8 @@ export async function forEveryEntryDeep(
 
   if (depth === ENV.recursionDepth)
     console.info('Recursive action done!');
+}
+
+export function getEnts(folder: string): fs.Dirent[] {
+  return fs.readdirSync(folder, { withFileTypes: true });
 }

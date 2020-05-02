@@ -1,6 +1,5 @@
-import { renameFile, splitFileName } from './Util';
-import ENV from '../ENV';
-import { RawFactoryModule, FileIteratorFunction, FileMetadata, FileIteratorInitFunction } from '../types';
+import { splitFileName, simpleRename } from './Util';
+import { RawFactoryModule, FileMetadata } from '../types';
 
 export type EntityType = 'file' | 'directory';
 interface RenameOptions {
@@ -10,7 +9,7 @@ interface RenameOptions {
   imageFiles?: boolean; // Only rename image files, exposing exif metadata of the files
 }
 
-const module: RawFactoryModule = {
+const Rename: RawFactoryModule = {
   everyEntryRename: (iterate) => ({
     abbrev: 'eer',
     help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType?: "file"|"directory", includeExt?: boolean, musicFiles?: boolean, imageFiles?: boolean}}',
@@ -33,18 +32,12 @@ const module: RawFactoryModule = {
         }
 
         let newName: string;
-        try {
-          if (includeExt) {
-            newName = renameCallback(ent.name, metadata);
-          } else {
-            const [baseName, ext] = splitFileName(ent.name);
-            metadata.ext = ext.replace('.', '');
-            newName = renameCallback(baseName, metadata) + ext;
-          }
-        } catch (err) {
-          console.error(`Could not rename ${ent.name} in ${folder}. Error:`);
-          console.error(err)
-          return;
+        if (includeExt) {
+          newName = renameCallback(ent.name, metadata);
+        } else {
+          const [baseName, ext] = splitFileName(ent.name);
+          metadata.ext = ext.replace('.', '');
+          newName = renameCallback(baseName, metadata) + ext;
         }
 
         if (
@@ -52,9 +45,9 @@ const module: RawFactoryModule = {
           !(ent.isDirectory() && skipEntType === 'directory') && 
           !(ent.isFile() && skipEntType === 'file')
         ) {
-          console.log(`Renaming ${ent.name} to ${newName}`);
           try {
-            renameFile(folder, ent.name, newName);
+            const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
+            console.log(`Renamed ${ent.name} to ${renamedName}`);
             return newName;
           } catch (err) {
             console.error(err);
@@ -95,4 +88,4 @@ const module: RawFactoryModule = {
   // }),
 }
 
-export default module;
+export default Rename;
