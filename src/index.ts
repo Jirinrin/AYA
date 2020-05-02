@@ -14,12 +14,16 @@ let r: repl.REPLServer;
 
 function evall(func: Function) {
   return (args: string) => {
-    const argsArray = 
-      args
-        .split(',,')
-        .map(arg => eval(arg));
-    func(...argsArray);
-    r.clearBufferedCommand(); /// Doesn't seem to do much
+    try {
+      const argsArray = 
+        args
+          .split(',,')
+          .map(arg => eval(arg));
+      func(...argsArray);
+      r.clearBufferedCommand(); /// Doesn't seem to do much
+    } catch (err) {
+      console.error('An error occurred:', err);
+    }
   };
 }
 
