@@ -20,7 +20,7 @@ const FolderOperations: RawModule = {
       const errors = [];
 
       await forEveryEntry(ENV.folder, (folder, dir) => {
-        if (!dir.isDirectory) return;
+        if (!dir.isDirectory()) return;
 
         const currentFolder = path.join(folder, dir.name);
         
