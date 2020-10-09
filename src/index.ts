@@ -6,7 +6,7 @@ import * as U from './IndexUtil';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
-import { evall, executeCode, globalEval } from './evalCode';
+import { evall, globalEval } from './evalCode';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -25,11 +25,9 @@ let r: repl.REPLServer;
 
 
 const wrappedEvall = (func: Function) => evall(func, r);
-const wrappedExecuteCode = (code: string) => executeCode(code, r);
-
 
 function startRepl() {
-  r = repl.start();
+  r = repl.start({ignoreUndefined: true, useGlobal: true});
 
   // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
@@ -64,11 +62,10 @@ function startRepl() {
     action: wrappedEvall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
   });
 
-  r.defineCommand('eval', {
-    help: 'Forcibly execute (eval) code in the underlying node.js environment',
-    action: globalEval,
-  });
-  r.addListener('line', wrappedExecuteCode);
+  // r.defineCommand('eval', {
+  //   help: 'Forcibly execute (eval) code in the underlying node.js environment',
+  //   action: globalEval,
+  // });
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
