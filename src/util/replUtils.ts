@@ -18,9 +18,8 @@ export function evall(func: Function, r: REPLServer) {
         if (!hasOpts)
           throw new ValidationError('You are passing options, but this command is not expecting any');
 
-        body = args.substring(0, optionsStartIndex);
-        opts = minimist( args.slice(optionsStartIndex).split(' '));
-        // console.log('options', Object.entries(opts).map(e => `${e[0]}::${e[1]}`).join('|||'));
+        body = args.substring(0, optionsStartIndex).trim();
+        opts = minimist( args.slice(optionsStartIndex).split(' ') );
       }
 
       if (paramsCount > 0 && !body)
@@ -31,12 +30,11 @@ export function evall(func: Function, r: REPLServer) {
         argsArray = [];
       } else if (paramsCount == 1) {
         argsArray = [body];
-      } else if (paramsCount == 2) {
-        // for now only up to 2 params supported
-        const partsMatch = body.match(/^\s*(\S+) +(\S.*)$/);
-        if (partsMatch.length-1 !== paramsCount)
+      } else {
+        const partsMatch = body.match(/"[^"]+"|'[^']+'|\/[^\/]+\/|[\S]+/g);
+        if (partsMatch.length < paramsCount)
           throw new ValidationError(`You should supply ${paramsCount} arguments instead of ${partsMatch.length-1}`);
-        argsArray = [partsMatch[1], partsMatch[2]];
+        argsArray = [...partsMatch.slice(0,paramsCount-1), partsMatch.slice(paramsCount-1).join(' ')];
       }
       
       const parsedArgsArray = argsArray.map((arg: string, i) => {
