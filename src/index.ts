@@ -1,10 +1,12 @@
-import * as U from './IndexUtil';
 import * as repl from 'repl';
 import { createInterface } from 'readline';
+import chalk from 'chalk';
+
+import * as U from './IndexUtil';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
-import chalk from 'chalk';
+import { evall, executeCode, globalEval } from './evalCode';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -22,20 +24,9 @@ const rl = createInterface({
 let r: repl.REPLServer;
 
 
-function evall(func: Function) {
-  return (args: string) => {
-    try {
-      const argsArray = 
-        args
-          .split(',,')
-          .map(arg => eval(arg));
-      func(...argsArray);
-      r.clearBufferedCommand(); /// Doesn't seem to do much
-    } catch (err) {
-      console.error('An error occurred:', err);
-    }
-  };
-}
+const wrappedEvall = (func: Function) => evall(func, r);
+const wrappedExecuteCode = (code: string) => executeCode(code, r);
+
 
 function startRepl() {
   r = repl.start();
@@ -66,22 +57,24 @@ function startRepl() {
   
   r.defineCommand('fee', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: evall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
+    action: wrappedEvall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
   });
   r.defineCommand('fee-deep', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
-    action: evall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
+    action: wrappedEvall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
   });
-  r.defineCommand('e', {
-    help: 'Execute (eval) code in the underlying node.js environment',
-    action: eval,
+
+  r.defineCommand('eval', {
+    help: 'Forcibly execute (eval) code in the underlying node.js environment',
+    action: globalEval,
   });
+  r.addListener('line', wrappedExecuteCode);
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
       r.defineCommand(op.abbrev, {
         help: `${op.help}`,
-        action: evall(op.run),
+        action: wrappedEvall(op.run),
       });
     });
   });
