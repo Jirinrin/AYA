@@ -54,5 +54,3 @@ ent will get property `mm` for you to access
 - add how-to on using scripts, add examples of things you can do with this thing, supply options, ...
 - add ora fancy spinner thingy
 - syntax highlighting?! for js (and regex)
-- split IndexUtil off into CommandUtil or sth
-- autocomplete for extra opts?

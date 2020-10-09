@@ -1,6 +1,6 @@
 import { OperationMaker, IterationType, Operation } from "../types";
-import { forEveryEntry, forEveryEntryDeep } from "../IndexUtil";
 import ENV from "../ENV";
+import { forEveryEntry, forEveryEntryDeep } from "../util";
 
 export function makeOperation(maker: OperationMaker, iterationType: IterationType): Operation {
   switch (iterationType) {

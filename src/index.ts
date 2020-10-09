@@ -2,14 +2,13 @@ import * as repl from 'repl';
 import { CompleterResult, createInterface } from 'readline';
 import chalk from 'chalk';
 
-import * as U from './IndexUtil';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
-import { evall, globalEval } from './IndexUtil';
 import './Global';
-import './LocalStorage';
-import { config, userScripts } from './LocalStorage';
+import './util/LocalStorage';
+import { config, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
+import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, globalEval } from './util';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -79,11 +78,11 @@ function startRepl() {
   // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
     help: 'Change current directory',
-    action: (newFolderName) => U.changeDirectory(newFolderName),
+    action: (newFolderName) => changeDirectory(newFolderName),
   });
   r.defineCommand('helpp', {
     help: 'Get help for specific command',
-    action: (commandName: string) => U.getCommandHelp(r, commandName),
+    action: (commandName: string) => getCommandHelp(r, commandName),
   });
   r.defineCommand('set-depth', {
     help: 'Set recursion depth for deep functions to {$1: number}',
@@ -91,7 +90,7 @@ function startRepl() {
   });
   // r.defineCommand('toggle-mm', {
   //   help: 'toggle access to music metadata',
-  //   action: () => U.setEnvVar('musicMetadata', !ENV.musicMetadata),
+  //   action: () => setEnvVar('musicMetadata', !ENV.musicMetadata),
   // });
   Object.keys(ENV).forEach((key) => {
     r.defineCommand(key, {
@@ -108,11 +107,11 @@ function startRepl() {
   
   r.defineCommand('fee', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: wrappedEvall((callback: FileIteratorCallback) => U.forEveryEntry(ENV.folder, callback)),
+    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntry(ENV.folder, callback)),
   });
   r.defineCommand('fee-deep', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
-    action: wrappedEvall((callback: FileIteratorCallback) => U.forEveryEntryDeep(ENV.folder, callback)),
+    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntryDeep(ENV.folder, callback)),
   });
 
   // r.defineCommand('eval', {
@@ -177,12 +176,12 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
 
         if (!triesLeft)
           return console.log('Max tries were exceeded. Please set the folder via the .cd command');
-        if (U.changeDirectory(answer) || triesLeft <= 0)
+        if (changeDirectory(answer) || triesLeft <= 0)
           return resolve();
         else if (!answer) {
           console.log('...Never mind that => using cwd');
-          U.changeDirectory(process.cwd());
-          // U.changeDirectory(path.resolve('.'));
+          changeDirectory(process.cwd());
+          // changeDirectory(path.resolve('.'));
           return resolve();
         }
         return setFolderRecursive(triesLeft, resolve);

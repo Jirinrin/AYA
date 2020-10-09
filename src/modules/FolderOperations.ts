@@ -1,9 +1,9 @@
 import { RawModule } from "../types";
-import { forEveryEntry, getEnts } from "../IndexUtil";
 import ENV from "../ENV";
 import * as path from "path";
 import * as fs from "fs";
 import { simpleMove } from "./Util";
+import { forEveryEntry, getEnts } from "../util";
 
 const TEMP_DIR_NAME = "___tmp";
 
