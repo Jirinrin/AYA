@@ -30,25 +30,20 @@ let r: repl.REPLServer;
 const wrappedEvall = (func: Function) => evall(func, r);
 
 const completer = (line: string): CompleterResult => {
-  try {
+  let completions: string[] = [];
+  let matchString = line;
 
-    let completions: string[] = [];
-    let matchString = line;
-  
-    const userScriptMatch = line.match(/^\.userscript(?:-(get|set|delete))? /);
-    if (userScriptMatch) {
-      completions = Object.keys(userScripts.s);
-      matchString = line.slice(userScriptMatch[0].length);
-    } else if (line.startsWith('.')) {
-      completions = Object.keys(r.commands);
-      matchString = line.slice(1);
-    }
-  
-    const hits = completions.filter((c) => c.startsWith(matchString));
-    return [hits, matchString];
-  } catch (err) {
-    console.error('yabai!!', err);
+  const userScriptMatch = line.match(/^\.userscript(?:-(get|set|delete))? /);
+  if (userScriptMatch) {
+    completions = Object.keys(userScripts.s);
+    matchString = line.slice(userScriptMatch[0].length);
+  } else if (line.startsWith('.')) {
+    completions = Object.keys(r.commands);
+    matchString = line.slice(1);
   }
+
+  const hits = completions.filter((c) => c.startsWith(matchString));
+  return [hits, matchString];
 }
 
 function startRepl() {
@@ -122,6 +117,8 @@ function startRepl() {
     help: 'Run userscript with the key {$1}',
     action: wrappedEvall((key: string) => r.write(userScripts.s[key] + "\n")),
   });
+
+  console.log
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
