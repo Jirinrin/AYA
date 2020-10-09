@@ -45,7 +45,7 @@ const completer = (line: string): CompleterResult => {
     }
   
     const hits = completions.filter((c) => c.startsWith(matchString));
-    return [hits.length ? hits : completions, matchString];
+    return [hits, matchString];
   } catch (err) {
     console.error('yabai!!', err);
   }
