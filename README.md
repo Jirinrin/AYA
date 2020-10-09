@@ -46,7 +46,6 @@ ent will get property `mm` for you to access
 - In .help for all commands does not show deep versions, only appends `-deep version available`
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
 - Be able to set default `ENV[var]`s persistently (esp. folder, recursion depth) (write to JSON or something)
-- Add chalk colors for readability
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 
 - be able to execute commands for each item
