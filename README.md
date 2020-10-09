@@ -48,9 +48,9 @@ ent will get property `mm` for you to access
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 
 - allow passing arguments to the initial call of the process (e.g. which command to run) (=> enables putting a static bat file in a folder which does a thing)
-- separate shorthand command for 'replace all files with regex', just pass two strings instead of the whole (f) => f.replace() stuff
 - expose `ls` command
 - make fee not have to deal with the 'folder' if calling it directly
 - add how-to on using scripts, add examples of things you can do with this thing, supply options, ...
 - add ora fancy spinner thingy
 - syntax highlighting?! for js (and regex)
+- be able to give argument to userscripts?
