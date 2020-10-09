@@ -1,5 +1,5 @@
 {
-  "name": "file-manipulator-js",
+  "name": "ayayatsuri",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,19 +7,19 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "ts-node src",
-    "compile": "tsc && pkg -t node10-win-x64 build\\index.js -o file-manipulator-js"
+    "compile": "tsc && pkg -t node10-win-x64 build\\index.js -o ayayatsuri"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jirinrin/file-manipulator-js.git"
+    "url": "git+https://github.com/Jirinrin/ayayatsuri.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Jirinrin/file-manipulator-js/issues"
+    "url": "https://github.com/Jirinrin/ayayatsuri/issues"
   },
-  "homepage": "https://github.com/Jirinrin/file-manipulator-js#readme",
+  "homepage": "https://github.com/Jirinrin/ayayatsuri#readme",
   "dependencies": {
     "exiftool-vendored": "^8.21.1",
     "music-metadata": "^4.1.0"
