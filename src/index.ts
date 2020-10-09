@@ -6,7 +6,7 @@ import * as U from './IndexUtil';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
-import { evall, globalEval } from './evalCode';
+import { evall, globalEval } from './IndexUtil';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -105,8 +105,8 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
 }
 
 setFolderRecursive(10)
-.then(() => {
-  rl.close();
-  startRepl();
-})
-.catch(console.error);
+  .then(() => {
+    rl.close();
+    startRepl();
+  })
+  .catch(console.error);
