@@ -66,10 +66,14 @@ const Rename: RawModule = {
     abbrev: 'eer-rx',
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern}. opts: ${eerOpts}`,
     run: (
-      searchRegex: RegExp,
+      searchRegex: string|RegExp,
       replacePattern: string,
       opts?: RenameOptions,
-    ) => renameEveryEntry(iterate)(fileName => fileName.replace(searchRegex, replacePattern), opts),
+    ) => {
+      if (typeof searchRegex === 'string')
+        searchRegex = new RegExp(searchRegex);
+      return renameEveryEntry(iterate)(fileName => fileName.replace(searchRegex, replacePattern), opts)
+    },
   }),
 }
 
