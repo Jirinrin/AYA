@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/Jirinrin/ayayatsuri#readme",
   "dependencies": {
+    "chalk": "^4.1.0",
     "exiftool-vendored": "^8.21.1",
     "music-metadata": "^4.1.0"
   },

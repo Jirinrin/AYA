@@ -4,6 +4,16 @@ import { createInterface } from 'readline';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
+import chalk from 'chalk';
+
+const prevConsoleLog = console.log;
+const prevConsoleWarn = console.warn;
+const prevConsoleError = console.error;
+const prevConsoleInfo = console.info;
+console.log = (...args: any[]) => prevConsoleLog(chalk.white(...args));
+console.warn = (...args: any[]) => prevConsoleWarn(chalk.magenta(...args));
+console.error = (...args: any[]) => prevConsoleError(chalk.redBright(...args));
+console.info = (...args: any[]) => prevConsoleInfo(chalk.cyanBright(...args));
 
 const rl = createInterface({
   input: process.stdin,
