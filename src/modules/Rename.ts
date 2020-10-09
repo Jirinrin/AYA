@@ -31,13 +31,19 @@ const Rename: RawModule = {
           }
         }
 
+        const rename = (name: string, metadata?: Object) => {
+          const result = renameCallback(name, metadata);
+          if (!result) throw new Error('Please return something from your renaming function');
+          return result;
+        }
+
         let newName: string;
         if (includeExt) {
-          newName = renameCallback(ent.name, metadata);
+          newName = rename(ent.name, metadata);
         } else {
           const [baseName, ext] = splitFileName(ent.name);
           metadata.ext = ext.replace('.', '');
-          newName = renameCallback(baseName, metadata) + ext;
+          newName = rename(baseName, metadata) + ext;
         }
 
         if (
