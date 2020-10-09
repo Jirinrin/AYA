@@ -26,10 +26,10 @@ const rl = createInterface({
 });
 let r: repl.REPLServer;
 
-const optsLookup = {
-  opts: {} as Record<string, string[]>, // categorized by cmdName
-  optsValues: {} as Record<string, string[]>,  // categorized by cmdName.optName
-};
+interface ExtendedREPLCommand extends repl.REPLCommand {
+  opts?: string[];
+  optsValues?: Record<string, string[]>;
+}
 
 const wrappedEvall = (func: Function) => evall(func, r);
 
@@ -40,13 +40,13 @@ const completer = (line: string): CompleterResult => {
   if (line.startsWith('.')) {
     const [cmdMatch, cmdName] = line.match(/^\.([\w-]+) +/) ?? [];
     if (cmdName) {
-      const opts = optsLookup.opts[cmdName];
+      const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
+      // console.log(JSON.stringify(commandData))
       const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
       if (typingOption && opts) {
         const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
         if (typOptFromEquals) {
-          const optsValues = optsLookup.optsValues[cmdName+typOptName];
-          completions = optsValues ?? [];
+          completions = optsValues[typOptName] ?? [];
           matchString = line.slice(typingOption.index+typOptName.length+1); // Assuming you put only one character between opt and value
         } else {
           completions = opts;
@@ -152,15 +152,15 @@ function startRepl() {
 
   Object.entries(r.commands).forEach(([cmdName, command]) => {
     if (command.help.includes('opts:')) {
-      optsLookup.opts[cmdName] = command.help
+      (command as ExtendedREPLCommand).opts = command.help
         .match(/--[\w=|]+/g)
         .map(o => {
           let [opt, val] = o.split('=', 2);
           if (val) {
-            if (val.includes('|')) optsLookup.optsValues[cmdName+opt] = val.split('|');
+            if (val.includes('|'))
+              ((command as ExtendedREPLCommand).optsValues??={})[opt] = val.split('|');
             opt += '=';
           }
-          // (command as any).bla = 'test';
           return opt;
         });
     }
