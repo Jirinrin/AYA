@@ -33,7 +33,7 @@ class LocalStorage<T extends Record<string, any>> {
   }
 
   protected writeState() {
-    fs.writeFileSync(this.jsonPath, JSON.stringify(this.state), 'utf8');
+    fs.writeFileSync(this.jsonPath, JSON.stringify(this.state, null, 2), 'utf8');
   }
 
   public set<K extends keyof T>(key: K, val: T[K]) {
@@ -81,5 +81,17 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 }
 
+class Logger extends LocalStorage<Array<any>> {
+  constructor() {
+    super('log.json', []);
+  }
+
+  public log(...message: any[]) {
+    this.state.push(message.join(' '));
+    this.writeState();
+  }
+}
+
 export const config = new Config();
 export const userScripts = new UserScripts();
+export const logger = new Logger();

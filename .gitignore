@@ -2,3 +2,4 @@ node_modules
 *.log
 build/*
 .ayaStorage/settings.json
+.ayaStorage/log.json
