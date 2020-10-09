@@ -45,13 +45,12 @@ ent will get property `mm` for you to access
 - Also expose 'path' thingy in callback for every item?
 - In .help for all commands does not show deep versions, only appends `-deep version available`
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
-- Be able to set default `ENV[var]`s persistently (esp. folder, recursion depth) (write to JSON or something)
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 
-- be able to execute commands for each item
 - allow passing arguments to the initial call of the process (e.g. which command to run) (=> enables putting a static bat file in a folder which does a thing)
 - passing options to a command with --flags (e.g. --withExtensions, --deep) instead of that weird options object, parse this with yargs or sth
 - allow definining (and deleting etc) 'scripts' within the cli: these are like an alias / function which you can call for much used actions; these should also persist to a local file
 - separate shorthand command for 'replace all files with regex', just pass two strings instead of the whole (f) => f.replace() stuff
 - expose `ls` command
 - make fee not have to deal with the 'folder' if calling it directly
+- add how-to on using scripts, add examples of things you can do with this thing, ...

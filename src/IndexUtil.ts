@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { FileIteratorCallback } from './types';
-import ENV from './ENV';
 import C from './CONST';
 import { putMusicMetadataOnEntity } from './modules/Music';
 import { putImageMetadataOnEntity } from './modules/Image';
 import { REPLServer } from 'repl';
+import { config } from './LocalStorage';
+import ENV from './ENV';
 
 export const globalEval = eval;
 export function evall(func: Function, r: REPLServer) {
@@ -23,16 +24,12 @@ export function evall(func: Function, r: REPLServer) {
   };
 }
 
-export function setEnvVar<K extends keyof typeof ENV>(key: K, value: typeof ENV[K]) {
-  ENV[key] = value;
-}
-
 /**
  * @return boolean indicating whether it was succesful
  */
 export function changeDirectory(newFolderName: string): boolean {
   if (fs.existsSync(newFolderName)) {
-    setEnvVar('folder', newFolderName);
+    ENV.folder = newFolderName;
     console.log(`The current directory is now "${newFolderName}"`);
     return true;
   } else {
@@ -102,7 +99,7 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
 export async function forEveryEntryDeep(
   folder: string, 
   callback: FileIteratorCallback,
-  depth: number = ENV.recursionDepth,
+  depth: number = config.s.recursionDepth,
 ) {
   await forEveryEntry(folder, (deepFolder, ent) => {
     callback(deepFolder, ent);
@@ -118,7 +115,7 @@ export async function forEveryEntryDeep(
     }
   });
 
-  if (depth === ENV.recursionDepth)
+  if (depth === config.s.recursionDepth)
     console.info('Recursive action done!');
 }
 

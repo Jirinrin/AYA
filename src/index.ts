@@ -5,9 +5,11 @@ import chalk from 'chalk';
 import * as U from './IndexUtil';
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
-import ENV from './ENV';
 import { evall, globalEval } from './IndexUtil';
 import './Global';
+import './LocalStorage';
+import { config } from './LocalStorage';
+import ENV from './ENV';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -41,7 +43,7 @@ function startRepl() {
   });
   r.defineCommand('set-depth', {
     help: 'Set recursion depth for deep functions to {$1: number}',
-    action: (newDepth: string) => U.setEnvVar('recursionDepth', Number(newDepth)),
+    action: (newDepth: string) => config.set('recursionDepth', Number(newDepth)),
   });
   // r.defineCommand('toggle-mm', {
   //   help: 'toggle access to music metadata',
@@ -49,8 +51,14 @@ function startRepl() {
   // });
   Object.keys(ENV).forEach((key) => {
     r.defineCommand(key, {
-      help: `Print current value of ${key}`,
+      help: `Print current value of env item "${key}"`,
       action: () => console.log(ENV[key]),
+    })
+  });
+  Object.keys(config).forEach((key) => {
+    r.defineCommand(key, {
+      help: `Print current value of config item "${key}"`,
+      action: () => console.log(config.s[key]),
     })
   });
   
