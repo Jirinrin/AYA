@@ -102,7 +102,7 @@ function startRepl() {
   //   action: globalEval,
   // });
 
-  r.defineCommand('help-userscripts', {
+  r.defineCommand('userscripts', {
     help: 'Show what userscripts are available for you',
     action: wrappedEvall(() => console.info(`Available userscripts: ${userScripts.getKeysString()}`)),
   });
@@ -112,15 +112,15 @@ function startRepl() {
   });
   r.defineCommand('userscript-set', {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
-    action: wrappedEvall((key: string, code: string) => userScripts.set(key, code)),
+    action: wrappedEvall((key: string, s_code: string) => userScripts.set(key, s_code.replace(/\\n/g, '\n'))),
   });
   r.defineCommand('userscript-delete', {
     help: 'Delete userscript with the key {$1}',
-    action: wrappedEvall((key: string, code: string) => userScripts.delete(key)),
+    action: wrappedEvall((key: string) => userScripts.delete(key)),
   });
   r.defineCommand('userscript', {
     help: 'Run userscript with the key {$1}',
-    action: wrappedEvall((key: string) => r.write(userScripts.s[key])),
+    action: wrappedEvall((key: string) => r.write(userScripts.s[key] + "\n")),
   });
 
   Modules.forEach((mod) => {

@@ -48,7 +48,6 @@ ent will get property `mm` for you to access
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 
 - allow passing arguments to the initial call of the process (e.g. which command to run) (=> enables putting a static bat file in a folder which does a thing)
-- passing options to a command with --flags (e.g. --withExtensions, --deep) instead of that weird options object, parse this with yargs or sth... slash generally, don't expect all strings to be wrapped with quotes, don't use the double comma, etc
 - separate shorthand command for 'replace all files with regex', just pass two strings instead of the whole (f) => f.replace() stuff
 - expose `ls` command
 - make fee not have to deal with the 'folder' if calling it directly

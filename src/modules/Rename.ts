@@ -12,7 +12,7 @@ interface RenameOptions {
 const Rename: RawModule = {
   everyEntryRename: iterate => ({
     abbrev: 'eer',
-    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. You may supply {$2: {skipEntType?: "file"|"directory", includeExt?: boolean, musicFiles?: boolean, imageFiles?: boolean}}',
+    help: 'Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. opts: [--skipEntType=file|directory, --includeExt, --musicFiles, --imageFiles]',
     run: (
       renameCallback: (fileName: string, metadata?: Object) => string, 
       {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {}
