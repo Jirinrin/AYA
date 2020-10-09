@@ -1,5 +1,5 @@
 import * as repl from 'repl';
-import { createInterface } from 'readline';
+import { CompleterResult, createInterface } from 'readline';
 import chalk from 'chalk';
 
 import * as U from './IndexUtil';
@@ -29,8 +29,34 @@ let r: repl.REPLServer;
 
 const wrappedEvall = (func: Function) => evall(func, r);
 
+const completer = (line: string): CompleterResult => {
+  try {
+
+    let completions: string[] = [];
+    let matchString = line;
+  
+    const userScriptMatch = line.match(/^\.userscript(?:-(get|set|delete))? /);
+    if (userScriptMatch) {
+      completions = Object.keys(userScripts.s);
+      matchString = line.slice(userScriptMatch[0].length);
+    } else if (line.startsWith('.')) {
+      completions = Object.keys(r.commands);
+      matchString = line.slice(1);
+    }
+  
+    const hits = completions.filter((c) => c.startsWith(matchString));
+    return [hits.length ? hits : completions, matchString];
+  } catch (err) {
+    console.error('yabai!!', err);
+  }
+}
+
 function startRepl() {
-  r = repl.start({ignoreUndefined: true, useGlobal: true});
+  r = repl.start({
+    ignoreUndefined: true,
+    useGlobal: true,
+    completer,
+  });
 
   // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
