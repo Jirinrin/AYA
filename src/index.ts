@@ -8,7 +8,7 @@ import { Operation, FileIteratorCallback } from './types';
 import { evall, globalEval } from './IndexUtil';
 import './Global';
 import './LocalStorage';
-import { config } from './LocalStorage';
+import { config, userScripts } from './LocalStorage';
 import ENV from './ENV';
 
 const prevConsoleLog = console.log;
@@ -75,6 +75,27 @@ function startRepl() {
   //   help: 'Forcibly execute (eval) code in the underlying node.js environment',
   //   action: globalEval,
   // });
+
+  r.defineCommand('help-userscripts', {
+    help: 'Show what userscripts are available for you',
+    action: wrappedEvall(() => console.info(`Available userscripts: ${userScripts.getKeysString()}`)),
+  });
+  r.defineCommand('userscript-get', {
+    help: 'Print the contents of the userscript with the key {$1}',
+    action: wrappedEvall((key: string) => console.log(userScripts.s[key])),
+  });
+  r.defineCommand('userscript-set', {
+    help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
+    action: wrappedEvall((key: string, code: string) => userScripts.set(key, code)),
+  });
+  r.defineCommand('userscript-delete', {
+    help: 'Delete userscript with the key {$1}',
+    action: wrappedEvall((key: string, code: string) => userScripts.delete(key)),
+  });
+  r.defineCommand('userscript', {
+    help: 'Run userscript with the key {$1}',
+    action: wrappedEvall((key: string) => r.write(userScripts.s[key])),
+  });
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
