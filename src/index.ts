@@ -26,6 +26,10 @@ const rl = createInterface({
 });
 let r: repl.REPLServer;
 
+const optsLookup = {
+  opts: {} as Record<string, string[]>, // categorized by cmdName
+  optsValues: {} as Record<string, string[]>,  // categorized by cmdName.optName
+};
 
 const wrappedEvall = (func: Function) => evall(func, r);
 
@@ -33,13 +37,32 @@ const completer = (line: string): CompleterResult => {
   let completions: string[] = [];
   let matchString = line;
 
-  const userScriptMatch = line.match(/^\.userscript(?:-(get|set|delete))? /);
-  if (userScriptMatch) {
-    completions = Object.keys(userScripts.s);
-    matchString = line.slice(userScriptMatch[0].length);
-  } else if (line.startsWith('.')) {
-    completions = Object.keys(r.commands);
-    matchString = line.slice(1);
+  if (line.startsWith('.')) {
+    const [cmdMatch, cmdName] = line.match(/^\.([\w-]+) +/) ?? [];
+    if (cmdName) {
+      const opts = optsLookup.opts[cmdName];
+      const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
+      if (typingOption && opts) {
+        const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
+        if (typOptFromEquals) {
+          const optsValues = optsLookup.optsValues[cmdName+typOptName];
+          completions = optsValues ?? [];
+          matchString = line.slice(typingOption.index+typOptName.length+1); // Assuming you put only one character between opt and value
+        } else {
+          completions = opts;
+          matchString = line.slice(typingOption.index);
+        }
+      } else if (cmdName.match(/^userscript(?:-(get|set|delete))/)) {
+        completions = Object.keys(userScripts.s);
+        matchString = line.slice(cmdMatch.length);
+      } else if (cmdName === 'help') {
+        completions = Object.keys(r.commands);
+        matchString = line.slice(4+1+1);
+      }
+    } else {
+      completions = Object.keys(r.commands);
+      matchString = line.slice(1);
+    }
   }
 
   const hits = completions.filter((c) => c.startsWith(matchString));
@@ -118,8 +141,6 @@ function startRepl() {
     action: wrappedEvall((key: string) => r.write(userScripts.s[key] + "\n")),
   });
 
-  console.log
-
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
       r.defineCommand(op.abbrev, {
@@ -127,6 +148,22 @@ function startRepl() {
         action: wrappedEvall(op.run),
       });
     });
+  });
+
+  Object.entries(r.commands).forEach(([cmdName, command]) => {
+    if (command.help.includes('opts:')) {
+      optsLookup.opts[cmdName] = command.help
+        .match(/--[\w=|]+/g)
+        .map(o => {
+          let [opt, val] = o.split('=', 2);
+          if (val) {
+            if (val.includes('|')) optsLookup.optsValues[cmdName+opt] = val.split('|');
+            opt += '=';
+          }
+          // (command as any).bla = 'test';
+          return opt;
+        });
+    }
   });
 }
 
