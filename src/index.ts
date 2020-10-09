@@ -7,6 +7,7 @@ import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import ENV from './ENV';
 import { evall, globalEval } from './IndexUtil';
+import './Global';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
