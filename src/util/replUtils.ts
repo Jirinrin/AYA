@@ -33,7 +33,7 @@ export function evall(func: Function, r: REPLServer) {
       } else {
         const partsMatch = body.match(/"[^"]+"|'[^']+'|\/[^\/]+\/|[\S]+/g);
         if (partsMatch.length < paramsCount)
-          throw new ValidationError(`You should supply ${paramsCount} arguments instead of ${partsMatch.length-1}`);
+          throw new ValidationError(`You should supply ${paramsCount} arguments instead of ${partsMatch.length}`);
         argsArray = [...partsMatch.slice(0,paramsCount-1), partsMatch.slice(paramsCount-1).join(' ')];
       }
       
