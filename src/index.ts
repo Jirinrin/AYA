@@ -38,7 +38,7 @@ const completer = (line: string): CompleterResult => {
 
   if (line.startsWith('.')) {
     const [cmdMatch, cmdName] = line.match(/^\.([\w-]+) +/) ?? [];
-    if (cmdName) {
+    if (cmdName && r.commands[cmdName]) {
       const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
       // console.log(JSON.stringify(commandData))
       const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
