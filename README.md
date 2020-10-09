@@ -48,3 +48,11 @@ ent will get property `mm` for you to access
 - Be able to set default `ENV[var]`s persistently (esp. folder, recursion depth) (write to JSON or something)
 - Add chalk colors for readability
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
+
+- be able to execute commands for each item
+- allow passing arguments to the initial call of the process (e.g. which command to run) (=> enables putting a static bat file in a folder which does a thing)
+- make the commands you do more standardised:
+  - passing options with --flags (e.g. --withExtensions, --deep) instead of that weird options object, parse this with yargs or sth
+  - some way to let the normal code you execute end up in the proper runtime? (=> not `.e ` in front of every command) (could go either way: preferably still in the REPL because autocomplete, but maybe in a normal CLI?)
+- allow definining (and deleting etc) 'scripts' within the cli: these are like an alias / function which you can call for much used actions; these should also persist to a local file
+- separate shorthand command for 'replace all files with regex', just pass two strings instead of the whole (f) => f.replace() stuff
