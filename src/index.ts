@@ -12,10 +12,10 @@ const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
 const prevConsoleError = console.error;
 const prevConsoleInfo = console.info;
-console.log = (...args: any[]) => prevConsoleLog(chalk.white(...args));
+console.log = (...args: any[]) => prevConsoleLog(chalk.green(...args));
 console.warn = (...args: any[]) => prevConsoleWarn(chalk.magenta(...args));
 console.error = (...args: any[]) => prevConsoleError(chalk.redBright(...args));
-console.info = (...args: any[]) => prevConsoleInfo(chalk.cyanBright(...args));
+console.info = (...args: any[]) => prevConsoleInfo(chalk.cyan(...args));
 
 const rl = createInterface({
   input: process.stdin,
