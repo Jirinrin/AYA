@@ -81,7 +81,7 @@ function startRepl() {
       action: () => console.log(ENV[key]),
     })
   });
-  Object.keys(config).forEach((key) => {
+  Object.keys(config.s).forEach((key) => {
     r.defineCommand(key, {
       help: `Print current value of config item "${key}"`,
       action: () => console.log(config.s[key]),
