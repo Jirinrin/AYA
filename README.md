@@ -51,5 +51,8 @@ ent will get property `mm` for you to access
 - separate shorthand command for 'replace all files with regex', just pass two strings instead of the whole (f) => f.replace() stuff
 - expose `ls` command
 - make fee not have to deal with the 'folder' if calling it directly
-- add how-to on using scripts, add examples of things you can do with this thing, ...
+- add how-to on using scripts, add examples of things you can do with this thing, supply options, ...
 - add ora fancy spinner thingy
+- syntax highlighting?! for js (and regex)
+- split IndexUtil off into CommandUtil or sth
+- autocomplete for extra opts?
