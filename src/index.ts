@@ -1,14 +1,16 @@
 import * as repl from 'repl';
-import { CompleterResult, createInterface } from 'readline';
+import { CompleterResult, createInterface, cursorTo } from 'readline';
 import chalk from 'chalk';
+import refractor, { RefractorNode } from 'refractor';
 
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import './Global';
 import './util/LocalStorage';
-import { config, userScripts } from './util/LocalStorage';
+import { config, logger, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
 import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, globalEval } from './util';
+import highlightLookup from './highlightLookup'
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -35,6 +37,7 @@ const wrappedEvall = (func: Function) => evall(func, r);
 const completer = (line: string): CompleterResult => {
   let completions: string[] = [];
   let matchString = line;
+
 
   if (line.startsWith('.')) {
     const [cmdMatch, cmdName] = line.match(/^\.([\w-]+) +/) ?? [];
@@ -73,7 +76,75 @@ function startRepl() {
     ignoreUndefined: true,
     useGlobal: true,
     completer,
+    useColors: true,
   });
+
+  const rr = r as any;
+
+  // todo: streamline this whole bunch of code
+
+  process.stdin.on('keypress', (c, k) => {
+    // setTimeout is needed otherwise if you call console.log
+    // it will include the prompt in the output
+    if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
+      setTimeout(() => {
+        rr._refreshCurrentLine();
+        // rr._refreshLine();
+      }, 0);
+    }
+  });
+
+  const originalWriteToOutput = rr._writeToOutput.bind(rr);
+  rr._writeToOutput = function _writeToOutput(stringToWrite: string) {
+    const promptMatch = stringToWrite.match(/^(?:>|\.\.\.) /);
+    if (!promptMatch) {
+      originalWriteToOutput(stringToWrite);
+      return;
+    }
+
+    const parseHighlightNode = (node: RefractorNode): string => {
+      if (node.type === 'text') return node.value;
+      if (node.children[0].type === 'element') {
+        return node.children.map(parseHighlightNode).join('');
+      }
+
+      let val = node.children[0].value;
+      node.properties.className.forEach(className => {
+        if (className === 'token') return;
+        const ch = highlightLookup[className];
+        if (ch) val = ch(val);
+        else logger.log('unknown highlight class:', className);
+      });
+      return val;
+    };
+
+    let strWithoutPrompt = stringToWrite.slice(promptMatch[0].length);
+
+    const hlParts = refractor.highlight(strWithoutPrompt, 'js').map(parseHighlightNode);
+
+    originalWriteToOutput(promptMatch[0] + hlParts.join(''));
+  };
+
+  function refreshCurrentLine() {
+    // line length
+    const line = this._prompt + this.line;
+    const cursorPos = this.getCursorPos();
+
+    // Cursor to left edge.
+    cursorTo(this.output, 0);
+
+    // Write the prompt and the current buffer content.
+    this._writeToOutput(line);
+
+    // Move cursor to original position.
+    cursorTo(this.output, cursorPos.cols);
+  }
+
+  rr._refreshCurrentLine = refreshCurrentLine;
+
+  (global as any).r = r;
+
+  // end todo  
 
   // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
