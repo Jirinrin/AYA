@@ -3,7 +3,7 @@ import { CompleterResult, cursorTo } from "readline";
 import refractor, { RefractorNode } from "refractor";
 import { REPLServer } from "repl";
 import { ExtendedREPLCommand, r } from "..";
-import highlightLookup from "../highlightLookup";
+import highlightLookup from "./highlightLookup";
 import { config, logger, userScripts } from "./LocalStorage";
 
 const getCommand = (line: string) =>
@@ -18,7 +18,6 @@ export function completer(line: string): CompleterResult {
     const [cmdMatch, cmdName] = getCommand(line);
     if (cmdName && r.commands[cmdName]) {
       const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
-      // console.log(JSON.stringify(commandData))
       const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
       if (typingOption && opts) {
         const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
@@ -91,7 +90,6 @@ function highlightLine(line: string): string {
   if (cmdName === 'eer-rx') {
     const [arg1Match, quote1, actualRegex, quote2] = l.match(/^(")([^"]+)("?)/) ?? l.match(/^(')([^']+)('?)/) ?? l.match(/^(\/)([^\/]+)(\/?)/) ?? l.match(/^()(\S+)()/) ?? [];
     if (arg1Match) {
-      logger.log('match', [arg1Match, quote1, actualRegex, quote2].join('|||'));
       if (quote1) eatFromLine(1, chalk.red(quote1));
       eatFromLine(actualRegex.length, highlightPart(l.slice(0, actualRegex.length), 'regex'));
       if (quote2) eatFromLine(1, chalk.red(quote2));

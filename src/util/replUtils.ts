@@ -25,7 +25,7 @@ export function evall(func: Function) {
       }
 
       if (paramsCount > 0 && !body)
-        throw new ValidationError(`This command needs ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
+        throw new ValidationError(`This command requires ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
 
       let argsArray: string[];
       if (paramsCount == 0) {
@@ -35,7 +35,7 @@ export function evall(func: Function) {
       } else {
         const partsMatch = body.match(/"[^"]+"|'[^']+'|\/[^\/]+\/|[\S]+/g);
         if (partsMatch.length < paramsCount)
-          throw new ValidationError(`This command needs ${paramsCount} arguments instead of ${partsMatch.length}`);
+          throw new ValidationError(`This command requires ${paramsCount} arguments instead of ${partsMatch.length}`);
         argsArray = [...partsMatch.slice(0,paramsCount-1), partsMatch.slice(paramsCount-1).join(' ')];
       }
       
