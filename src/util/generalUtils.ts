@@ -1,3 +1,5 @@
+import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
+
 interface IFunctionData {
   hasOpts: boolean;
   paramsCount: number;
@@ -27,4 +29,23 @@ export function getFunctionData(func: Function): IFunctionData {
   // console.log('func opts', hasOpts);
 
   return { hasOpts, paramsCount, paramStrings };
+}
+
+type SimpleType = number | string | boolean | null;
+
+export function recordToSchema<T extends Record<string, SimpleType>>(
+  r: T, types?: Partial<Record<keyof T, JSONSchema7TypeName>>,
+): JSONSchema7 {
+  return {
+    type: 'object',
+    properties: {
+      ...Object.entries(r).reduce((acc, [k, v]) => ({
+        ...acc,
+        [k]: {
+          type: types[k] ?? typeof v as JSONSchema7TypeName,
+          default: v,
+        }
+      }), {} as Record<string, JSONSchema7Definition>)
+    }
+  };
 }

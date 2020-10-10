@@ -47,10 +47,10 @@ ent will get property `mm` for you to access
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 
-- allow passing arguments to the initial call of the process (e.g. which command to run) (=> enables putting a static bat file in a folder which does a thing)
+- allow passing arguments to the initial call of the process (e.g. which command to run, or which userscript to run) (=> enables putting a static bat file in a folder which does a thing)
 - expose `ls` command
+- access deep version of a command with --deep flag (filter that out)
 - make fee not have to deal with the 'folder' if calling it directly
 - add how-to on using scripts, add examples of things you can do with this thing, supply options, ...
 - add ora fancy spinner thingy
-- syntax highlighting?! for js (and regex)
 - be able to give argument to userscripts?

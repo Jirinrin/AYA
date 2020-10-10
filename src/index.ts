@@ -1,14 +1,15 @@
 import * as repl from 'repl';
-import { CompleterResult, createInterface } from 'readline';
+import { createInterface } from 'readline';
 import chalk from 'chalk';
 
 import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import './Global';
 import './util/LocalStorage';
-import { config, userScripts } from './util/LocalStorage';
+import { config, IConfig, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
-import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, globalEval } from './util';
+import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, setConfigItem } from './util';
+import { completer, setupSyntaxHighlighting } from './util/replCustomization';
 
 const prevConsoleLog = console.log;
 const prevConsoleWarn = console.warn;
@@ -23,49 +24,11 @@ const rl = createInterface({
   input: process.stdin,
   output: process.stdout
 });
-let r: repl.REPLServer;
+export let r: repl.REPLServer;
 
-interface ExtendedREPLCommand extends repl.REPLCommand {
+export interface ExtendedREPLCommand extends repl.REPLCommand {
   opts?: string[];
   optsValues?: Record<string, string[]>;
-}
-
-const wrappedEvall = (func: Function) => evall(func, r);
-
-const completer = (line: string): CompleterResult => {
-  let completions: string[] = [];
-  let matchString = line;
-
-  if (line.startsWith('.')) {
-    const [cmdMatch, cmdName] = line.match(/^\.([\w-]+) +/) ?? [];
-    if (cmdName && r.commands[cmdName]) {
-      const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
-      // console.log(JSON.stringify(commandData))
-      const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
-      if (typingOption && opts) {
-        const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
-        if (typOptFromEquals) {
-          completions = optsValues[typOptName] ?? [];
-          matchString = line.slice(typingOption.index+typOptName.length+1); // Assuming you put only one character between opt and value
-        } else {
-          completions = opts;
-          matchString = line.slice(typingOption.index);
-        }
-      } else if (cmdName.match(/^userscript(?:-(get|set|delete))/)) {
-        completions = Object.keys(userScripts.s);
-        matchString = line.slice(cmdMatch.length);
-      } else if (cmdName === 'help') {
-        completions = Object.keys(r.commands);
-        matchString = line.slice(4+1+1);
-      }
-    } else {
-      completions = Object.keys(r.commands);
-      matchString = line.slice(1);
-    }
-  }
-
-  const hits = completions.filter((c) => c.startsWith(matchString));
-  return [hits, matchString];
 }
 
 function startRepl() {
@@ -73,45 +36,45 @@ function startRepl() {
     ignoreUndefined: true,
     useGlobal: true,
     completer,
+    useColors: true,
   });
 
-  // TODO: for setters, console.log the new value afterwards
+  setupSyntaxHighlighting(r);
+
   r.defineCommand('cd', {
     help: 'Change current directory',
     action: (newFolderName) => changeDirectory(newFolderName),
   });
+  r.defineCommand('cwd', {
+    help: 'Get current working directory',
+    action: () => console.log(ENV.cwd),
+  });
+
   r.defineCommand('helpp', {
     help: 'Get help for specific command',
     action: (commandName: string) => getCommandHelp(r, commandName),
   });
-  r.defineCommand('set-depth', {
-    help: 'Set recursion depth for deep functions to {$1: number}',
-    action: (newDepth: string) => config.set('recursionDepth', Number(newDepth)),
+
+  r.defineCommand('config-get', {
+    help: 'Print the contents of the config item with the key {$1}',
+    action: evall(<K extends keyof IConfig>(key: K) => console.log(config.s[key])),
   });
-  // r.defineCommand('toggle-mm', {
-  //   help: 'toggle access to music metadata',
-  //   action: () => setEnvVar('musicMetadata', !ENV.musicMetadata),
-  // });
-  Object.keys(ENV).forEach((key) => {
-    r.defineCommand(key, {
-      help: `Print current value of env item "${key}"`,
-      action: () => console.log(ENV[key]),
-    })
+  r.defineCommand('config-set', {
+    help: 'Set the contents of config with the key {$1} to the code you define {$2}',
+    action: evall(setConfigItem),
   });
-  Object.keys(config.s).forEach((key) => {
-    r.defineCommand(key, {
-      help: `Print current value of config item "${key}"`,
-      action: () => console.log(config.s[key]),
-    })
+  r.defineCommand('config', {
+    help: 'List all config items',
+    action: evall(() => console.info(`Available config: ${config.getKeysString()}`)),
   });
   
   r.defineCommand('fee', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntry(ENV.folder, callback)),
+    action: evall((callback: FileIteratorCallback) => forEveryEntry(ENV.cwd, callback)),
   });
   r.defineCommand('fee-deep', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
-    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntryDeep(ENV.folder, callback)),
+    action: evall((callback: FileIteratorCallback) => forEveryEntryDeep(ENV.cwd, callback)),
   });
 
   // r.defineCommand('eval', {
@@ -120,36 +83,38 @@ function startRepl() {
   // });
 
   r.defineCommand('userscripts', {
-    help: 'Show what userscripts are available for you',
-    action: wrappedEvall(() => console.info(`Available userscripts: ${userScripts.getKeysString()}`)),
+    help: 'List all available userscripts',
+    action: evall(() => console.info(`Available userscripts: ${userScripts.getKeysString()}`)),
   });
   r.defineCommand('userscript-get', {
     help: 'Print the contents of the userscript with the key {$1}',
-    action: wrappedEvall((key: string) => console.log(userScripts.s[key])),
+    action: evall((key: string) => console.log(userScripts.s[key])),
   });
   r.defineCommand('userscript-set', {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
-    action: wrappedEvall((key: string, s_code: string) => userScripts.set(key, s_code.replace(/\\n/g, '\n'))),
+    action: evall((key: string, s_code: string) => userScripts.set(key, s_code.replace(/\\n/g, '\n'))),
   });
   r.defineCommand('userscript-delete', {
     help: 'Delete userscript with the key {$1}',
-    action: wrappedEvall((key: string) => userScripts.delete(key)),
+    action: evall((key: string) => userScripts.delete(key)),
   });
   r.defineCommand('userscript', {
     help: 'Run userscript with the key {$1}',
-    action: wrappedEvall((key: string) => r.write(userScripts.s[key] + "\n")),
+    action: evall((key: string) => r.write(userScripts.s[key] + "\n")),
   });
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
       r.defineCommand(op.abbrev, {
         help: `${op.help}`,
-        action: wrappedEvall(op.run),
+        action: evall(op.run),
       });
     });
   });
 
-  Object.entries(r.commands).forEach(([cmdName, command]) => {
+  config.validateJson();
+
+  Object.entries(r.commands).forEach(([, command]) => {
     if (command.help.includes('opts:')) {
       (command as ExtendedREPLCommand).opts = command.help
         .match(/--[\w=|]+/g)

@@ -13,7 +13,7 @@ declare global {
 
 global.exec = (cmd) => {
   exec(cmd, {
-    cwd: ENV.folder,
+    cwd: ENV.cwd,
   }, (error, stdout, stderr) => {
     console.log(stdout);
     if (error) {
