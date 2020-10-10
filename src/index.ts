@@ -85,73 +85,42 @@ function startRepl() {
   const rr = r as any;
 
   // todo: streamline this whole bunch of code
-  // todo: it still looks quite trippy with all these refreshes...
-  // todo: allow turning syntax highlighting off
+
+  const parseHighlightNode = (node: RefractorNode, classNames: string[] = []): string => {
+    if (node.type === 'element')
+      return node.children.map(c => parseHighlightNode(c, node.properties.className)).join('');
+
+    let val = node.value;
+    classNames.forEach(className => {
+      if (className === 'token') return;
+      const ch = highlightLookup[className];
+      if (ch) val = ch(val);
+      else logger.log('unknown highlight class:', className);
+    });
+    return val;
+  };
 
   process.stdin.on('keypress', (c, k) => {
-    // setTimeout is needed otherwise if you call console.log
-    // it will include the prompt in the output
-    if (config.s.syntaxHighlighting) {
-      if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
-        setTimeout(() => {
-          rr._refreshCurrentLine();
-          // rr._refreshLine();
-        }, 0);
-      }
+    if (!config.s.syntaxHighlighting) return;
+
+    if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
+      setTimeout(() => {
+        const hlLine = refractor.highlight(rr.line, 'js')
+          .map(c => parseHighlightNode(c))
+          .join('');
+        rr._refreshCurrentLine(hlLine);
+      }, 0);
     }
   });
 
-  const originalWriteToOutput = rr._writeToOutput.bind(rr);
-  rr._writeToOutput = function _writeToOutput(stringToWrite: string) {
-    const promptMatch = stringToWrite.match(/^(?:>|\.\.\.) /);
-    if (!promptMatch || !config.s.syntaxHighlighting) {
-      originalWriteToOutput(stringToWrite);
-      return;
-    }
-
-    const parseHighlightNode = (node: RefractorNode, classNames: string[] = []): string => {
-      if (node.type === 'element') {
-        return node.children.map(c => parseHighlightNode(c, node.properties.className)).join('');
-      }
-
-      let val = node.value;
-
-      classNames.forEach(className => {
-        if (className === 'token') return;
-        const ch = highlightLookup[className];
-        if (ch) val = ch(val);
-        else logger.log('unknown highlight class:', className);
-      });
-      return val;
-    };
-
-    let strWithoutPrompt = stringToWrite.slice(promptMatch[0].length);
-
-    const hlParts = refractor.highlight(strWithoutPrompt, 'js').map(c => parseHighlightNode(c));
-    const outputString = promptMatch[0] + hlParts.join('')
-    logger.log(outputString);
-
-    originalWriteToOutput(outputString);
-  };
-
-  function refreshCurrentLine() {
-    // line length
-    const line = this._prompt + this.line;
+  function refreshCurrentLine(input: string) {
+    const line = this._prompt + input;
     const cursorPos = this.getCursorPos();
-
-    // Cursor to left edge.
     cursorTo(this.output, 0);
-
-    // Write the prompt and the current buffer content.
     this._writeToOutput(line);
-
-    // Move cursor to original position.
     cursorTo(this.output, cursorPos.cols);
   }
-
   rr._refreshCurrentLine = refreshCurrentLine;
-
-  (global as any).r = r;
 
   // end todo streamline
 
