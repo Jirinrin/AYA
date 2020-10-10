@@ -88,6 +88,7 @@ class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<
 
 const defaultConfig = {
   recursionDepth: 3,
+  syntaxHighlighting: true,
 };
 export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});
 export type IConfig = typeof defaultConfig;

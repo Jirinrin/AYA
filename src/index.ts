@@ -91,18 +91,20 @@ function startRepl() {
   process.stdin.on('keypress', (c, k) => {
     // setTimeout is needed otherwise if you call console.log
     // it will include the prompt in the output
-    if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
-      setTimeout(() => {
-        rr._refreshCurrentLine();
-        // rr._refreshLine();
-      }, 0);
+    if (config.s.syntaxHighlighting) {
+      if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
+        setTimeout(() => {
+          rr._refreshCurrentLine();
+          // rr._refreshLine();
+        }, 0);
+      }
     }
   });
 
   const originalWriteToOutput = rr._writeToOutput.bind(rr);
   rr._writeToOutput = function _writeToOutput(stringToWrite: string) {
     const promptMatch = stringToWrite.match(/^(?:>|\.\.\.) /);
-    if (!promptMatch) {
+    if (!promptMatch || !config.s.syntaxHighlighting) {
       originalWriteToOutput(stringToWrite);
       return;
     }
