@@ -2,11 +2,12 @@ import * as fs from 'fs';
 import minimist from 'minimist';
 import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
+import { r } from '..';
 import ENV from '../ENV';
 import { config, IConfig } from './LocalStorage';
 
 export const globalEval = eval;
-export function evall(func: Function, r: REPLServer) {
+export function evall(func: Function) {
   const { hasOpts, paramsCount, paramStrings } = getFunctionData(func);
 
   return (args: string) => {
