@@ -3,6 +3,7 @@ import minimist from 'minimist';
 import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
 import ENV from '../ENV';
+import { config, IConfig } from './LocalStorage';
 
 export const globalEval = eval;
 export function evall(func: Function, r: REPLServer) {
@@ -23,7 +24,7 @@ export function evall(func: Function, r: REPLServer) {
       }
 
       if (paramsCount > 0 && !body)
-        throw new ValidationError(`Please supply ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
+        throw new ValidationError(`This command needs ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
 
       let argsArray: string[];
       if (paramsCount == 0) {
@@ -33,7 +34,7 @@ export function evall(func: Function, r: REPLServer) {
       } else {
         const partsMatch = body.match(/"[^"]+"|'[^']+'|\/[^\/]+\/|[\S]+/g);
         if (partsMatch.length < paramsCount)
-          throw new ValidationError(`You should supply ${paramsCount} arguments instead of ${partsMatch.length}`);
+          throw new ValidationError(`This command needs ${paramsCount} arguments instead of ${partsMatch.length}`);
         argsArray = [...partsMatch.slice(0,paramsCount-1), partsMatch.slice(paramsCount-1).join(' ')];
       }
       
@@ -67,7 +68,7 @@ export function evall(func: Function, r: REPLServer) {
  */
 export function changeDirectory(newFolderName: string): boolean {
   if (fs.existsSync(newFolderName)) {
-    ENV.folder = newFolderName;
+    ENV.cwd = newFolderName;
     console.log(`The current directory is now "${newFolderName}"`);
     return true;
   } else {
@@ -82,4 +83,9 @@ export function getCommandHelp(r: REPLServer, commandName: string) {
     console.log(`Explanation for .${commandName}:\n  ${command.help}`);
   else
     console.error(`Could not find a command named "${commandName}"`);
+}
+
+export function setConfigItem<K extends keyof IConfig>(key: K, val: IConfig[K]) {
+  if (config.set(key, val))
+    console.info(`Successfully set config item "${key}" to ${val}`);
 }

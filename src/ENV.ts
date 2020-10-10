@@ -1,4 +1,4 @@
 // Editable
 export default {
-  folder: undefined as string,
+  cwd: undefined as string,
 };

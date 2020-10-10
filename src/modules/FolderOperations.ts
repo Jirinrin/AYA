@@ -14,12 +14,12 @@ const FolderOperations: RawModule = {
     run: async () => {
       console.log('Start flattening...');
 
-      const tempDir = path.join(ENV.folder, TEMP_DIR_NAME);
+      const tempDir = path.join(ENV.cwd, TEMP_DIR_NAME);
       if (!fs.existsSync(tempDir))
         fs.mkdirSync(tempDir);
       const errors = [];
 
-      await forEveryEntry(ENV.folder, (folder, dir) => {
+      await forEveryEntry(ENV.cwd, (folder, dir) => {
         if (!dir.isDirectory()) return;
 
         const currentFolder = path.join(folder, dir.name);

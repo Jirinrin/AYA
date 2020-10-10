@@ -1,5 +1,8 @@
 import * as fs from 'fs';
+import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
+import { recordToSchema } from './generalUtils';
+import Ajv, { ValidateFunction } from 'ajv';
 
 class LocalStorage<T extends Record<string, any>> {
   protected jsonPath: string;
@@ -7,7 +10,7 @@ class LocalStorage<T extends Record<string, any>> {
 
   public get s() { return this.state };
 
-  constructor(fileName: string, initState: T, checkAllKeys?: boolean) {
+  constructor(fileName: string, initState: T) {
     const dir = path.resolve('./.ayaStorage');
     if (!fs.existsSync(dir))
       fs.mkdirSync(dir);
@@ -17,11 +20,10 @@ class LocalStorage<T extends Record<string, any>> {
       fs.writeFileSync(this.jsonPath, JSON.stringify(initState, null, 2), 'utf8');
 
     this.readState();
+  }
 
-    if (checkAllKeys)
-      Object.entries(initState).forEach(([k, v]: [keyof T, any]) => {
-        if (!this.state[k]) this.set(k, v);
-      })
+  public getKeysString(): string {
+    return Object.keys(this.state).join(", ");
   }
 
   protected readState() {
@@ -32,20 +34,66 @@ class LocalStorage<T extends Record<string, any>> {
     fs.writeFileSync(this.jsonPath, JSON.stringify(this.state, null, 2), 'utf8');
   }
 
-  public set<K extends keyof T>(key: K, val: T[K]) {
+  public set<K extends keyof T>(key: K, val: T[K]): boolean {
+    if (this.state[key] === val) {
+      console.warn('Nothing changed.');
+      return false;
+    }
     this.state[key] = val;
     this.writeState();
+    return true;
+  }
+}
+
+
+const ajv = new Ajv({useDefaults: true, allErrors: true});
+
+class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<T> {
+  protected schema: JSONSchema7;
+  protected validate: ValidateFunction;
+
+  constructor(fileName: string, initState: T, schema: JSONSchema7) {
+    super(fileName, initState);
+
+    this.schema = schema;
+    this.validate = ajv.compile(schema);
+  }
+  
+  public validateJson() {
+    if (!this.validate(this.state)) {
+      this.validate.errors.forEach(err => {
+        const property: keyof T = err.dataPath.slice(1);
+        console.error(`Property "${property}" (current value: ${JSON.stringify(this.state[property])}) in ${this.constructor.name} is invalid: "${err.message}"`);
+        const defaultVal = (this.schema.properties[property as string] as JSONSchema7).default as T[typeof property];
+        console.warn(`Resetting to default value: ${defaultVal}`);
+        this.set(property, defaultVal);
+      });
+    }
+    this.writeState();
+  }
+
+  public set<K extends keyof T>(key: K, val: T[K]): boolean {
+    if (typeof key === 'string') {
+      const newState = {...this.state, [key]: val};
+      if (!this.validate(newState)) {
+        console.error(`You can't do that: "${this.validate.errors.map(e => e.message).join('; ')}"`);
+        return false;
+      }
+    }
+
+    return super.set(key, val);
   }
 }
 
 
 const defaultConfig = {
   recursionDepth: 3,
-}
-type IConfig = typeof defaultConfig;
-class Config extends LocalStorage<IConfig> {
+};
+export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});
+export type IConfig = typeof defaultConfig;
+class Config extends ValidatedLocalStorage<IConfig> {
   constructor() {
-    super('config.json', defaultConfig, true);
+    super('config.json', defaultConfig, configSchema);
   }
 }
 
@@ -55,10 +103,6 @@ type IUserScripts = Record<string, UserScript>;
 class UserScripts extends LocalStorage<IUserScripts> {
   constructor() {
     super('scripts.json', {});
-  }
-
-  public getKeysString(): string {
-    return Object.keys(this.state).join(", ");
   }
 
   private keyExists(key: string): boolean {
@@ -82,6 +126,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
     console.info(`Successfully deleted item with key ${key}`);
   }
 }
+
 
 class Logger extends LocalStorage<Array<any>> {
   constructor() {

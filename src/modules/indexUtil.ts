@@ -12,11 +12,11 @@ export function makeOperation(maker: OperationMaker, iterationType: IterationTyp
 }
 
 function makeShallowOperation(maker: OperationMaker): Operation {
-  return maker(cb => forEveryEntry(ENV.folder, cb));
+  return maker(cb => forEveryEntry(ENV.cwd, cb));
 }
 
 function makeDeepOperation(maker: OperationMaker): Operation {
-  const rawOp = maker(cb => forEveryEntryDeep(ENV.folder, cb));
+  const rawOp = maker(cb => forEveryEntryDeep(ENV.cwd, cb));
   return {
     abbrev: `${rawOp.abbrev}-deep`,
     help: `${rawOp.help} - But recursively for the set depth`,

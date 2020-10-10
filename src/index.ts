@@ -7,9 +7,9 @@ import Modules from './modules';
 import { Operation, FileIteratorCallback } from './types';
 import './Global';
 import './util/LocalStorage';
-import { config, logger, userScripts } from './util/LocalStorage';
+import { config, IConfig, logger, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
-import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, globalEval } from './util';
+import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, globalEval, setConfigItem } from './util';
 import highlightLookup from './highlightLookup'
 
 const prevConsoleLog = console.log;
@@ -56,6 +56,9 @@ const completer = (line: string): CompleterResult => {
         }
       } else if (cmdName.match(/^userscript(?:-(get|set|delete))/)) {
         completions = Object.keys(userScripts.s);
+        matchString = line.slice(cmdMatch.length);
+      } else if (cmdName.match(/^config-[gs]et/)) {
+        completions = Object.keys(config.s);
         matchString = line.slice(cmdMatch.length);
       } else if (cmdName === 'help') {
         completions = Object.keys(r.commands);
@@ -150,43 +153,40 @@ function startRepl() {
 
   // end todo streamline
 
-  // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {
     help: 'Change current directory',
     action: (newFolderName) => changeDirectory(newFolderName),
   });
+  r.defineCommand('cwd', {
+    help: 'Get current working directory',
+    action: () => console.log(ENV.cwd),
+  });
+
   r.defineCommand('helpp', {
     help: 'Get help for specific command',
     action: (commandName: string) => getCommandHelp(r, commandName),
   });
-  r.defineCommand('set-depth', {
-    help: 'Set recursion depth for deep functions to {$1: number}',
-    action: (newDepth: string) => config.set('recursionDepth', Number(newDepth)),
+
+  r.defineCommand('config-get', {
+    help: 'Print the contents of the config item with the key {$1}',
+    action: wrappedEvall(<K extends keyof IConfig>(key: K) => console.log(config.s[key])),
   });
-  // r.defineCommand('toggle-mm', {
-  //   help: 'toggle access to music metadata',
-  //   action: () => setEnvVar('musicMetadata', !ENV.musicMetadata),
-  // });
-  Object.keys(ENV).forEach((key) => {
-    r.defineCommand(key, {
-      help: `Print current value of env item "${key}"`,
-      action: () => console.log(ENV[key]),
-    })
+  r.defineCommand('config-set', {
+    help: 'Set the contents of config with the key {$1} to the code you define {$2}',
+    action: wrappedEvall(setConfigItem),
   });
-  Object.keys(config.s).forEach((key) => {
-    r.defineCommand(key, {
-      help: `Print current value of config item "${key}"`,
-      action: () => console.log(config.s[key]),
-    })
+  r.defineCommand('config', {
+    help: 'List all config items',
+    action: wrappedEvall(() => console.info(`Available config: ${config.getKeysString()}`)),
   });
   
   r.defineCommand('fee', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntry(ENV.folder, callback)),
+    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntry(ENV.cwd, callback)),
   });
   r.defineCommand('fee-deep', {
     help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
-    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntryDeep(ENV.folder, callback)),
+    action: wrappedEvall((callback: FileIteratorCallback) => forEveryEntryDeep(ENV.cwd, callback)),
   });
 
   // r.defineCommand('eval', {
@@ -195,7 +195,7 @@ function startRepl() {
   // });
 
   r.defineCommand('userscripts', {
-    help: 'Show what userscripts are available for you',
+    help: 'List all available userscripts',
     action: wrappedEvall(() => console.info(`Available userscripts: ${userScripts.getKeysString()}`)),
   });
   r.defineCommand('userscript-get', {
@@ -223,6 +223,8 @@ function startRepl() {
       });
     });
   });
+
+  config.validateJson();
 
   Object.entries(r.commands).forEach(([cmdName, command]) => {
     if (command.help.includes('opts:')) {
