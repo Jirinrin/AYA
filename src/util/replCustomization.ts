@@ -76,12 +76,26 @@ function highlightPart(part: string, lang: string): string {
 function highlightLine(line: string): string {
   let l = line;
   let result = '';
+  const eatFromLine = (howMuchToEat: number, addToResult: string) => {
+    result += addToResult;
+    l = l.slice(howMuchToEat);
+  };
 
+  const [cmdMatch, cmdName] = getCommand(l);
   if (l.startsWith('.')) {
-    const [cmdMatch, cmdName] = getCommand(l);
     if (!cmdMatch) return line;
     result += l.slice(0, cmdMatch.length);
     l = l.slice(cmdMatch.length);
+  }
+
+  if (cmdName === 'eer-rx') {
+    const [arg1Match, quote1, actualRegex, quote2] = l.match(/^(")([^"]+)("?)/) ?? l.match(/^(')([^']+)('?)/) ?? l.match(/^(\/)([^\/]+)(\/?)/) ?? l.match(/^()(\S+)()/) ?? [];
+    if (arg1Match) {
+      logger.log('match', [arg1Match, quote1, actualRegex, quote2].join('|||'));
+      if (quote1) eatFromLine(1, chalk.red(quote1));
+      eatFromLine(actualRegex.length, highlightPart(l.slice(0, actualRegex.length), 'regex'));
+      if (quote2) eatFromLine(1, chalk.red(quote2));
+    }
   }
 
   const optionsMatch = l.match(/--.*$/);
@@ -89,9 +103,8 @@ function highlightLine(line: string): string {
     return result + highlightPart(l, 'js');
   }
 
-  result += highlightPart(l.slice(0, optionsMatch.index), 'js');
-  l = l.slice(optionsMatch.index);
-  
+  eatFromLine(optionsMatch.index, highlightPart(l.slice(0, optionsMatch.index), 'js'));
+
   return result + highlightPart(l, 'bash');
 }
 
