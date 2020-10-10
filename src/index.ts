@@ -82,6 +82,8 @@ function startRepl() {
   const rr = r as any;
 
   // todo: streamline this whole bunch of code
+  // todo: it still looks quite trippy with all these refreshes...
+  // todo: allow turning syntax highlighting off
 
   process.stdin.on('keypress', (c, k) => {
     // setTimeout is needed otherwise if you call console.log
@@ -102,14 +104,14 @@ function startRepl() {
       return;
     }
 
-    const parseHighlightNode = (node: RefractorNode): string => {
-      if (node.type === 'text') return node.value;
-      if (node.children[0].type === 'element') {
-        return node.children.map(parseHighlightNode).join('');
+    const parseHighlightNode = (node: RefractorNode, classNames: string[] = []): string => {
+      if (node.type === 'element') {
+        return node.children.map(c => parseHighlightNode(c, node.properties.className)).join('');
       }
 
-      let val = node.children[0].value;
-      node.properties.className.forEach(className => {
+      let val = node.value;
+
+      classNames.forEach(className => {
         if (className === 'token') return;
         const ch = highlightLookup[className];
         if (ch) val = ch(val);
@@ -120,9 +122,11 @@ function startRepl() {
 
     let strWithoutPrompt = stringToWrite.slice(promptMatch[0].length);
 
-    const hlParts = refractor.highlight(strWithoutPrompt, 'js').map(parseHighlightNode);
+    const hlParts = refractor.highlight(strWithoutPrompt, 'js').map(c => parseHighlightNode(c));
+    const outputString = promptMatch[0] + hlParts.join('')
+    logger.log(outputString);
 
-    originalWriteToOutput(promptMatch[0] + hlParts.join(''));
+    originalWriteToOutput(outputString);
   };
 
   function refreshCurrentLine() {
@@ -144,7 +148,7 @@ function startRepl() {
 
   (global as any).r = r;
 
-  // end todo  
+  // end todo streamline
 
   // TODO: for setters, console.log the new value afterwards
   r.defineCommand('cd', {

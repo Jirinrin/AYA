@@ -1,10 +1,10 @@
 import chalk, { Chalk } from "chalk";
 
 // todo: better color scheme (can use chalk.hex()?) https://github.com/dracula/prism
-// todo: include all kinds of regex related keywords: 'language-regex', 'regex-delimiter'
+// todo: include all kinds of regex related keywords: 'language-regex', 'regex-delimiter', 'quantifier', 'group', 'charclass'
 
 const highlights: [string[], Chalk][] = [
-  [["property", "tag", "boolean", "number", "constant", "symbol", "deleted"], chalk.red], // #905
+  [["property", "tag", "boolean", "number", "constant", "symbol", "deleted", "regex-delimiter"], chalk.red], // #905
 
   [["selector", "attr-name", "string", "char", "builtin", "inserted"], chalk.yellow], // #690
 
