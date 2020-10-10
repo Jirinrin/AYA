@@ -10,13 +10,13 @@ class LocalStorage<T extends Record<string, any>> {
 
   public get s() { return this.state };
 
-  constructor(fileName: string, initState: T) {
+  constructor(fileName: string, initState: T, reset?: boolean) {
     const dir = path.resolve('./.ayaStorage');
     if (!fs.existsSync(dir))
       fs.mkdirSync(dir);
     
     this.jsonPath = path.resolve(dir, fileName);
-    if (!fs.existsSync(this.jsonPath))
+    if (!fs.existsSync(this.jsonPath) || reset)
       fs.writeFileSync(this.jsonPath, JSON.stringify(initState, null, 2), 'utf8');
 
     this.readState();
@@ -131,7 +131,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
 
 class Logger extends LocalStorage<Array<any>> {
   constructor() {
-    super('log.json', []);
+    super('log.json', [], true);
   }
 
   public log(...message: any[]) {
