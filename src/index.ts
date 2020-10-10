@@ -3,12 +3,12 @@ import { createInterface } from 'readline';
 import chalk from 'chalk';
 
 import Modules from './modules';
-import { Operation, FileIteratorCallback } from './types';
+import { Operation, FileIteratorCallback, FileIteratorCallbackSimple } from './types';
 import './Global';
 import './util/LocalStorage';
 import { config, IConfig, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
-import { changeDirectory, evall, forEveryEntry, forEveryEntryDeep, getCommandHelp, setConfigItem } from './util';
+import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, setConfigItem } from './util';
 import { completer, setupSyntaxHighlighting } from './util/replCustomization';
 
 const prevConsoleLog = console.log;
@@ -69,11 +69,11 @@ function startRepl() {
   });
   
   r.defineCommand('fee', {
-    help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant), entry: Dirent) => void}',
-    action: evall((callback: FileIteratorCallback) => forEveryEntry(ENV.cwd, callback)),
+    help: 'For every entry in cwd execute callback {$1: (entry: Dirent) => void}',
+    action: evall((callback: FileIteratorCallbackSimple) => forEveryEntrySimple(ENV.cwd, callback)),
   });
   r.defineCommand('fee-deep', {
-    help: 'For every entry in folder execute callback {$1: (folder: string (irrelevant?), entry: Dirent) => void} - does this recursively until the set depth',
+    help: 'For every entry in cwd execute callback {$1: (current directory: string, entry: Dirent) => void} - does this recursively until the set depth',
     action: evall((callback: FileIteratorCallback) => forEveryEntryDeep(ENV.cwd, callback)),
   });
 

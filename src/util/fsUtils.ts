@@ -5,7 +5,7 @@ import C from '../CONST';
 import { config } from './LocalStorage';
 import { putImageMetadataOnEntity } from '../modules/Image';
 import { putMusicMetadataOnEntity } from '../modules/Music';
-import { FileIteratorCallback } from '../types';
+import { FileIteratorCallback, FileIteratorCallbackSimple } from '../types';
 
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
@@ -31,7 +31,7 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
  */
-export async function forEveryEntry(folder: string, callback: FileIteratorCallback) {
+export async function forEveryEntry(folder: string, callback: FileIteratorCallback): Promise<void> {
   console.info(`Scanning ${folder}...`);
   try {
     if (typeof callback !== 'function')
@@ -55,6 +55,9 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
   } finally {
     console.info('Done!');
   }
+}
+export async function forEveryEntrySimple(folder: string, callback: FileIteratorCallbackSimple): Promise<void> {
+  await forEveryEntry(folder, (f, e) => callback(e));
 }
 
 export async function forEveryEntryDeep(

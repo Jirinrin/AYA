@@ -11,6 +11,7 @@ export interface FileMetadata {
 export interface Entry extends Dirent, FileMetadata {}
 
 export type FileIteratorCallback = (folder: string, ent: Entry) => void;
+export type FileIteratorCallbackSimple = (ent: Entry) => void;
 export type FileIteratorFunction = (folder: string, callback: FileIteratorCallback) => void;
 export type FileIteratorInitFunction = (callback: FileIteratorCallback) => void;
 export enum IterationType {
