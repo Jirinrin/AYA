@@ -1,3 +1,4 @@
+import chalk, { Chalk } from "chalk";
 import { CompleterResult, cursorTo } from "readline";
 import refractor, { RefractorNode } from "refractor";
 import { REPLServer } from "repl";
@@ -5,12 +6,16 @@ import { ExtendedREPLCommand, r } from "..";
 import highlightLookup from "../highlightLookup";
 import { config, logger, userScripts } from "./LocalStorage";
 
+const getCommand = (line: string) =>
+  (line.match(/^\.([\w-]+) +/) ?? []) as [cmdMatch?: string, cmdName?: string];
+
+
 export function completer(line: string): CompleterResult {
   let completions: string[] = [];
   let matchString = line;
 
   if (line.startsWith('.')) {
-    const [cmdMatch, cmdName] = line.match(/^\.([\w-]+) +/) ?? [];
+    const [cmdMatch, cmdName] = getCommand(line);
     if (cmdName && r.commands[cmdName]) {
       const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
       // console.log(JSON.stringify(commandData))
@@ -47,19 +52,48 @@ export function completer(line: string): CompleterResult {
 
 // Syntax highlighting
 
-function parseHighlightNode(node: RefractorNode, classNames: string[] = []): string {
+function parseHighlightNode(node: RefractorNode, classNames: string[] = [], defaultChalk: Chalk = chalk): string {
   if (node.type === 'element')
     return node.children.map(c => parseHighlightNode(c, node.properties.className)).join('');
 
   let val = node.value;
   classNames.forEach(className => {
-    if (className === 'token') return;
+    if (className === 'token' || className.startsWith('language-')) // todo?: maybe some system with language specific class overwrites?
+      return;
     const ch = highlightLookup[className];
     if (ch) val = ch(val);
-    else logger.log('unknown highlight class:', className);
+    else logger.log(`unknown highlight class: ${className}. Val: ${val}`);
   });
   return val;
 };
+
+function highlightPart(part: string, lang: string): string {
+  return refractor.highlight(part, lang)
+    .map(c => parseHighlightNode(c))
+    .join('');
+}
+
+function highlightLine(line: string): string {
+  let l = line;
+  let result = '';
+
+  if (l.startsWith('.')) {
+    const [cmdMatch, cmdName] = getCommand(l);
+    if (!cmdMatch) return line;
+    result += l.slice(0, cmdMatch.length);
+    l = l.slice(cmdMatch.length);
+  }
+
+  const optionsMatch = l.match(/--.*$/);
+  if (!optionsMatch) {
+    return result + highlightPart(l, 'js');
+  }
+
+  result += highlightPart(l.slice(0, optionsMatch.index), 'js');
+  l = l.slice(optionsMatch.index);
+  
+  return result + highlightPart(l, 'bash');
+}
 
 // Bare bones variation on Interface._refreshLine, to facilitate syntax highlighting
 function /*REPLServer.*/refreshCurrentLine(input: string) {
@@ -79,10 +113,9 @@ export function setupSyntaxHighlighting(r: REPLServer) {
     if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
       // todo: remove timeout?
       setTimeout(() => {
-        const hlLine = refractor.highlight(rr.line, 'js')
-          .map(c => parseHighlightNode(c))
-          .join('');
-        rr._refreshCurrentLine(hlLine);
+        const edited = highlightLine(rr.line);
+        // logger.log('yo', rr.line, '|||', edited);
+        rr._refreshCurrentLine(edited);
       }, 0);
     }
   });
