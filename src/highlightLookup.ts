@@ -18,15 +18,15 @@ import chalk, { Chalk } from "chalk";
 const highlights: [string[], Chalk][] = [
   [['script', 'prolog', 'punctuation', 'charset'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
-  [['url', 'built-in', 'class-name', 'console', 'charset-punctuation'], chalk.cyan], // --cyan
+  [['url', 'built-in', 'class-name', 'console', 'charset-punctuation', 'property-access'], chalk.cyan], // --cyan
   [['atrule', 'attr-name', 'attr-value', 'function', 'method'], chalk.greenBright], // --green
   [['property', 'parameter', 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
-  [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation'], chalk.magentaBright], // --pink
-  [['boolean', 'constant', 'number'], chalk.magenta], // --purple
+  [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier'], chalk.magentaBright], // --pink
+  [['boolean', 'constant', 'number', 'escape', 'charclass'], chalk.magenta], // --purple
   [['regex', 'regex-delimiter', 'charset-negation'], chalk.red], // --red
   [['string', 'char'], chalk.yellowBright], // --yellow
 
-  // [['inserted', 'property-access', 'quantifier', 'charclass', 'deleted', 'namespace'], chalk], // uncategorized
+  // not sure: 'inserted', 'deleted', 'namespace'
 
   [['italic'], chalk.italic],
   [["bold", "important"], chalk.bold],
