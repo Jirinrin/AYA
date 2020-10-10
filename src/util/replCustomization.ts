@@ -34,9 +34,9 @@ export function completer(line: string): CompleterResult {
       } else if (cmdName.match(/^config-[gs]et/)) {
         completions = Object.keys(config.s);
         matchString = line.slice(cmdMatch.length);
-      } else if (cmdName === 'help') {
+      } else if (cmdName === 'helpp') {
         completions = Object.keys(r.commands);
-        matchString = line.slice(4+1+1);
+        matchString = line.slice(cmdMatch.length);
       }
     } else {
       completions = Object.keys(r.commands);
