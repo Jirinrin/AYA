@@ -4,6 +4,7 @@ import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
+import { forEveryEntrySimple } from './fsUtils';
 import { config, IConfig } from './LocalStorage';
 
 export const globalEval = eval;
@@ -89,4 +90,11 @@ export function getCommandHelp(r: REPLServer, commandName: string) {
 export function setConfigItem<K extends keyof IConfig>(key: K, val: IConfig[K]) {
   if (config.set(key, val))
     console.info(`Successfully set config item "${key}" to ${val}`);
+}
+
+export function ls() {
+  forEveryEntrySimple(ENV.cwd, e => {
+    if (e.isDirectory()) e.name += '/';
+    console.log(e.name);
+  });
 }

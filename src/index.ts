@@ -8,7 +8,7 @@ import './Global';
 import './util/LocalStorage';
 import { config, IConfig, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
-import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, setConfigItem } from './util';
+import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, ls, setConfigItem } from './util';
 import { completer, setupSyntaxHighlighting } from './util/replCustomization';
 
 const prevConsoleLog = console.log;
@@ -48,6 +48,10 @@ function startRepl() {
   r.defineCommand('cwd', {
     help: 'Get current working directory',
     action: () => console.log(ENV.cwd),
+  });
+  r.defineCommand('ls', {
+    help: 'Show entries in current directory',
+    action: ls,
   });
 
   r.defineCommand('helpp', {
