@@ -88,7 +88,7 @@ function highlightLine(line: string): string {
   }
 
   if (cmdName === 'eer-rx') {
-    const [arg1Match, quote1, actualRegex, quote2] = l.match(/^(")([^"]+)("?)/) ?? l.match(/^(')([^']+)('?)/) ?? l.match(/^(\/)([^\/]+)(\/?)/) ?? l.match(/^()(\S+)()/) ?? [];
+    const [arg1Match, quote1, actualRegex, quote2] = l.match(/^(")([^"]+)("?)/) ?? l.match(/^(')([^']+)('?)/) ?? l.match(/^(\/)([^\/]+)(\/?)/) ?? l.match(/^(`)([^`]+)(`?)/) ?? l.match(/^()(\S+)()/) ?? [];
     if (arg1Match) {
       if (quote1) eatFromLine(1, chalk.red(quote1));
       eatFromLine(actualRegex.length, highlightPart(l.slice(0, actualRegex.length), 'regex'));
