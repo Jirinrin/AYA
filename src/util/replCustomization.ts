@@ -9,41 +9,39 @@ import { config, userScripts } from "./LocalStorage";
 const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+) +/) ?? []) as [cmdMatch?: string, cmdName?: string];
 
+function getCompletionData(line: string): [completions: string[], matchString: string] {
+  if (!line.startsWith('.'))
+    return [ [], line ];
 
-export function completer(line: string): CompleterResult {
-  let completions: string[] = [];
-  let matchString = line;
+  const [cmdMatch, cmdName] = getCommand(line);
+  if (!cmdName || !r.commands[cmdName])
+    return [ Object.keys(r.commands), line.slice(1) ];
 
-  if (line.startsWith('.')) {
-    const [cmdMatch, cmdName] = getCommand(line);
-    if (cmdName && r.commands[cmdName]) {
-      const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
-      const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
-      if (typingOption && opts) {
-        const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
-        if (typOptFromEquals) {
-          completions = optsValues[typOptName] ?? [];
-          matchString = line.slice(typingOption.index+typOptName.length+1); // Assuming you put only one character between opt and value
-        } else {
-          completions = opts;
-          matchString = line.slice(typingOption.index);
-        }
-      } else if (cmdName.match(/^userscript(?:-(get|set|delete))/)) {
-        completions = Object.keys(userScripts.s);
-        matchString = line.slice(cmdMatch.length);
-      } else if (cmdName.match(/^config-[gs]et/)) {
-        completions = Object.keys(config.s);
-        matchString = line.slice(cmdMatch.length);
-      } else if (cmdName === 'helpp') {
-        completions = Object.keys(r.commands);
-        matchString = line.slice(cmdMatch.length);
-      }
-    } else {
-      completions = Object.keys(r.commands);
-      matchString = line.slice(1);
+  const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
+  const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
+  if (typingOption && opts) {
+    const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
+    if (typOptFromEquals) {
+      return [
+        optsValues[typOptName] ?? [], 
+        line.slice(typingOption.index+typOptName.length+1) // Assuming you put only one character between opt and value
+      ];
     }
+    return [ opts, line.slice(typingOption.index) ];
   }
 
+  if (cmdName.match(/^userscript(?:-(get|set|delete))/))
+    return [ Object.keys(userScripts.s), line.slice(cmdMatch.length) ];
+  if (cmdName.match(/^config-[gs]et/))
+    return [ Object.keys(config.s),      line.slice(cmdMatch.length) ];
+  if (cmdName === 'helpp')
+    return [ Object.keys(r.commands),    line.slice(cmdMatch.length) ];
+
+  return [ [], line ];
+}
+
+export function completer(line: string): CompleterResult {
+  const [completions, matchString] = getCompletionData(line);
   const hits = completions.filter((c) => c.startsWith(matchString));
   return [hits, matchString];
 }
