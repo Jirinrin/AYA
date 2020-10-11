@@ -16,21 +16,25 @@ export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>) =>
 
 export type OperationFunction = CustomFunction & {(...args: any): any|Promise<any>};
 
-export interface Operation {
-  cmdName: string;
+export interface BaseOperation {
   help: string;
   run: OperationFunction;
 }
 export interface ShallowDeepRawOperation {
-  cmdName: string;
   help: string;
   getRun: (iterator: FileIteratorFunction) => OperationFunction;
 };
-
-export interface RawModule {
-  [operationName: string]: Operation | ShallowDeepRawOperation,
+export interface SimpleRawOperation {
+  help: string;
+  run_s: OperationFunction;
+};
+export interface Operation extends BaseOperation {
+  cmdName: string;
+  simple: boolean;
 }
 
-export type Module = Operation[];
+export type RawOperation = BaseOperation | SimpleRawOperation | ShallowDeepRawOperation;
+export type RawModule = Record<string, RawOperation>;
+export type Module = Array<Operation>;
 
 export * from './music';

@@ -61,7 +61,6 @@ export function evall(func: OperationFunction) {
       if (opts)
         parsedArgsArray.push(opts);
 
-      console.log();
       await func(...parsedArgsArray);
 
       r.clearBufferedCommand(); // Doesn't seem to do much
