@@ -17,6 +17,8 @@ export function evall(func: Function) {
 
   return async (args: string): Promise<void> => {
     try {
+      setConsoleIndent(0);
+
       let body = args.trim();
       let opts: Record<string, any>;
 
@@ -67,8 +69,10 @@ export function evall(func: Function) {
         console.error(err);
       else
         console.error('An error occured:', (err as Error).stack);
+    } finally {
+      setConsoleIndent(0);
+      r.write('\n');
     }
-    r.write('\n');
   };
 }
 
