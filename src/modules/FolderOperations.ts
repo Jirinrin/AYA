@@ -2,7 +2,7 @@ import { RawModule } from "../types";
 import ENV from "../ENV";
 import * as path from "path";
 import * as fs from "fs";
-import { simpleMove } from "./Util";
+import { simpleMove } from "../util";
 import { forEveryEntry, getEnts } from "../util";
 
 const TEMP_DIR_NAME = "___tmp";

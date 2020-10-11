@@ -1,4 +1,4 @@
-import { splitFileName, simpleRename } from './Util';
+import { splitFileName, simpleRename } from '../util';
 import { FileIteratorInitFunction, FileMetadata, RawModule } from '../types';
 
 export type EntityType = 'file' | 'directory';
