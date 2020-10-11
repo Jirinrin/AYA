@@ -7,7 +7,7 @@ import './Global';
 import './util/LocalStorage';
 import { config } from './util/LocalStorage';
 import { changeDirectory, evall, evalls, setConsole } from './util';
-import { completer, setupSyntaxHighlighting } from './util/replCustomization';
+import { completer, setupReplCustomization } from './util/replCustomization';
 
 setConsole();
 
@@ -30,8 +30,6 @@ function startRepl() {
     useColors: true,
   });
 
-  setupSyntaxHighlighting(r);
-
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
       r.defineCommand(op.cmdName, {
@@ -40,6 +38,8 @@ function startRepl() {
       });
     });
   });
+
+  setupReplCustomization(r);
 
   config.validateJson();
 

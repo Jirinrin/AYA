@@ -1,32 +1,42 @@
 import * as chalk from "chalk";
-import { CompleterResult, cursorTo } from "readline";
+import { Completer, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
 import { ExtendedREPLCommand, r } from "..";
 import highlightLookup from "./highlightLookup";
 import { config, userScripts } from "./LocalStorage";
+import { customTabComplete } from "./replCustomizationOverwrite";
 
 const getCommand = (line: string) =>
-  (line.match(/^\.([\w-]+) +/) ?? []) as [cmdMatch?: string, cmdName?: string];
+  (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
-function getCompletionData(line: string): [completions: string[], matchString: string] {
+function getCompletionData(line: string): [completions: string[], matchString: string, actualCompletions?: string[]] {
+  const empty = [ [], line ] as [string[],string];
   if (!line.startsWith('.'))
-    return [ [], line ];
+    return empty;
 
-  const [cmdMatch, cmdName] = getCommand(line);
-  if (!cmdName || !r.commands[cmdName])
-    return [ Object.keys(r.commands), line.slice(1) ];
+  const [cmdMatch, cmdName, space] = getCommand(line);
+  if (!space || !r.commands[cmdName]) {
+    if (!cmdName)
+      return empty;
+    const cmdNameRegex = new RegExp(`^${cmdName}`, 'i');
+    const matchingCommands = Object.keys(r.commands).filter(c => c.match(cmdNameRegex));
+    if (!matchingCommands.length)
+      return empty;
+    const completions = matchingCommands.map(cmd => cmd.slice(line.length-1)).filter(cmd => !!cmd);
+    global.log('complete', JSON.stringify(completions), 'and', JSON.stringify(matchingCommands));
+    return [ completions, '', matchingCommands ];
+  }
 
   const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
-  const typingOption = line.match(/(--\w*)([= ]\w*)?$/);
+  const typingOption = line.match(/(--\w*)([= ]\w*)?$/i);
   if (typingOption && opts) {
     const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
-    if (typOptFromEquals) {
+    if (typOptFromEquals)
       return [
         optsValues[typOptName] ?? [], 
         line.slice(typingOption.index+typOptName.length+1) // Assuming you put only one character between opt and value
       ];
-    }
     return [ opts, line.slice(typingOption.index) ];
   }
 
@@ -37,13 +47,13 @@ function getCompletionData(line: string): [completions: string[], matchString: s
   if (cmdName === 'helpp')
     return [ Object.keys(r.commands),    line.slice(cmdMatch.length) ];
 
-  return [ [], line ];
+  return empty;
 }
 
-export function completer(line: string): CompleterResult {
-  const [completions, matchString] = getCompletionData(line);
+export const completer: Completer = (line: string) => {
+  const [completions, matchString, actualCompletions] = getCompletionData(line);
   const hits = completions.filter((c) => c.startsWith(matchString));
-  return [hits, matchString];
+  return [hits, matchString, actualCompletions] as unknown as [string[], string];
 }
 
 
@@ -113,7 +123,7 @@ function /*REPLServer.*/refreshCurrentLine(input: string) {
   cursorTo(this.output, cursorPos.cols);
 }
 
-export function setupSyntaxHighlighting(r: REPLServer) {
+export function setupReplCustomization(r: REPLServer) {
   const rr = r as any;
 
   process.stdin.on('keypress', (c, k) => {
@@ -130,4 +140,6 @@ export function setupSyntaxHighlighting(r: REPLServer) {
   });
 
   rr._refreshCurrentLine = refreshCurrentLine;
+
+  rr._tabComplete = customTabComplete;
 }
