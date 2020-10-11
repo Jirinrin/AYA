@@ -9,7 +9,7 @@ const TEMP_DIR_NAME = "___tmp";
 
 const FolderOperations: RawModule = {
   flatten: {
-    abbrev: 'flatten',
+    command: 'flatten',
     help: 'Flatten folders that only contain one folder',
     run: async () => {
       console.log('Start flattening...');
@@ -49,7 +49,7 @@ const FolderOperations: RawModule = {
     }
   },
   clean: {
-    abbrev: 'clean',
+    command: 'clean',
     help: 'Remove empty folders',
     getRun: iterate => async () => iterate((folder, dir) => {
       if (!dir.isDirectory()) return;

@@ -19,12 +19,12 @@ export type FileIteratorInitFunction = (callback: FileIteratorCallback) => void;
 type IFunction = (...args: any) => any;
 
 export interface Operation {
-  abbrev: string;
+  command: string;
   help: string;
   run: CustomFunction;
 }
 export interface ShallowDeepRawOperation {
-  abbrev: string;
+  command: string;
   help: string;
   getRun: ((iterator: FileIteratorInitFunction) => IFunction) & CustomFunction;
 };

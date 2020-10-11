@@ -109,7 +109,7 @@ function startRepl() {
 
   Modules.forEach((mod) => {
     mod.forEach((op: Operation) => {
-      r.defineCommand(op.abbrev, {
+      r.defineCommand(op.command, {
         help: `${op.help}`,
         action: evall(op.run),
       });
