@@ -3,3 +3,4 @@ node_modules
 build/*
 .ayaStorage/config.json
 .ayaStorage/log.json
+.ayaStorage/p-log.json

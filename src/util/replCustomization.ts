@@ -4,7 +4,7 @@ import * as refractor from "refractor";
 import { REPLServer } from "repl";
 import { ExtendedREPLCommand, r } from "..";
 import highlightLookup from "./highlightLookup";
-import { config, logger, userScripts } from "./LocalStorage";
+import { config, pLogger, userScripts } from "./LocalStorage";
 
 const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+) +/) ?? []) as [cmdMatch?: string, cmdName?: string];
@@ -61,7 +61,7 @@ function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] 
       return;
     const ch = highlightLookup[className];
     if (ch) val = ch(val);
-    else logger.log(`unknown highlight class: ${className}. Val: ${val}`);
+    else pLogger.log(`unknown highlight class: ${className}. Val: ${val}`);
   });
   return val;
 };

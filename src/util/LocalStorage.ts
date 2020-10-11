@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
-import { recordToSchema } from './generalUtils';
+import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
 
-class LocalStorage<T extends Record<string, any>> {
+class LocalStorage<T extends Record<string, any> = any> {
   protected jsonPath: string;
   protected state: T;
 
@@ -128,7 +128,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 }
 
-
+// todo: use a normal write stream to a log.log like file
 class Logger extends LocalStorage<Array<any>> {
   constructor() {
     super('log.json', [], true);
@@ -140,6 +140,22 @@ class Logger extends LocalStorage<Array<any>> {
   }
 }
 
+class PersistentLogger extends LocalStorage {
+  constructor() {
+    super('p-log.json', {});
+  }
+
+  public log(...message: any[]) {
+    const msg = message.join(' ');
+    const key = getHashCode(msg);
+    if (!this.state[key]) {
+      this.set(key, msg)
+      this.writeState();
+    }
+  }
+}
+
 export const config = new Config();
 export const userScripts = new UserScripts();
 export const logger = new Logger();
+export const pLogger = new PersistentLogger();

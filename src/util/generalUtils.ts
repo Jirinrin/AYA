@@ -55,3 +55,13 @@ export function recordToSchema<T extends Record<string, SimpleType>>(
     }
   };
 }
+
+export function getHashCode(s: string) {
+    let hash = 0, i: number, chr: number;
+    for (i = 0; i < s.length; i++) {
+      chr   = s.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
