@@ -2,7 +2,7 @@ import * as repl from 'repl';
 import { createInterface } from 'readline';
 
 import Modules from './modules';
-import { Operation, FileIteratorCallback, FileIteratorCallbackSimple } from './types';
+import { Operation, FileIteratorCallback } from './types';
 import './Global';
 import './util/LocalStorage';
 import { config, IConfig, userScripts } from './util/LocalStorage';
@@ -65,8 +65,8 @@ function startRepl() {
   });
   
   r.defineCommand('fee', {
-    help: 'For every entry in cwd execute callback {$1: (entry: Dirent) => void}',
-    action: evall((callback: FileIteratorCallbackSimple) => forEveryEntrySimple(ENV.cwd, callback)),
+    help: 'For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void}',
+    action: evall((callback: FileIteratorCallback) => forEveryEntry(ENV.cwd, callback)),
   });
   r.defineCommand('fee-deep', {
     help: 'For every entry in cwd execute callback {$1: (current directory: string, entry: Dirent) => void} - does this recursively until the set depth',

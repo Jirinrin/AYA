@@ -4,7 +4,8 @@ import * as path from 'path';
 import { config } from './LocalStorage';
 import { putImageMetadataOnEntity } from '../modules/Image';
 import { putMusicMetadataOnEntity } from '../modules/Music';
-import { FileIteratorCallback, FileIteratorCallbackSimple } from '../types';
+import { Entry, FileIteratorCallback } from '../types';
+import { setConsoleIndent, setConsoleIndentRel } from './generalUtils';
 
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
@@ -20,9 +21,9 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
       return;
     }
     files?.forEach(async (ent) => {
-      if (C.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
-      if (C.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
-      callback(folder, ent);
+      if (config.s.imageMetadata) ent = await putImageMetadataOnEntity(ent, folder);
+      if (config.s.musicMetadata) ent = await putMusicMetadataOnEntity(ent, folder);
+      callback(ent, folder);
     });
   });
 }
@@ -32,53 +33,55 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
  */
 export async function forEveryEntry(folder: string, callback: FileIteratorCallback): Promise<void> {
   console.info(`Scanning ${folder}...`);
+  const indents = setConsoleIndentRel(1);
   try {
     if (typeof callback !== 'function')
-      throw new Error('callback does not appear to be a function');
-
-    const files = getEnts(folder);
-    await Promise.all(
-      files?.map(async (ent) => {
-        if (config.s.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
-        if (config.s.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
-        try { 
-          callback(folder, ent);
-        } catch (err) { 
-          console.error(err);
-        }
-      })
+      throw new Error('Callback should be a function');
+    const e = getEnts(folder);
+    const ents: Entry[] = await Promise.all(
+      e?.map(async (ent) => {
+        if (config.s.musicMetadata) ent = await putMusicMetadataOnEntity(ent, folder);
+        if (config.s.imageMetadata) ent = await putImageMetadataOnEntity(ent, folder);
+        return ent;
+      }) ?? [],
     );
+
+    for (const ent of ents) {
+      try {
+        await callback(ent, folder);
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
   } catch (err) {
     console.error('An error occurred:', err);
   } finally {
+    setConsoleIndent(indents-1);
     console.info('Done!');
   }
-}
-export async function forEveryEntrySimple(folder: string, callback: FileIteratorCallbackSimple): Promise<void> {
-  await forEveryEntry(folder, (f, e) => callback(e));
 }
 
 export async function forEveryEntryDeep(
   folder: string, 
   callback: FileIteratorCallback,
-  depth: number = config.s.recursionDepth,
-) {
-  await forEveryEntry(folder, (deepFolder, ent) => {
-    callback(deepFolder, ent);
-    if (depth <= 0) {
+  invDepth: number = config.s.recursionDepth,
+): Promise<void> {
+  await forEveryEntry(folder, async (ent, deepFolder) => {
+    await callback(ent, deepFolder);
+    if (invDepth <= 0) {
       return;
     }
     if (ent.isDirectory()) {
-      return forEveryEntryDeep(
+      return await forEveryEntryDeep(
         path.join(deepFolder, ent.name),
         callback,
-        depth - 1,
+        invDepth - 1,
       );
     }
   });
 
-  if (depth === config.s.recursionDepth)
+  if (invDepth === 0)
     console.info('Recursive action done!');
 }
 

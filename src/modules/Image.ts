@@ -10,7 +10,7 @@ export async function getImageFileMetadata(filePath?: string): Promise<Tags | nu
   }
 }
 
-export async function putImageMetadataOnEntity(folder: string, ent: Entry): Promise<Entry> {
+export async function putImageMetadataOnEntity(ent: Entry, folder: string): Promise<Entry> {
   const im = await getImageFileMetadata(path.join(folder, ent.name));
   ent.im = im;
   return ent;

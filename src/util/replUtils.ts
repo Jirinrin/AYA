@@ -1,18 +1,19 @@
 import * as fs from 'fs';
 import * as minimist from 'minimist';
 import { REPLServer } from 'repl';
-import { getFunctionData, ValidationError } from '.';
+import { forEveryEntry, getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
-import { forEveryEntrySimple } from './fsUtils';
+import { setConsoleIndent } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
+import { OperationFunction } from '../types';
 
 export const globalEval = eval;
 
 /**
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
-export function evall(func: Function) {
+export function evall(func: OperationFunction) {
   const { hasOpts, paramsCount, paramStrings } = getFunctionData(func);
 
   return async (args: string): Promise<void> => {
@@ -112,7 +113,7 @@ export function setConfigItem<K extends keyof IConfig>(key: K, val: IConfig[K]) 
 }
 
 export function ls() {
-  return forEveryEntrySimple(ENV.cwd, e => {
+  return forEveryEntry(ENV.cwd, e => {
     if (e.isDirectory()) e.name += '/';
     console.log(e.name);
   });

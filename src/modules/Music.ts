@@ -42,7 +42,7 @@ export async function getMusicFileMetadata(filePath: string): Promise<mm.IAudioM
   }
 }
 
-export async function putMusicMetadataOnEntity(folder: string, ent: Entry): Promise<Entry> {
+export async function putMusicMetadataOnEntity(ent: Entry, folder: string): Promise<Entry> {
   const mm = await getMusicFileMetadata(path.join(folder, ent.name));
   ent.mm = mm;
   return ent;

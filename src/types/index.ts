@@ -11,22 +11,20 @@ export interface FileMetadata {
 
 export interface Entry extends Dirent, FileMetadata {}
 
-export type FileIteratorCallback = (folder: string, ent: Entry) => void;
-export type FileIteratorCallbackSimple = (ent: Entry) => void;
-export type FileIteratorFunction = (folder: string, callback: FileIteratorCallback) => void;
-export type FileIteratorInitFunction = (callback: FileIteratorCallback) => void;
+export type FileIteratorCallback<TReturn extends any = any> = (ent: Entry, folder: string) => TReturn|Promise<TReturn>;
+export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>) => void;
 
-type IFunction = (...args: any) => any;
+export type OperationFunction = CustomFunction & {(...args: any): any|Promise<any>};
 
 export interface Operation {
   cmdName: string;
   help: string;
-  run: CustomFunction;
+  run: OperationFunction;
 }
 export interface ShallowDeepRawOperation {
   cmdName: string;
   help: string;
-  getRun: ((iterator: FileIteratorInitFunction) => IFunction) & CustomFunction;
+  getRun: (iterator: FileIteratorFunction) => OperationFunction;
 };
 
 export interface RawModule {

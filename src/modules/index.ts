@@ -17,11 +17,11 @@ function makeShallow(op: ShallowDeepRawOperation): Operation {
   const newOp: Operation = {
     cmdName: op.cmdName,
     help: `${op.help}${hasOpts ? ',' : ' | opts:'} --deep`,
-    run: (...args: Parameters<ReturnType<typeof op.getRun>>) => { // Implied that params now contains an 'opts' param as last
+    run: async (...args: Parameters<ReturnType<typeof op.getRun>>) => { // Implied that params now contains an 'opts' param as last
       let opts = args[args.length-1];
       if (typeof opts !== 'object') opts = {};
       const iterator = opts.deep ? forEveryEntryDeep : forEveryEntry;
-      op.getRun(cb => iterator(ENV.cwd, cb))(...args);
+      return op.getRun(cb => iterator(ENV.cwd, cb))(...args);
     }
   }
   newOp.run.paramNames = paramNames;

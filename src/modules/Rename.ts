@@ -1,5 +1,5 @@
 import { splitFileName, simpleRename } from '../util';
-import { FileIteratorInitFunction, FileMetadata, RawModule } from '../types';
+import { FileIteratorFunction, FileMetadata, RawModule } from '../types';
 
 export type EntityType = 'file' | 'directory';
 interface RenameOptions {
@@ -11,11 +11,11 @@ interface RenameOptions {
 
 const eerOpts = "--skipEntType=file|directory, --includeExt, --musicFiles, --imageFiles"
 
-const renameEveryEntry = (iterate: FileIteratorInitFunction) => (
+const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   renameCallback: (fileName: string, metadata?: Object) => string, 
   {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {},
 ) =>
-  iterate((folder, ent) => {
+  iterate((ent, folder) => {
     let metadata: FileMetadata = {};
     if (musicFiles) {
       metadata.mm = ent.mm;

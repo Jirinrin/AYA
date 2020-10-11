@@ -10,9 +10,7 @@ interface IFunctionData {
 
 export class ValidationError extends Error {}
 
-export interface CustomFunction extends Function {
-  paramNames?: string[];
-}
+export type CustomFunction = { (...args: any): any; paramNames?: string[]; };
 
 export function getFunctionData(func: CustomFunction): IFunctionData {
   const funcStr = func.toString();
