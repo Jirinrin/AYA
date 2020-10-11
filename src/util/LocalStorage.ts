@@ -146,11 +146,21 @@ export class Logger extends LocalStorage {
     fs.writeFileSync(this.filePath, '', 'utf8');
   }
 
-  public log(...message: any[]) {
-    fs.appendFileSync(this.filePath, message
-      .map(m => typeof m === 'string' ? JSON.stringify(m) : JSON.stringify(m).replace(/^"?(.*)"?$/, '$1')).join(' ')
-      .replace(/\\([^\\])/g, '$1') + '\n', 'utf8'
+  private logBase(verbose: boolean, ...message: any[]) {
+    const toStr = m => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
+    fs.appendFileSync(
+      this.filePath, 
+      message
+        .map(m => typeof m === 'string' ? toStr(m) : toStr(m).replace(/^"?(.*)"?$/, '$1')).join(' ')
+        .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n'),
+      'utf8'
     );
+  }
+  public log(...message: any[]) {
+    this.logBase(false, ...message);
+  }
+  public logv(...message: any[]) {
+    this.logBase(true, ...message);
   }
 }
 

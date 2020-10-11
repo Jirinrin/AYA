@@ -8,6 +8,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       log: Logger['log'];
+      logv: Logger['log'];
       pLog: PersistentLogger['log'];
 
       exec: (cmd: string) => void;
@@ -18,6 +19,7 @@ declare global {
 const logger = new Logger();
 const pLogger = new PersistentLogger();
 global.log = logger.log.bind(logger);
+global.logv = logger.logv.bind(logger);
 global.pLog = pLogger.log.bind(pLogger);
 
 global.exec = (cmd) => {
