@@ -147,7 +147,10 @@ export class Logger extends LocalStorage {
   }
 
   public log(...message: any[]) {
-    fs.appendFileSync(this.filePath, message.map(m => JSON.stringify(m)).join(' ') + '\n', 'utf8');
+    fs.appendFileSync(this.filePath, message
+      .map(m => JSON.stringify(m).slice(1, -1)).join(' ')
+      .replace(/\\([^\\])/g, '$1') + '\n', 'utf8'
+    );
   }
 }
 
