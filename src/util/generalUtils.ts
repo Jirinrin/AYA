@@ -1,3 +1,4 @@
+import * as chalk from "chalk";
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
 
 interface IFunctionData {
@@ -65,3 +66,19 @@ export function getHashCode(s: string) {
   }
   return hash;
 };
+
+export function indent(indents: number): string {
+  return '  '.repeat(indents);
+}
+
+const {log, warn, error, info} = console;
+const consoleLog = (...args: any[]) => log(chalk.green(...args));
+const consoleWarn = (...args: any[]) => warn(chalk.yellow(...args));
+const consoleError = (...args: any[]) => error(chalk.redBright(...args));
+const consoleInfo = (...args: any[]) => info(chalk.cyan(...args));
+export function setConsoleIndent(indents: number) {
+  console.log   = (...args: any[]) => consoleLog  (indent(indents) + chalk.green(...args));
+  console.warn  = (...args: any[]) => consoleWarn (indent(indents) + chalk.yellow(...args));
+  console.error = (...args: any[]) => consoleError(indent(indents) + chalk.redBright(...args));
+  console.info  = (...args: any[]) => consoleInfo (indent(indents) + chalk.cyan(...args));
+}

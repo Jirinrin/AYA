@@ -1,6 +1,5 @@
 import * as repl from 'repl';
 import { createInterface } from 'readline';
-import * as chalk from 'chalk';
 
 import Modules from './modules';
 import { Operation, FileIteratorCallback, FileIteratorCallbackSimple } from './types';
@@ -11,14 +10,7 @@ import ENV from './ENV';
 import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, ls, setConfigItem, evalls } from './util';
 import { completer, setupSyntaxHighlighting } from './util/replCustomization';
 
-const prevConsoleLog = console.log;
-const prevConsoleWarn = console.warn;
-const prevConsoleError = console.error;
-const prevConsoleInfo = console.info;
-console.log = (...args: any[]) => prevConsoleLog(chalk.green(...args));
-console.warn = (...args: any[]) => prevConsoleWarn(chalk.magenta(...args));
-console.error = (...args: any[]) => prevConsoleError(chalk.redBright(...args));
-console.info = (...args: any[]) => prevConsoleInfo(chalk.cyan(...args));
+setConsoleIndent(0);
 
 const rl = createInterface({
   input: process.stdin,
