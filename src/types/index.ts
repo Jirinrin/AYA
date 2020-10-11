@@ -1,6 +1,7 @@
 import { Dirent } from "fs";
 import { IAudioMetadata } from "music-metadata";
 import { Tags } from "exiftool-vendored";
+import { CustomFunction } from "../util";
 
 export interface FileMetadata {
   mm?: IAudioMetadata;
@@ -14,21 +15,22 @@ export type FileIteratorCallback = (folder: string, ent: Entry) => void;
 export type FileIteratorCallbackSimple = (ent: Entry) => void;
 export type FileIteratorFunction = (folder: string, callback: FileIteratorCallback) => void;
 export type FileIteratorInitFunction = (callback: FileIteratorCallback) => void;
-export enum IterationType {
-  'shallow',
-  'deep',
-}
-// export type IterationType = typeof IterationTypes;
+
+type IFunction = (...args: any) => any;
 
 export interface Operation {
   abbrev: string;
   help: string;
-  run: Function;
+  run: CustomFunction;
+}
+export interface ShallowDeepRawOperation {
+  abbrev: string;
+  help: string;
+  getRun: ((iterator: FileIteratorInitFunction) => IFunction) & CustomFunction;
 };
-export type OperationMaker = (iterator: FileIteratorInitFunction) => Operation;
 
 export interface RawModule {
-  [operationName: string]: Operation | OperationMaker,
+  [operationName: string]: Operation | ShallowDeepRawOperation,
 }
 
 export type Module = Operation[];

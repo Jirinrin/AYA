@@ -57,15 +57,15 @@ const renameEveryEntry = (iterate: FileIteratorInitFunction) => (
 
 
 const Rename: RawModule = {
-  everyEntryRename: iterate => ({
+  everyEntryRename: {
     abbrev: 'eer',
     help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. opts: ${eerOpts}`,
-    run: renameEveryEntry(iterate),
-  }),
-  everyEntryRenameRegex: iterate => ({
+    getRun: iterate => renameEveryEntry(iterate),
+  },
+  everyEntryRenameRegex: {
     abbrev: 'eer-rx',
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern}. opts: ${eerOpts}`,
-    run: (
+    getRun: iterate => (
       searchRegex: string|RegExp,
       replacePattern: string,
       opts?: RenameOptions,
@@ -74,7 +74,7 @@ const Rename: RawModule = {
         searchRegex = new RegExp(searchRegex);
       return renameEveryEntry(iterate)(fileName => fileName.replace(searchRegex, replacePattern), opts)
     },
-  }),
+  },
 }
 
 export default Rename;

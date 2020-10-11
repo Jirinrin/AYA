@@ -48,10 +48,10 @@ const FolderOperations: RawModule = {
       }
     }
   },
-  clean: iterate => ({
+  clean: {
     abbrev: 'clean',
     help: 'Remove empty folders',
-    run: async () => iterate((folder, dir) => {
+    getRun: iterate => async () => iterate((folder, dir) => {
       if (!dir.isDirectory()) return;
 
       const dirPath = path.join(folder, dir.name);
@@ -61,7 +61,7 @@ const FolderOperations: RawModule = {
       fs.rmdirSync(dirPath);
       console.log(`Removed ${dirPath}`);
     })
-  }),
+  },
 };
 
 export default FolderOperations;
