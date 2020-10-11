@@ -6,7 +6,7 @@ import Rename from './Rename';
 import FolderOperations from './FolderOperations';
 import Base from './Base';
 
-// todo: evall/evalls right in this file
+// todo: evall/evalls right in this file; and also generating cmdInfo
 
 const rawModules: RawModule[] = [
   Base,
@@ -20,7 +20,7 @@ function makeShallow(op: ShallowDeepRawOperation, cmdName: string): Operation {
 
   const newOp: Operation = {
     cmdName,
-    help: `${op.help}${hasOpts ? ',' : ' | opts:'} --deep`,
+    help: `${op.help}${hasOpts ? ',' : ' | opts:'} --deep(-d)`,
     simple: false,
     run: async (...args: Parameters<ReturnType<typeof op.getRun>>) => { // Implied that params now contains an 'opts' param as last
       let opts = args[args.length-1];

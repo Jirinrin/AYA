@@ -2,13 +2,16 @@ import * as chalk from "chalk";
 import { Completer, CompleterResult, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
-import { ExtendedREPLCommand, r } from "..";
+import { cmdInfo, r } from "..";
 import highlightLookup from "./highlightLookup";
 import { config, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
 
 const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
+
+
+  // Auto completion
 
 export type CustomCompleterResult = [completions: string[], matchString: string, actualCompletions?: string[], actualMatchString?: string];
 
@@ -18,10 +21,10 @@ function completeCaseIns(stringToCheck: string, completions: string[]|Record<str
   const completionsArray = Array.isArray(completions) ? completions : Object.keys(completions);
   const checkRegex = new RegExp(`^${stringToCheck}`, 'i');
   const actualCompletions = completionsArray.filter(c => c.match(checkRegex));
+  // global.log('completion case ins', stringToCheck, completionsArray, actualCompletions);
   if (!actualCompletions.length)
     return emptyCompl;
   const trimmedCompletions = actualCompletions.map(c => c.slice(stringToCheck.length)).filter(c => !!c);
-  global.log('bla', stringToCheck, completionsArray, actualCompletions, trimmedCompletions);
   return [ trimmedCompletions, '', actualCompletions, stringToCheck ];
 }
 
@@ -38,14 +41,15 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(cmdName, r.commands);
   }
 
-  const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
-  const typingOption = line.match(/(--\w*)([= ]\w*)?$/i);
-  if (typingOption && opts) {
+  const {renderOpts, optsValues} = cmdInfo[cmdName];
+  // Assuming you put only one character between opt and value
+  const typingOption = line.match(/--(\w*)([= ]\w*)?$/);
+  if (typingOption && renderOpts) {
     const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
+    global.log('slice', typingOption.index, typOptName, typOptName.length, line, line.slice(typingOption.index+typOptName.length+1))
     if (typOptFromEquals)
-    // Assuming you put only one character between opt and value
-      return completeCaseIns(line.slice(typingOption.index+typOptName.length+1), optsValues[typOptName] ?? []);
-    return completeCaseIns(line.slice(typingOption.index), opts);
+      return completeCaseIns(line.slice(typingOption.index+typOptName.length+2+1), optsValues[typOptName] ?? []);
+    return completeCaseIns(line.slice(typingOption.index), renderOpts);
   }
 
   if (cmdName.match(/^userscript(?:-(get|set|delete))?/))

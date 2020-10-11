@@ -17,10 +17,14 @@ const rl = createInterface({
 });
 export let r: repl.REPLServer;
 
-export interface ExtendedREPLCommand extends repl.REPLCommand {
+export interface CommandInfo {
+  help: string;
   opts?: string[];
+  renderOpts?: string[]; // parallel to opts
   optsValues?: Record<string, string[]>;
+  optsAliases?: Record<string, string>;
 }
+export const cmdInfo: Record<string, CommandInfo> = {};
 
 function startRepl() {
   r = repl.start({
@@ -30,34 +34,38 @@ function startRepl() {
     useColors: true,
   });
 
-  Modules.forEach((mod) => {
-    mod.forEach((op: Operation) => {
-      r.defineCommand(op.cmdName, {
-        help: `${op.help}`,
-        action: op.simple ? evalls(op.run) : evall(op.run),
+  try {
+    Modules.forEach((mod) => {
+      // todo: move logic to modules/index.ts
+      mod.forEach((op: Operation) => {
+        const info: CommandInfo = { help: op.help };
+        op.help
+          .match(/--[\w=|\(\)-]+/g)
+          ?.forEach(o => {
+            let [_, opt, alias, val] = o.match(/^--([^\(\)=]+)(?:\(-(\w)\))?(?:=(.+))?$/) ?? [];
+            if (!_) return;
+            (info.opts??=[]).push(opt);
+            (info.renderOpts??=[]).push(`--${opt}` + (val ? '=' : ''));
+            if (val?.includes('|'))
+              (info.optsValues??={})[opt] = val.split('|');
+            if (alias)
+              (info.optsAliases??={})[alias] = opt; // does this go well now?
+          });
+        cmdInfo[op.cmdName] = info;
+  
+        r.defineCommand(op.cmdName, {
+          help: op.help,
+          action: op.simple ? evalls(op.run) : evall(op.run, info),
+        });
       });
     });
-  });
+  } catch (err) {
+    console.trace(err);
+  }
 
   setupReplCustomization(r);
 
   config.validateJson();
-
-  Object.entries(r.commands).forEach(([, command]) => {
-    if (command.help.includes('opts:')) {
-      (command as ExtendedREPLCommand).opts = command.help
-        .match(/--[\w=|]+/g)
-        .map(o => {
-          let [opt, val] = o.split('=', 2);
-          if (val) {
-            if (val.includes('|'))
-              ((command as ExtendedREPLCommand).optsValues??={})[opt] = val.split('|');
-            opt += '=';
-          }
-          return opt;
-        });
-    }
-  });
 }
 
 function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Promise<void> {
