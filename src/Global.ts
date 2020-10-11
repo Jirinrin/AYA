@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 import ENV from "./ENV";
-import { logger, Logger, PersistentLogger, pLogger } from "./util/LocalStorage";
+import { Logger, PersistentLogger } from "./util/LocalStorage";
 
 export {};
 
@@ -14,8 +14,10 @@ declare global {
   }
 }
 
-global.log = logger.log;
-global.pLog = pLogger.log;
+const logger = new Logger();
+const pLogger = new PersistentLogger();
+global.log = logger.log.bind(logger);
+global.pLog = pLogger.log.bind(pLogger);
 
 global.exec = (cmd) => {
   exec(cmd, {

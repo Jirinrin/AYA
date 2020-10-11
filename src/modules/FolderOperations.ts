@@ -19,7 +19,7 @@ const FolderOperations: RawModule = {
         fs.mkdirSync(tempDir);
       const errors = [];
 
-      await forEveryEntry(ENV.cwd, (folder, dir) => {
+      await forEveryEntry(ENV.cwd, (dir, folder) => {
         if (!dir.isDirectory()) return;
 
         const currentFolder = path.join(folder, dir.name);
@@ -51,7 +51,7 @@ const FolderOperations: RawModule = {
   clean: {
     cmdName: 'clean',
     help: 'Remove empty folders',
-    getRun: iterate => async () => iterate((folder, dir) => {
+    getRun: iterate => async () => iterate((dir, folder) => {
       if (!dir.isDirectory()) return;
 
       const dirPath = path.join(folder, dir.name);
