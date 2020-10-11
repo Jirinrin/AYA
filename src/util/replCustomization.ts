@@ -1,5 +1,5 @@
 import * as chalk from "chalk";
-import { Completer, cursorTo } from "readline";
+import { Completer, CompleterResult, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
 import { ExtendedREPLCommand, r } from "..";
@@ -10,21 +10,32 @@ import { customTabComplete } from "./replCustomizationOverwrite";
 const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
-function getCompletionData(line: string): [completions: string[], matchString: string, actualCompletions?: string[], actualMatchString?: string] {
-  const empty = [ [], line ] as [string[],string];
+export type CustomCompleterResult = [completions: string[], matchString: string, actualCompletions?: string[], actualMatchString?: string];
+
+let emptyCompl: CompleterResult;
+
+function completeCaseIns(stringToCheck: string, completions: string[]|Record<string,any>): CustomCompleterResult {
+  const completionsArray = Array.isArray(completions) ? completions : Object.keys(completions);
+  const checkRegex = new RegExp(`^${stringToCheck}`, 'i');
+  const actualCompletions = completionsArray.filter(c => c.match(checkRegex));
+  if (!actualCompletions.length)
+    return emptyCompl;
+  const trimmedCompletions = actualCompletions.map(c => c.slice(stringToCheck.length)).filter(c => !!c);
+  global.log('bla', stringToCheck, completionsArray, actualCompletions, trimmedCompletions);
+  return [ trimmedCompletions, '', actualCompletions, stringToCheck ];
+}
+
+function getCompletionData(line: string): CustomCompleterResult {
+  emptyCompl = [ [], line ] as CompleterResult;
   if (!line.startsWith('.'))
-    return empty;
+    return emptyCompl;
 
   const [cmdMatch, cmdName, space] = getCommand(line);
   if (!space || !r.commands[cmdName]) {
     if (!cmdName)
-      return empty;
-    const cmdNameRegex = new RegExp(`^${cmdName}`, 'i');
-    const matchingCommands = Object.keys(r.commands).filter(c => c.match(cmdNameRegex));
-    if (!matchingCommands.length)
-      return empty;
-    const completions = matchingCommands.map(cmd => cmd.slice(line.length-1)).filter(cmd => !!cmd);
-    return [ completions, '', matchingCommands, line.slice(1) ];
+      return emptyCompl;
+
+    return completeCaseIns(cmdName, r.commands);
   }
 
   const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
@@ -32,21 +43,19 @@ function getCompletionData(line: string): [completions: string[], matchString: s
   if (typingOption && opts) {
     const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
     if (typOptFromEquals)
-      return [
-        optsValues[typOptName] ?? [], 
-        line.slice(typingOption.index+typOptName.length+1) // Assuming you put only one character between opt and value
-      ];
-    return [ opts, line.slice(typingOption.index) ];
+    // Assuming you put only one character between opt and value
+      return completeCaseIns(line.slice(typingOption.index+typOptName.length+1), optsValues[typOptName] ?? []);
+    return completeCaseIns(line.slice(typingOption.index), opts);
   }
 
-  if (cmdName.match(/^userscript(?:-(get|set|delete))/))
-    return [ Object.keys(userScripts.s), line.slice(cmdMatch.length) ];
-  if (cmdName.match(/^config-[gs]et/))
-    return [ Object.keys(config.s),      line.slice(cmdMatch.length) ];
-  if (cmdName === 'helpp')
-    return [ Object.keys(r.commands),    line.slice(cmdMatch.length) ];
+  if (cmdName.match(/^userscript(?:-(get|set|delete))?/))
+    return completeCaseIns(line.slice(cmdMatch.length), userScripts.s);
+    if (cmdName.match(/^config-[gs]et/))
+    return completeCaseIns(line.slice(cmdMatch.length), config.s);
+    if (cmdName === 'helpp')
+    return completeCaseIns(line.slice(cmdMatch.length), r.commands);
 
-  return empty;
+  return emptyCompl;
 }
 
 export const completer: Completer = (line: string) => {
