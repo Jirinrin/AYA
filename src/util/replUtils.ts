@@ -8,6 +8,10 @@ import { forEveryEntrySimple } from './fsUtils';
 import { config, IConfig } from './LocalStorage';
 
 export const globalEval = eval;
+
+/**
+ * Generates from a function you give it a wonderful command with argument parsing etc.
+ */
 export function evall(func: Function) {
   const { hasOpts, paramsCount, paramStrings } = getFunctionData(func);
 
