@@ -8,7 +8,7 @@ import './Global';
 import './util/LocalStorage';
 import { config, IConfig, userScripts } from './util/LocalStorage';
 import ENV from './ENV';
-import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, ls, setConfigItem } from './util';
+import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, ls, setConfigItem, evalls } from './util';
 import { completer, setupSyntaxHighlighting } from './util/replCustomization';
 
 const prevConsoleLog = console.log;
@@ -43,20 +43,20 @@ function startRepl() {
 
   r.defineCommand('cd', {
     help: 'Change current directory',
-    action: (newFolderName) => changeDirectory(newFolderName),
+    action: evalls(changeDirectory),
   });
   r.defineCommand('cwd', {
     help: 'Get current working directory',
-    action: () => console.log(ENV.cwd),
+    action: evalls(() => console.log(ENV.cwd)),
   });
   r.defineCommand('ls', {
     help: 'Show entries in current directory',
-    action: ls,
+    action: evalls(ls),
   });
 
   r.defineCommand('helpp', {
     help: 'Get help for specific command',
-    action: (commandName: string) => getCommandHelp(r, commandName),
+    action: evalls((commandName: string) => getCommandHelp(r, commandName)),
   });
 
   r.defineCommand('config-get', {

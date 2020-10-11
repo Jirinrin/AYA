@@ -15,7 +15,7 @@ export const globalEval = eval;
 export function evall(func: Function) {
   const { hasOpts, paramsCount, paramStrings } = getFunctionData(func);
 
-  return (args: string) => {
+  return async (args: string): Promise<void> => {
     try {
       let body = args.trim();
       let opts: Record<string, any>;
@@ -58,7 +58,8 @@ export function evall(func: Function) {
       if (opts)
         parsedArgsArray.push(opts);
 
-      func(...parsedArgsArray);
+      await func(...parsedArgsArray);
+
       r.clearBufferedCommand(); // Doesn't seem to do much
     } catch (err) {
       if (err instanceof ValidationError)
@@ -66,6 +67,15 @@ export function evall(func: Function) {
       else
         console.error('An error occured:', (err as Error).stack);
     }
+    r.write('\n');
+  };
+}
+
+// evall-simple
+export function evalls(func: Function) {
+  return async () => {
+    await func();
+    r.write('\n');
   };
 }
 
@@ -97,7 +107,7 @@ export function setConfigItem<K extends keyof IConfig>(key: K, val: IConfig[K]) 
 }
 
 export function ls() {
-  forEveryEntrySimple(ENV.cwd, e => {
+  return forEveryEntrySimple(ENV.cwd, e => {
     if (e.isDirectory()) e.name += '/';
     console.log(e.name);
   });
