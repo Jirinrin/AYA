@@ -44,9 +44,14 @@ ent will get property `mm` for you to access
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
 - allow passing arguments to the initial call of the process (e.g. which command to run, or which userscript to run) (=> enables putting a static bat file in a folder which does a thing)
 - add ora fancy spinner thingy
+- have some [iter] like (colored?) label in the help of commands that iterate
+- give commands more self-explanatory names, like doForEach, renameEach, etc.
+- set userscript based on history, e.g. use the last x lines. Or maybe even better: util functie which converts the last x lines to a string, so you can pass that as a variable to .userscript-set
+- remove utils/index.ts
 
 - And clone objects and such
 - Also expose 'path' thingy in callback for every item?
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 - be able to give argument to userscripts?
 - somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command
+- allow first specifying options and then args

@@ -119,7 +119,7 @@ export function customTabComplete(lastKeypressWasTab: boolean) {
 
     // If there is a common prefix to all matches, then apply that portion.
     if (actualCompletions) {
-      const prefix = commonPrefix((actualCompletions).filter((e) => e !== ''));
+      const prefix = commonPrefix(actualCompletions.filter((e) => e !== ''));
       if (prefix.length > actualCompleteOn.length) {
         const newLine = this.line.slice(0, -actualCompleteOn.length) + prefix;
         this.line = newLine;
