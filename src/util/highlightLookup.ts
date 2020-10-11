@@ -22,7 +22,7 @@ const highlights: [string[], chalk.Chalk][] = [
   [['atrule', 'attr-name', 'attr-value', 'function', 'method'], chalk.greenBright], // --green
   [['property', 'parameter', 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
   [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier'], chalk.magentaBright], // --pink
-  [['boolean', 'constant', 'number', 'escape', 'charclass'], chalk.magenta], // --purple
+  [['boolean', 'constant', 'number', 'escape', 'charclass', 'special-escape'], chalk.magenta], // --purple
   [['regex', 'regex-delimiter', 'charset-negation'], chalk.red], // --red
   [['string', 'char'], chalk.yellowBright], // --yellow
 
