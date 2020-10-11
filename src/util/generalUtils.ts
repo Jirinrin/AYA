@@ -69,6 +69,12 @@ export function indent(indents: number): string {
   return '  '.repeat(indents);
 }
 
+export function getTrace() {
+  const err = { name: ' ' };
+  Error.captureStackTrace(err, getTrace);
+  return (err as Error).stack.trim().slice(1);
+}
+
 const consolePairings: Partial<{[K in keyof Console]: [Console[K], chalk.Chalk]}> = {
   log: [console.log, chalk.green],
   warn: [console.warn, chalk.yellow],
