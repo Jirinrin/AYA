@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import C from '../CONST';
 import { config } from './LocalStorage';
 import { putImageMetadataOnEntity } from '../modules/Image';
 import { putMusicMetadataOnEntity } from '../modules/Music';
@@ -40,8 +39,8 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
     const files = getEnts(folder);
     await Promise.all(
       files?.map(async (ent) => {
-        if (C.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
-        if (C.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
+        if (config.s.musicMetadata) ent = await putMusicMetadataOnEntity(folder, ent);
+        if (config.s.imageMetadata) ent = await putImageMetadataOnEntity(folder, ent);
         try { 
           callback(folder, ent);
         } catch (err) { 
