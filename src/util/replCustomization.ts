@@ -61,7 +61,7 @@ function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] 
       return;
     const ch = highlightLookup[className];
     if (ch) val = ch(val);
-    else pLogger.log(`unknown highlight class: ${className}. Val: ${val}`);
+    else global.pLog(`unknown highlight class: ${className}. Val: ${val}`);
   });
   return val;
 };
@@ -125,7 +125,7 @@ export function setupSyntaxHighlighting(r: REPLServer) {
       // todo: remove timeout?
       setTimeout(() => {
         const edited = highlightLine(rr.line);
-        // logger.log('yo', rr.line, '|||', edited);
+        // global.log('yo', rr.line, '|||', edited);
         rr._refreshCurrentLine(edited);
       }, 0);
     }
