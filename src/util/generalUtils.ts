@@ -1,11 +1,18 @@
 import * as chalk from "chalk";
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
 
+export enum ParamData {
+  Any,
+  String,
+  MaybeString,
+}
+// todo: use this data in syntax highlighting or sth?
+
 interface IFunctionData {
   paramNames: string[];
   hasOpts: boolean;
   paramsCount: number;
-  paramStrings: boolean[];
+  paramData: ParamData[];
 }
 
 export class ValidationError extends Error {}
@@ -24,7 +31,11 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
   const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts');
   const paramsCount = hasOpts ? paramNames.length-1 : paramNames.length;
   // Prefix string params with `s_` to allow passing them dry, or ask the gods to interpret it as a string
-  const paramStrings = paramNames.map(p => p.includes('s_'));
+  const paramData = paramNames.map(p => {
+    if (p.includes('s_')) return ParamData.String;
+    if (p.includes('r_')) return ParamData.MaybeString;
+    return ParamData.Any;
+  });
 
   // console.info('func name', func.name);
   // console.info('func str', funcStr);
@@ -33,7 +44,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
   // console.log('func params count', paramsCount);
   // console.log('func opts', hasOpts);
 
-  return { paramNames, hasOpts, paramsCount, paramStrings };
+  return { paramNames, hasOpts, paramsCount, paramData };
 }
 
 type SimpleType = number | string | boolean | null;

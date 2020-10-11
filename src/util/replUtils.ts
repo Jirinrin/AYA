@@ -4,7 +4,7 @@ import { REPLServer } from 'repl';
 import { forEveryEntry, getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
-import { setConsoleIndent } from './generalUtils';
+import { ParamData, setConsoleIndent } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
 import { OperationFunction } from '../types';
 
@@ -14,7 +14,7 @@ export const globalEval = eval;
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
 export function evall(func: OperationFunction) {
-  const { hasOpts, paramsCount, paramStrings } = getFunctionData(func);
+  const { hasOpts, paramsCount, paramData } = getFunctionData(func);
 
   return async (args: string): Promise<void> => {
     try {
@@ -48,9 +48,12 @@ export function evall(func: OperationFunction) {
       }
       
       const parsedArgsArray = argsArray.map((arg: string, i) => {
+        const argData = paramData[i];
         try {
-          return paramStrings[i] ? arg : globalEval(arg)
+          return argData === ParamData.String ? arg : globalEval(arg)
         } catch (err) {
+          if (argData === ParamData.MaybeString)
+            return arg;
           // It will parse simple string arguments without spaces without having to prefix `s_`
           if (err instanceof ReferenceError && err.message === `${arg} is not defined`)
             return arg;
