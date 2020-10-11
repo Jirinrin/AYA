@@ -10,7 +10,7 @@ import { customTabComplete } from "./replCustomizationOverwrite";
 const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
-function getCompletionData(line: string): [completions: string[], matchString: string, actualCompletions?: string[]] {
+function getCompletionData(line: string): [completions: string[], matchString: string, actualCompletions?: string[], actualMatchString?: string] {
   const empty = [ [], line ] as [string[],string];
   if (!line.startsWith('.'))
     return empty;
@@ -24,8 +24,7 @@ function getCompletionData(line: string): [completions: string[], matchString: s
     if (!matchingCommands.length)
       return empty;
     const completions = matchingCommands.map(cmd => cmd.slice(line.length-1)).filter(cmd => !!cmd);
-    global.log('complete', JSON.stringify(completions), 'and', JSON.stringify(matchingCommands));
-    return [ completions, '', matchingCommands ];
+    return [ completions, '', matchingCommands, line.slice(1) ];
   }
 
   const {opts, optsValues} = r.commands[cmdName] as ExtendedREPLCommand;
@@ -51,9 +50,9 @@ function getCompletionData(line: string): [completions: string[], matchString: s
 }
 
 export const completer: Completer = (line: string) => {
-  const [completions, matchString, actualCompletions] = getCompletionData(line);
+  const [completions, matchString, actualCompletions, actualMatchString] = getCompletionData(line);
   const hits = completions.filter((c) => c.startsWith(matchString));
-  return [hits, matchString, actualCompletions] as unknown as [string[], string];
+  return [hits, matchString, actualCompletions, actualMatchString] as unknown as [string[], string];
 }
 
 

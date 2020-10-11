@@ -1,7 +1,8 @@
+import { cursorTo } from "readline";
 import { inspect } from "util";
 
 // This runs in O(n log n).
-function commonPrefix(strings) {
+function commonPrefix(strings: string[]): string {
   if (strings.length === 1) {
     return strings[0];
   }
@@ -110,21 +111,37 @@ export function customTabComplete(lastKeypressWasTab: boolean) {
     }
 
     // Result and the text that was completed.
-    const [completions, completeOn] = value;
+    let [completions, completeOn, actualCompletions, actualCompleteOn] = value;
 
-    if ((!completions || completions.length === 0)) {
+    if ((!completions || completions.length === 0) && !actualCompletions) {
       return;
     }
 
     // If there is a common prefix to all matches, then apply that portion.
-    const prefix = commonPrefix(completions.filter((e) => e !== ''));
-    if (prefix.length > completeOn.length) {
-      this._insertString(prefix.slice(completeOn.length));
-      return;
+    if (actualCompletions) {
+      const prefix = commonPrefix((actualCompletions).filter((e) => e !== ''));
+      if (prefix.length > actualCompleteOn.length) {
+        const newLine = this.line.slice(0, -actualCompleteOn.length) + prefix;
+        this.line = newLine;
+        this.cursor = newLine.length;
+        this._refreshLine();
+        return;
+      }
+    } else {
+      const prefix = commonPrefix((completions).filter((e) => e !== ''));
+      if (prefix.length > completeOn.length) {
+        this._insertString(prefix.slice(completeOn.length));
+        return;
+      }
     }
 
     if (!lastKeypressWasTab) {
       return;
+    }
+
+    if (actualCompletions) {
+      completions = actualCompletions;
+      completeOn = actualCompleteOn;
     }
 
     // Apply/show completions.
