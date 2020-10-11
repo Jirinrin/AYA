@@ -159,5 +159,3 @@ export class PersistentLogger extends LocalStorage {
 
 export const config = new Config();
 export const userScripts = new UserScripts();
-export const logger = new Logger();
-export const pLogger = new PersistentLogger();

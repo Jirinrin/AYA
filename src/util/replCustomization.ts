@@ -4,7 +4,7 @@ import * as refractor from "refractor";
 import { REPLServer } from "repl";
 import { ExtendedREPLCommand, r } from "..";
 import highlightLookup from "./highlightLookup";
-import { config, pLogger, userScripts } from "./LocalStorage";
+import { config, userScripts } from "./LocalStorage";
 
 const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+) +/) ?? []) as [cmdMatch?: string, cmdName?: string];
