@@ -1,5 +1,5 @@
-import { cursorTo } from "readline";
 import { inspect } from "util";
+import { CustomCompleterResult } from "./replCustomization";
 
 // This runs in O(n log n).
 function commonPrefix(strings: string[]): string {
@@ -111,7 +111,7 @@ export function customTabComplete(lastKeypressWasTab: boolean) {
     }
 
     // Result and the text that was completed.
-    let [completions, completeOn, actualCompletions, actualCompleteOn] = value;
+    let [completions, completeOn, actualCompletions, actualCompleteOn] = value as CustomCompleterResult;
 
     if ((!completions || completions.length === 0) && !actualCompletions) {
       return;
@@ -143,6 +143,8 @@ export function customTabComplete(lastKeypressWasTab: boolean) {
       completions = actualCompletions;
       completeOn = actualCompleteOn;
     }
+
+    if (completions.length === 1) return;
 
     // Apply/show completions.
     const completionsWidth = completions.map((e) => getStringWidth(e));
