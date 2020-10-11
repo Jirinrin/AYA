@@ -9,6 +9,7 @@ declare global {
     interface Global {
       log: Logger['log'];
       pLog: PersistentLogger['log'];
+
       exec: (cmd: string) => void;
     } 
   }

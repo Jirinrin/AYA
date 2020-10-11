@@ -5,7 +5,7 @@ import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
 
 class LocalStorage<T extends Record<string, any> = any> {
-  protected jsonPath: string;
+  protected filePath: string;
   protected state: T;
 
   public get s() { return this.state };
@@ -15,9 +15,9 @@ class LocalStorage<T extends Record<string, any> = any> {
     if (!fs.existsSync(dir))
       fs.mkdirSync(dir);
     
-    this.jsonPath = path.resolve(dir, fileName);
-    if (!fs.existsSync(this.jsonPath) || reset)
-      fs.writeFileSync(this.jsonPath, JSON.stringify(initState, null, 2), 'utf8');
+    this.filePath = path.resolve(dir, fileName);
+    if (!fs.existsSync(this.filePath) || reset)
+      this.initFile(initState);
 
     this.readState();
   }
@@ -27,11 +27,16 @@ class LocalStorage<T extends Record<string, any> = any> {
   }
 
   protected readState() {
-    this.state = JSON.parse(fs.readFileSync(this.jsonPath).toString());
+    this.state = JSON.parse(fs.readFileSync(this.filePath).toString());
+  }
+
+  protected initFile(initState: T) {
+    this.state = initState;
+    this.writeState();
   }
 
   protected writeState() {
-    fs.writeFileSync(this.jsonPath, JSON.stringify(this.state, null, 2), 'utf8');
+    fs.writeFileSync(this.filePath, JSON.stringify(this.state, null, 2), 'utf8');
   }
 
   public set<K extends keyof T>(key: K, val: T[K]): boolean {
@@ -130,15 +135,19 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 }
 
-// todo: use a normal write stream to a log.log like file
-export class Logger extends LocalStorage<Array<any>> {
+export class Logger extends LocalStorage {
   constructor() {
-    super('log.json', [], true);
+    super('aya.log', null, true);
+  }
+
+  protected writeState() {}
+  protected readState() {}
+  protected initFile() {
+    fs.writeFileSync(this.filePath, '', 'utf8');
   }
 
   public log(...message: any[]) {
-    this.state.push(message.join(' '));
-    this.writeState();
+    fs.appendFileSync(this.filePath, message.map(m => JSON.stringify(m)).join(' ') + '\n', 'utf8');
   }
 }
 
