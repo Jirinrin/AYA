@@ -131,7 +131,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
 }
 
 // todo: use a normal write stream to a log.log like file
-class Logger extends LocalStorage<Array<any>> {
+export class Logger extends LocalStorage<Array<any>> {
   constructor() {
     super('log.json', [], true);
   }
@@ -142,7 +142,7 @@ class Logger extends LocalStorage<Array<any>> {
   }
 }
 
-class PersistentLogger extends LocalStorage {
+export class PersistentLogger extends LocalStorage {
   constructor() {
     super('p-log.json', {});
   }
