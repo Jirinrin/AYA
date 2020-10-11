@@ -58,12 +58,12 @@ const renameEveryEntry = (iterate: FileIteratorInitFunction) => (
 
 const Rename: RawModule = {
   everyEntryRename: {
-    command: 'eer',
+    cmdName: 'eer',
     help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string}. opts: ${eerOpts}`,
     getRun: iterate => renameEveryEntry(iterate),
   },
   everyEntryRenameRegex: {
-    command: 'eer-rx',
+    cmdName: 'eer-rx',
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern}. opts: ${eerOpts}`,
     getRun: iterate => (
       searchRegex: string|RegExp,

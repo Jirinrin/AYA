@@ -15,7 +15,7 @@ function makeShallow(op: ShallowDeepRawOperation): Operation {
   if (!hasOpts) paramNames.push('opts');
 
   const newOp: Operation = {
-    command: op.command,
+    cmdName: op.cmdName,
     help: `${op.help}${hasOpts ? ',' : ' |'} --deep'`,
     run: (...params: Parameters<ReturnType<typeof op.getRun>>) => { // Implied that params now contains an 'opts' param as last
       const opts = params[params.length-1];
