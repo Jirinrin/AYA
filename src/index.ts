@@ -1,6 +1,6 @@
 import * as repl from 'repl';
 import { createInterface } from 'readline';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 
 import Modules from './modules';
 import { Operation, FileIteratorCallback, FileIteratorCallbackSimple } from './types';

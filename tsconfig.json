@@ -6,7 +6,7 @@
     "outDir": "./build",
     "target": "ES6",
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "module": "commonjs"
   }
 }

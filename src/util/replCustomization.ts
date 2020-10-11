@@ -1,6 +1,6 @@
-import chalk, { Chalk } from "chalk";
+import * as chalk from "chalk";
 import { CompleterResult, cursorTo } from "readline";
-import refractor, { RefractorNode } from "refractor";
+import * as refractor from "refractor";
 import { REPLServer } from "repl";
 import { ExtendedREPLCommand, r } from "..";
 import highlightLookup from "./highlightLookup";
@@ -51,7 +51,7 @@ export function completer(line: string): CompleterResult {
 
 // Syntax highlighting
 
-function parseHighlightNode(node: RefractorNode, classNames: string[] = [], defaultChalk: Chalk = chalk): string {
+function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] = [], defaultChalk: chalk.Chalk = chalk): string {
   if (node.type === 'element')
     return node.children.map(c => parseHighlightNode(c, node.properties.className)).join('');
 

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import minimist from 'minimist';
+import * as minimist from 'minimist';
 import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
 import { r } from '..';

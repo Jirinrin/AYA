@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
 import { recordToSchema } from './generalUtils';
-import Ajv, { ValidateFunction } from 'ajv';
+import * as Ajv from 'ajv';
 
 class LocalStorage<T extends Record<string, any>> {
   protected jsonPath: string;
@@ -50,7 +50,7 @@ const ajv = new Ajv({useDefaults: true, allErrors: true});
 
 class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<T> {
   protected schema: JSONSchema7;
-  protected validate: ValidateFunction;
+  protected validate: Ajv.ValidateFunction;
 
   constructor(fileName: string, initState: T, schema: JSONSchema7) {
     super(fileName, initState);

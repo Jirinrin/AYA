@@ -1,4 +1,4 @@
-import chalk, { Chalk } from "chalk";
+import * as chalk from "chalk";
 
 // Based on https://github.com/dracula/prism
 
@@ -15,7 +15,7 @@ import chalk, { Chalk } from "chalk";
 //   not sure        '#e2777a',
 // }
 
-const highlights: [string[], Chalk][] = [
+const highlights: [string[], chalk.Chalk][] = [
   [['script', 'prolog', 'punctuation', 'charset'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
   [['url', 'built-in', 'class-name', 'console', 'charset-punctuation', 'property-access'], chalk.cyan], // --cyan
@@ -32,7 +32,7 @@ const highlights: [string[], Chalk][] = [
   [["bold", "important"], chalk.bold],
 ];
 
-const highlightLookup: Record<string, Chalk> = {};
+const highlightLookup: Record<string, chalk.Chalk> = {};
 highlights.forEach(([classes, color]) => classes.forEach(c => highlightLookup[c] = color));
 
 export default highlightLookup;
