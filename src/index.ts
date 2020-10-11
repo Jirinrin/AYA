@@ -10,7 +10,7 @@ import ENV from './ENV';
 import { changeDirectory, evall, forEveryEntrySimple, forEveryEntryDeep, getCommandHelp, ls, setConfigItem, evalls } from './util';
 import { completer, setupSyntaxHighlighting } from './util/replCustomization';
 
-setConsoleIndent(0);
+setConsole();
 
 const rl = createInterface({
   input: process.stdin,

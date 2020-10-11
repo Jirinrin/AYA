@@ -71,14 +71,32 @@ export function indent(indents: number): string {
   return '  '.repeat(indents);
 }
 
-const {log, warn, error, info} = console;
-const consoleLog = (...args: any[]) => log(chalk.green(...args));
-const consoleWarn = (...args: any[]) => warn(chalk.yellow(...args));
-const consoleError = (...args: any[]) => error(chalk.redBright(...args));
-const consoleInfo = (...args: any[]) => info(chalk.cyan(...args));
+const consolePairings: Partial<{[K in keyof Console]: [Console[K], chalk.Chalk]}> = {
+  log: [console.log, chalk.green],
+  warn: [console.warn, chalk.yellow],
+  error: [console.error, chalk.redBright],
+  info: [console.info, chalk.cyan],
+  debug: [console.debug, chalk.gray],
+  dir: [console.dir, chalk.magenta],
+  table: [console.table, chalk.magentaBright],
+}
+const consolePairingsParsed: Array<[keyof Console, (indents: number) => Console['log']]> =
+  Object.entries(consolePairings).map(([k, [consoleFunc, ch]]: [keyof Console, [Console['log'], chalk.Chalk]]) =>
+    [k, (indents: number) => (...args: any[]) => consoleFunc(indent(indents) + ch(...args))]
+  );
+
+export function setConsole(indents: number = 0) {
+  consolePairingsParsed.forEach(([k, getConsoleFunc]) => console[k] = getConsoleFunc(indents));
+}
+
+let currentIndents = 0;
+export function setConsoleIndentRel(indentsDiff: number) {
+  currentIndents = Math.max(currentIndents + indentsDiff, 0);
+  setConsole(currentIndents);
+  return currentIndents;
+}
 export function setConsoleIndent(indents: number) {
-  console.log   = (...args: any[]) => consoleLog  (indent(indents) + chalk.green(...args));
-  console.warn  = (...args: any[]) => consoleWarn (indent(indents) + chalk.yellow(...args));
-  console.error = (...args: any[]) => consoleError(indent(indents) + chalk.redBright(...args));
-  console.info  = (...args: any[]) => consoleInfo (indent(indents) + chalk.cyan(...args));
+  if (currentIndents === indents) return;
+  currentIndents = indents;
+  setConsole(currentIndents);
 }
