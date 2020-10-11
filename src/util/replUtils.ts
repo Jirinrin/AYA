@@ -73,8 +73,8 @@ export function evall(func: Function) {
 
 // evall-simple
 export function evalls(func: Function) {
-  return async () => {
-    await func();
+  return async (args: string) => {
+    await func(args);
     r.write('\n');
   };
 }
