@@ -82,12 +82,12 @@ function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] 
       return;
     const ch = highlightLookup[className];
     if (ch) val = ch(val);
-    else global.pLog(`unknown highlight class: ${className}. Val: ${val}`);
+    else console.plog(`unknown highlight class: ${className}. Val: ${val}`);
   });
   return val;
 };
 
-function highlightPart(part: string, lang: string): string {
+export function highlight(part: string, lang: string): string {
   return refractor.highlight(part, lang)
     .map(c => parseHighlightNode(c))
     .join('');
@@ -112,19 +112,19 @@ function highlightLine(line: string): string {
     const [arg1Match, quote1, actualRegex, quote2] = l.match(/^(")([^"]+)("?)/) ?? l.match(/^(')([^']+)('?)/) ?? l.match(/^(\/)([^\/]+)(\/?)/) ?? l.match(/^(`)([^`]+)(`?)/) ?? l.match(/^()(\S+)()/) ?? [];
     if (arg1Match) {
       if (quote1) eatFromLine(1, chalk.red(quote1));
-      eatFromLine(actualRegex.length, highlightPart(l.slice(0, actualRegex.length), 'regex'));
+      eatFromLine(actualRegex.length, highlight(l.slice(0, actualRegex.length), 'regex'));
       if (quote2) eatFromLine(1, chalk.red(quote2));
     }
   }
 
   const optionsMatch = l.match(/--.*$/);
   if (!optionsMatch) {
-    return result + highlightPart(l, 'js');
+    return result + highlight(l, 'js');
   }
 
-  eatFromLine(optionsMatch.index, highlightPart(l.slice(0, optionsMatch.index), 'js'));
+  eatFromLine(optionsMatch.index, highlight(l.slice(0, optionsMatch.index), 'js'));
 
-  return result + highlightPart(l, 'bash');
+  return result + highlight(l, 'bash');
 }
 
 // Bare bones variation on Interface._refreshLine, to facilitate syntax highlighting

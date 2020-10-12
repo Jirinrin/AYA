@@ -5,7 +5,7 @@ import { config } from './LocalStorage';
 import { putImageMetadataOnEntity } from '../modules/Image';
 import { putMusicMetadataOnEntity } from '../modules/Music';
 import { Entry, FileIteratorCallback } from '../types';
-import { setConsoleIndent, setConsoleIndentRel } from './generalUtils';
+import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)

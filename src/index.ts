@@ -6,8 +6,9 @@ import { Operation } from './types';
 import './Global';
 import './util/LocalStorage';
 import { config } from './util/LocalStorage';
-import { changeDirectory, setConsole } from './util';
+import { changeDirectory } from './util';
 import { completer, setupReplCustomization } from './util/replCustomization';
+import { setConsole } from './util/consoleExtension';
 
 setConsole();
 

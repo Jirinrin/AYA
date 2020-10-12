@@ -146,18 +146,22 @@ export class Logger extends LocalStorage {
     fs.writeFileSync(this.filePath, '', 'utf8');
   }
 
-  private logBase(verbose: boolean, ...message: any[]) {
-    const toStr = m => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
-    const msg = message
+  private formatMsg(verbose: boolean, ...message: any[]): string {
+    const toStr = (m: any) => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
+    return message
       .map(m => typeof m === 'string' ? toStr(m) : toStr(m)?.replace(/^"?(.*)"?$/, '$1')).join(' ')
       .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n');
+  }
+
+  private logBase(verbose: boolean, ...message: any[]) {
+    const msg = this.formatMsg(verbose, ...message);
     fs.appendFileSync(this.filePath, msg, 'utf8');
     return msg;
   }
-  public log(...message: any[]) {
+  public log = (...message: any[]) => {
     this.logBase(false, ...message);
   }
-  public logv(...message: any[]) {
+  public logv = (...message: any[]) => {
     this.logBase(true, ...message);
   }
   public logl(...message: any[]) {
@@ -170,7 +174,7 @@ export class PersistentLogger extends LocalStorage {
     super('p-log.json', {});
   }
 
-  public log(...message: any[]) {
+  public log = (...message: any[]) => {
     const msg = message.join(' ');
     const key = getHashCode(msg);
     if (!this.state[key]) {
