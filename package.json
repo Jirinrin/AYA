@@ -27,6 +27,7 @@
     "chalk": "^4.1.0",
     "exiftool-vendored": "^8.21.1",
     "minimist": "^1.2.5",
+    "moment": "^2.29.1",
     "music-metadata": "^4.1.0",
     "refractor": "^3.1.0"
   },

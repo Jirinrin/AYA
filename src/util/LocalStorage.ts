@@ -4,6 +4,7 @@ import * as path from 'path';
 import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
 import * as defaultUserScripts from './default-userscripts.json';
+import * as moment from 'moment';
 
 class LocalStorage<T extends Record<string, any> = any> {
   protected filePath: string;
@@ -156,7 +157,7 @@ export class Logger extends LocalStorage {
 
   private logBase(verbose: boolean, ...message: any[]) {
     const msg = this.formatMsg(verbose, ...message);
-    fs.appendFileSync(this.filePath, msg, 'utf8');
+    fs.appendFileSync(this.filePath, `[${moment().locale('en-gb').format('L LTS')}] ` + msg, 'utf8');
     return msg;
   }
   public log = (...message: any[]) => {
@@ -179,7 +180,7 @@ export class PersistentLogger extends LocalStorage {
     const msg = message.join(' ');
     const key = getHashCode(msg);
     if (!this.state[key]) {
-      this.set(key, msg)
+      this.set(key, `[${moment().locale('en-gb').format('L LTS')}] ` + msg)
       this.writeState();
     }
   }
