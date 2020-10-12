@@ -1,36 +1,25 @@
 import * as fs from 'fs';
-import * as minimist from 'minimist';
 import { REPLServer } from 'repl';
 import { forEveryEntry, getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
-import { ParamData, setConsoleIndent } from './generalUtils';
+import { ParamData } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
-import { OperationFunction } from '../types';
+import { ActionFunction, ActionFunctionEvall, OperationFunction } from '../types';
+import { CommandInfo } from '../modules';
+import { setConsoleIndent } from './consoleExtension';
 
 export const globalEval = eval;
 
 /**
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
-export function evall(func: OperationFunction) {
-  const { hasOpts, paramsCount, paramData } = getFunctionData(func);
+export function evall(func: OperationFunction, info: CommandInfo): ActionFunctionEvall {
+  let { paramsCount, paramData } = getFunctionData(func);
 
-  return async (args: string): Promise<void> => {
+  return async (body, opts = {}): Promise<void> => {
     try {
       setConsoleIndent(0);
-
-      let body = args.trim();
-      let opts: Record<string, any>;
-
-      const optionsStartIndex = args.indexOf('--');
-      if (optionsStartIndex > -1) {
-        if (!hasOpts)
-          throw new ValidationError('You are passing options, but this command is not expecting any');
-
-        body = args.substring(0, optionsStartIndex).trim();
-        opts = minimist( args.slice(optionsStartIndex).split(' ') );
-      }
 
       if (paramsCount > 0 && !body)
         throw new ValidationError(`This command requires ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
@@ -80,8 +69,8 @@ export function evall(func: OperationFunction) {
 }
 
 // evall-simple
-export function evalls(func: Function) {
-  return async (args: string) => {
+export function evalls(func: ActionFunction): ActionFunction {
+  return async (args) => {
     await func(args);
     r.write('\n');
   };
