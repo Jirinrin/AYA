@@ -40,7 +40,6 @@ Misc guidance:
 ent will get property `mm` for you to access
 
 ## TODO
-- fix: (autocomplete and) highlighting for options: (1) when putting options first and then arguments; (2) when -- is part of a string proper highlighting
 - add how-to on using scripts, add examples of things you can do with this thing, supply options, ...
 - Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
 - allow passing arguments to the initial call of the process (e.g. which command to run, or which userscript to run) (=> enables putting a static bat file in a folder which does a thing)
@@ -55,4 +54,3 @@ ent will get property `mm` for you to access
 - Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 - be able to give argument to userscripts?
 - somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command
-- allow first specifying options and then args

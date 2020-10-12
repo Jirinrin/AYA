@@ -1,5 +1,6 @@
-import * as chalk from "chalk";
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
+import minimist = require('minimist');
+import { CommandInfo } from "../modules";
 
 export enum ParamData {
   Any,
@@ -79,4 +80,23 @@ export function getHashCode(s: string) {
 const regexEscapeRegex = /[-\/\\^$*+?.()|[\]{}]/g
 export function escapeRegex(regexString: string): string {
   return regexString.replace(regexEscapeRegex, '\\$&');
+}
+
+/**
+ * @return [body (not trimmed), opts]
+ */
+export function parseArgs(argsString: string, info?: CommandInfo): [body: string, opts: Record<string, any>] {
+  const opts: Record<string, any> & minimist.ParsedArgs = minimist(argsString.split(' '), {alias: info?.optsAliases});
+  const body = opts._.join(' ');
+  delete opts._;
+
+  return [body, opts];
+}
+
+export function splitArgsString(argsString: string): [reverse: boolean, part1: string, part2?: string] {
+  const [body] = parseArgs(argsString);
+  const bodyIndex = argsString.indexOf(body) ?? 0;
+  const reverse = bodyIndex > 3;
+  const splitIndex = reverse ? bodyIndex : body.length;
+  return [reverse, argsString.slice(0, splitIndex), argsString.slice(splitIndex)];
 }

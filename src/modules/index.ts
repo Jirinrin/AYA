@@ -1,6 +1,5 @@
-import minimist = require('minimist');
 import { Module, Operation, RawOperationShallowDeep, RawModule, RawOperation, RawOperationSimple, RawOperationCompiled, ActionFunction, ActionFunctionEvall } from '../types';
-import { evall, evalls, forEveryEntry, forEveryEntryDeep, getFunctionData } from '../util';
+import { evall, evalls, forEveryEntry, forEveryEntryDeep, getFunctionData, parseArgs } from '../util';
 import ENV from '../ENV';
 
 import Rename from './Rename';
@@ -69,15 +68,6 @@ function getCmdInfo(help: string): CommandInfo {
 }
 
 
-function parseArgs(argsString: string, info: CommandInfo): [body: string, opts: Record<string, any>] {
-  const opts: Record<string, any> & minimist.ParsedArgs = minimist(argsString.split(' '), {alias: info.optsAliases});
-  const body = opts._.join(' ').trim();
-  delete opts._;
-
-  return [body, opts];
-}
-
-
 function makeOperation(op: RawOperation, cmdName: string): Operation {
   let help = op.help;
   let action: ActionFunction|ActionFunctionEvall = null;
@@ -85,7 +75,7 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
     help += `${help.includes('opts:') ? ',' : ' | opts:'} --deep(-d)`;
 
   const info = getCmdInfo(help);
-  cmdInfo[cmdName] = info;  // side effect yay! Though maybe this whole global object is unnecessary?
+  cmdInfo[cmdName] = info;  // side effect yay! Though maybe this whole global variable is unnecessary?
 
   if (isShallowDeep(op)) action = makeShallow(op, info);
   else if (isCompiled(op)) action = op.run_c;

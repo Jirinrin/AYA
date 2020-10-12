@@ -2,8 +2,10 @@ import * as chalk from "chalk";
 import { Completer, CompleterResult, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
+
 import { r } from "..";
 import { cmdInfo } from "../modules";
+import { escapeRegex, splitArgsString } from "./generalUtils";
 import highlightLookup from "./highlightLookup";
 import { config, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
@@ -40,7 +42,6 @@ function completeJs(line: string): CustomCompleterResult {
 
   const checkString = line.slice(line.lastIndexOf(' ')+1);
   const [objKeyMatch, objKey, objSubKey] = (checkString.match(/(\w+)\.(\w*)/) ?? []);
-  console.llog('something', line, checkString, objKeyMatch, objKey, objSubKey);
   if (!objKeyMatch)
     // Defined variables will only show up in global when you initialized them with `var`
     return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
@@ -127,38 +128,56 @@ export function highlight(part: string, lang: string): string {
     .join('');
 }
 
+class ResultBuilder {
+  public result: string = '';
+  constructor(public l: string) {}
+  public eatFromInput(howMuchToEat: number, addToResult: string) {
+    this.result += addToResult;
+    this.l = this.l.slice(howMuchToEat);
+  }
+}
+
 export function highlightLine(line: string): string {
-  let l = line;
-  let result = '';
-  const eatFromLine = (howMuchToEat: number, addToResult: string) => {
-    result += addToResult;
-    l = l.slice(howMuchToEat);
+  const b = new ResultBuilder(line);
+
+  const [cmdMatch, cmdName] = getCommand(b.l);
+  if (b.l.startsWith('.')) {
+    if (!cmdMatch) return line;
+    b.eatFromInput(cmdMatch.length, b.l.slice(0, cmdMatch.length))
+  }
+
+  const [optsReverse, part1, part2] = splitArgsString(b.l);
+  const drawBody = (part: string): string => {
+    const p = new ResultBuilder(part);
+    if (cmdName === 'eer-rx') {
+      const [arg1Match, quote1, actualRegex, quote2] = p.l.match(/^(")([^"]+)("?)/) ?? p.l.match(/^(')([^']+)('?)/) ?? p.l.match(/^(\/)([^\/]+)(\/?)/) ?? p.l.match(/^(`)([^`]+)(`?)/) ?? p.l.match(/^()(\S+)()/) ?? [];
+      if (arg1Match) {
+        if (quote1) p.eatFromInput(1, chalk.red(quote1));
+        p.eatFromInput(actualRegex.length, highlight(p.l.slice(0, actualRegex.length), 'regex'));
+        if (quote2) p.eatFromInput(1, chalk.red(quote2));
+      }
+    }
+    return p.result + highlight(p.l, 'js');
   };
 
-  const [cmdMatch, cmdName] = getCommand(l);
-  if (l.startsWith('.')) {
-    if (!cmdMatch) return line;
-    result += l.slice(0, cmdMatch.length);
-    l = l.slice(cmdMatch.length);
+  const drawOptions = (part: string): string => {
+    return highlight(part, 'bash');
+  };
+
+  const drawPart = (part: string, drawer: (part: string) => string) => {
+    const output = drawer(part);
+    b.eatFromInput(part.length, output);
+  } 
+
+  if (optsReverse) {
+    drawPart(part1, drawOptions);
+    drawPart(part2, drawBody);
+  } else {
+    drawPart(part1, drawBody);
+    drawPart(part2, drawOptions);
   }
 
-  if (cmdName === 'eer-rx') {
-    const [arg1Match, quote1, actualRegex, quote2] = l.match(/^(")([^"]+)("?)/) ?? l.match(/^(')([^']+)('?)/) ?? l.match(/^(\/)([^\/]+)(\/?)/) ?? l.match(/^(`)([^`]+)(`?)/) ?? l.match(/^()(\S+)()/) ?? [];
-    if (arg1Match) {
-      if (quote1) eatFromLine(1, chalk.red(quote1));
-      eatFromLine(actualRegex.length, highlight(l.slice(0, actualRegex.length), 'regex'));
-      if (quote2) eatFromLine(1, chalk.red(quote2));
-    }
-  }
-
-  const optionsMatch = l.match(/--.*$/);
-  if (!optionsMatch) {
-    return result + highlight(l, 'js');
-  }
-
-  eatFromLine(optionsMatch.index, highlight(l.slice(0, optionsMatch.index), 'js'));
-
-  return result + highlight(l, 'bash');
+  return b.result;
 }
 
 // Bare bones variation on Interface._refreshLine, to facilitate syntax highlighting
