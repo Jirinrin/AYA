@@ -155,13 +155,19 @@ export class Logger extends LocalStorage {
       .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n');
   }
 
+  private logRaw(msg: string) {
+    fs.appendFileSync(this.filePath, `[${moment().locale('en-gb').format('L LTS')}] ` + msg, 'utf8');
+  }
   private logBase(verbose: boolean, ...message: any[]) {
     const msg = this.formatMsg(verbose, ...message);
-    fs.appendFileSync(this.filePath, `[${moment().locale('en-gb').format('L LTS')}] ` + msg, 'utf8');
+    this.logRaw(msg);
     return msg;
   }
   public log = (...message: any[]) => {
     this.logBase(false, ...message);
+  }
+  public logr = (...message: any[]) => {
+    this.logRaw(message.join(' '));
   }
   public logv = (...message: any[]) => {
     this.logBase(true, ...message);
