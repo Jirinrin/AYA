@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
+    "dev": "tsc --watch",
     "start": "ts-node src",
+    "start:dev": "node build",
     "compile": "tsc && pkg -t node10-win-x64 build\\index.js -o ayayatsuri"
   },
   "repository": {
