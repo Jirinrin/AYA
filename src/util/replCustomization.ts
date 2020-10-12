@@ -18,9 +18,43 @@ export type CustomCompleterResult = [completions: string[], matchString: string,
 
 let emptyCompl: CompleterResult;
 
+const jsGlobalObjects: [string, object][] = [
+  ['Object', Object], ['Array', Array], ['String', String], ['console', console], ['JSON', JSON]
+]
+const jsGlobalWords = ['var', 'blarn'];
+let jsGlobalKeys: string[];
+let jsGlobalKeyValues: Record<string, string[]>;
+const setJsGlobalKeys = () => {
+  jsGlobalKeys = [
+    ...jsGlobalObjects.map(([key]) => key),
+    ...jsGlobalWords,
+  ];
+  jsGlobalKeyValues = jsGlobalObjects.reduce((acc, [key, obj]) => ({
+    ...acc,
+    [key]: key.match(/^[A-Z]/) ? Object.getOwnPropertyNames(obj) : Object.keys(obj),
+  }), {});
+};
+
+function completeJs(line: string): CustomCompleterResult {
+  if (!jsGlobalKeys) setJsGlobalKeys();
+
+  const checkString = line.slice(line.lastIndexOf(' ')+1);
+  const [objKeyMatch, objKey, objSubKey] = (checkString.match(/(\w+)\.(\w*)/) ?? []);
+  console.llog('something', line, checkString, objKeyMatch, objKey, objSubKey);
+  if (!objKeyMatch)
+    // Defined variables will only show up in global when you initialized them with `var`
+    return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
+  
+  if (jsGlobalKeyValues[objKey])
+    return completeCaseIns(objSubKey, jsGlobalKeyValues[objKey])
+
+  return emptyCompl;
+   // todo: even better autocompletion interwoven through javascript? (parse with acorn) or at least some common keywords
+}
+
 function completeCaseIns(stringToCheck: string, completions: string[]|Record<string,any>): CustomCompleterResult {
   const completionsArray = Array.isArray(completions) ? completions : Object.keys(completions);
-  const checkRegex = new RegExp(`^${stringToCheck}`, 'i');
+  const checkRegex = new RegExp(`^${escapeRegex(stringToCheck)}`, 'i');
   const actualCompletions = completionsArray.filter(c => c.match(checkRegex));
   // global.log('completion case ins', stringToCheck, completionsArray, actualCompletions);
   if (!actualCompletions.length)
@@ -32,7 +66,7 @@ function completeCaseIns(stringToCheck: string, completions: string[]|Record<str
 function getCompletionData(line: string): CustomCompleterResult {
   emptyCompl = [ [], line ] as CompleterResult;
   if (!line.startsWith('.'))
-    return emptyCompl;
+    return completeJs(line);   
 
   const [cmdMatch, cmdName, space] = getCommand(line);
   if (!space || !r.commands[cmdName]) {
