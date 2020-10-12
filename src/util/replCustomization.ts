@@ -12,7 +12,7 @@ const getCommand = (line: string) =>
   (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
 
-  // Auto completion
+// Auto completion
 
 export type CustomCompleterResult = [completions: string[], matchString: string, actualCompletions?: string[], actualMatchString?: string];
 
@@ -93,7 +93,7 @@ export function highlight(part: string, lang: string): string {
     .join('');
 }
 
-function highlightLine(line: string): string {
+export function highlightLine(line: string): string {
   let l = line;
   let result = '';
   const eatFromLine = (howMuchToEat: number, addToResult: string) => {

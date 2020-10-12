@@ -3,6 +3,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
 import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
+import * as defaultUserScripts from './default-userscripts.json';
 
 class LocalStorage<T extends Record<string, any> = any> {
   protected filePath: string;
@@ -11,7 +12,7 @@ class LocalStorage<T extends Record<string, any> = any> {
   public get s() { return this.state };
 
   constructor(fileName: string, initState: T, reset?: boolean) {
-    const dir = path.resolve('./.ayaStorage');
+    const dir = path.resolve(path.dirname(require.main.filename), './.ayaStorage');
     if (!fs.existsSync(dir))
       fs.mkdirSync(dir);
     
@@ -110,7 +111,7 @@ type UserScript = string;
 type IUserScripts = Record<string, UserScript>;
 class UserScripts extends LocalStorage<IUserScripts> {
   constructor() {
-    super('userscripts.json', {});
+    super('userscripts.json', defaultUserScripts);
   }
 
   private keyExists(key: string): boolean {
