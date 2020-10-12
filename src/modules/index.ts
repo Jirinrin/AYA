@@ -1,6 +1,7 @@
 import { Module, Operation, RawOperationShallowDeep, RawModule, RawOperation, RawOperationSimple, RawOperationCompiled, ActionFunction, ActionFunctionEvall } from '../types';
-import { evall, evalls, forEveryEntry, forEveryEntryDeep, getFunctionData, parseArgs } from '../util';
+import { forEveryEntry, forEveryEntryDeep, getFunctionData, parseArgs } from '../util';
 import ENV from '../ENV';
+import { evall, evalls } from '../util/replUtils';
 
 import Rename from './Rename';
 import FolderOperations from './FolderOperations';

@@ -7,6 +7,7 @@ import { r } from "..";
 import { cmdInfo } from "../modules";
 import { escapeRegex, splitArgsString } from "./generalUtils";
 import highlightLookup from "./highlightLookup";
+import { jsGlobalObjects, jsKeywords } from "./input/javascriptComplWords";
 import { config, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
 
@@ -20,16 +21,12 @@ export type CustomCompleterResult = [completions: string[], matchString: string,
 
 let emptyCompl: CompleterResult;
 
-const jsGlobalObjects: [string, object][] = [
-  ['Object', Object], ['Array', Array], ['String', String], ['console', console], ['JSON', JSON]
-]
-const jsGlobalWords = ['var', 'blarn'];
 let jsGlobalKeys: string[];
 let jsGlobalKeyValues: Record<string, string[]>;
 const setJsGlobalKeys = () => {
   jsGlobalKeys = [
     ...jsGlobalObjects.map(([key]) => key),
-    ...jsGlobalWords,
+    ...jsKeywords,
   ];
   jsGlobalKeyValues = jsGlobalObjects.reduce((acc, [key, obj]) => ({
     ...acc,
@@ -149,7 +146,7 @@ export function highlightLine(line: string): string {
   const [optsReverse, part1, part2] = splitArgsString(b.l);
   const drawBody = (part: string): string => {
     const p = new ResultBuilder(part);
-    if (cmdName === 'eer-rx') {
+    if (cmdName === 'renameEach-rx') {
       const [arg1Match, quote1, actualRegex, quote2] = p.l.match(/^(")([^"]+)("?)/) ?? p.l.match(/^(')([^']+)('?)/) ?? p.l.match(/^(\/)([^\/]+)(\/?)/) ?? p.l.match(/^(`)([^`]+)(`?)/) ?? p.l.match(/^()(\S+)()/) ?? [];
       if (arg1Match) {
         if (quote1) p.eatFromInput(1, chalk.red(quote1));

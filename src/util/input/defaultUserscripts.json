@@ -1,5 +1,5 @@
 {
   "testtt": ".fee (f, ff) => console.log(ff.name)",
   "eeee": "var bla = 34;\n .fee () => console.error('waaa', bla)",
-  "teToTa": "ijerier"
+  "teToTa": "ijerier // todo: move to input/"
 }

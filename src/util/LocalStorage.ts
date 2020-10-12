@@ -3,7 +3,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
 import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
-import * as defaultUserScripts from './default-userscripts.json';
+import * as defaultUserScripts from './input/defaultUserscripts.json';
 import * as moment from 'moment';
 
 class LocalStorage<T extends Record<string, any> = any> {
