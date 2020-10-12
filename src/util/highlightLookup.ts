@@ -20,8 +20,8 @@ const highlights: [string[], chalk.Chalk][] = [
   [['script', 'prolog', 'punctuation', 'charset', 'interpolation'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
   [['url', 'built-in', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access', 'property'], chalk.cyan], // --cyan
-  [['atrule', 'attr-name', 'attr-value', 'function', 'method'], chalk.greenBright], // --green
-  [['parameter', 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
+  [['atrule', 'attr-name', 'attr-value', 'function', 'method', 'function-variable'], chalk.greenBright], // --green
+  [['parameter' /*should be italic*/, 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
   [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier', 'escape', 'special-escape', 'anchor', 'interpolation-punctuation'], chalk.magentaBright], // --pink
   [['boolean', 'constant', 'number', 'charclass', 'known-class-name'], chalk.magenta], // --purple
   [['regex', 'regex-delimiter', 'charset-negation'], chalk.red], // --red
