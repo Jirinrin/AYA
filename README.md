@@ -47,6 +47,7 @@ ent will get property `mm` for you to access
 - have some [iter] like (colored?) label in the help of commands that iterate
 - set userscript based on history, e.g. use the last x lines. Or maybe even better: util functie which converts the last x lines to a string, so you can pass that as a variable to .userscript-set
 - go through todos in code
+- do exe releases every once in a while?
 
 - And clone objects and such
 - Also expose 'path' thingy in callback for every item?

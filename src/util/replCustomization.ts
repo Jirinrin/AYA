@@ -6,9 +6,9 @@ import { REPLServer } from "repl";
 import { r } from "..";
 import { cmdInfo } from "../modules";
 import { escapeRegex, splitArgsString } from "./generalUtils";
-import highlightLookup from "./highlightLookup";
+import { defaultHighlightLookup, IHighlightLookup, languageSpecificHighlightLookup } from "./highlightLookup";
 import { jsKeywords } from "./input/javascriptKeywords";
-import { config, logger, userScripts } from "./LocalStorage";
+import { config, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
 
 const getCommand = (line: string) =>
@@ -25,7 +25,6 @@ let inittedJsGlobalKeys = false;
 let jsGlobalKeys: Set<string> = new Set<string>(jsKeywords);
 let jsGlobalKeyValues: Record<string, string[]> = {};
 const setGlobalKey = (key: string) => {
-  console.llog('key', key);
   if (key === 'GLOBAL' || key === 'root') return;
   if (jsGlobalKeys.has(key)) return;
 
@@ -48,7 +47,7 @@ function completeJs(line: string): CustomCompleterResult {
     return emptyCompl;
 
   const [objKeyMatch, objKey, objSubKey] = (checkString.match(/(\w+)\.(\w*)/) ?? []);
-  console.llog('complete js', objKeyMatch, objKey, objSubKey, jsGlobalKeyValues[objKey])
+  // console.llog('complete js', objKeyMatch, objKey, objSubKey, jsGlobalKeyValues[objKey])
   if (!objKeyMatch)
     // Defined variables will only show up in global when you initialized them with `var`
     return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
@@ -114,15 +113,31 @@ export const completer: Completer = (line: string) => {
 
 // Syntax highlighting
 
-function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] = [], defaultChalk: chalk.Chalk = chalk): string {
+function parseClasses(classNames: string[]): [classes: string[], language?: string] {
+  let language: string;
+  const classes = classNames.filter(c => {
+    if (c.startsWith('language-')) {
+      language = c;
+      return false;
+    }
+    return !(c === 'token'); // Can add more conditions hyah
+  });
+  return [classes, language];
+}
+
+function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] = [], parentHighlights: IHighlightLookup = defaultHighlightLookup): string {
+  const [classes, language] = parseClasses(classNames);
+
+  const highlights = (language && languageSpecificHighlightLookup[language]) || parentHighlights;
+
   if (node.type === 'element')
-    return node.children.map(c => parseHighlightNode(c, node.properties.className)).join('');
+    return node.children.map(c => parseHighlightNode(c, node.properties.className, highlights)).join('');
+
+  if (!classes.length) return highlights._(node.value);
 
   let val = node.value;
-  classNames.forEach(className => {
-    if (className === 'token' || className.startsWith('language-')) // todo?: maybe some system with language specific class overwrites?
-      return;
-    const ch = highlightLookup[className];
+  classes.forEach(className => {
+    const ch = highlights[className];
     if (ch) val = ch(val);
     else console.plog(`unknown highlight class: ${className}. Val: ${val}`);
   });
