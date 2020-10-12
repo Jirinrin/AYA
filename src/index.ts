@@ -47,16 +47,14 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
   return new Promise((res, rej) => {
     try {
       rl.question(`What folder (type nothing to use the current working directory)\n`, (answer) => {
-        const resolve = rootResolve || res;
+        const resolve = rootResolve ?? res;
 
         if (!triesLeft)
-          return console.log('Max tries were exceeded. Please set the folder via the .cd command');
-        if (changeDirectory(answer) || triesLeft <= 0)
-          return resolve();
-        else if (!answer) {
-          console.log('...Never mind that => using cwd');
+          return resolve(console.log('Max tries were exceeded. Please set the folder via the .cd command'));
+        if (!answer) {
           changeDirectory(process.cwd());
-          // changeDirectory(path.resolve('.'));
+          return resolve();
+        } else if (changeDirectory(answer) || triesLeft <= 0) {
           return resolve();
         }
         return setFolderRecursive(triesLeft, resolve);
