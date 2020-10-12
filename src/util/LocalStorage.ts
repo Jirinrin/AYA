@@ -151,7 +151,7 @@ export class Logger extends LocalStorage {
     const msg = message
       .map(m => typeof m === 'string' ? toStr(m) : toStr(m).replace(/^"?(.*)"?$/, '$1')).join(' ')
       .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n');
-    fs.appendFileSync(this.filePath, message, 'utf8');
+    fs.appendFileSync(this.filePath, msg, 'utf8');
     return msg;
   }
   public log(...message: any[]) {
