@@ -7,11 +7,11 @@ import Rename from './Rename';
 import FolderOperations from './FolderOperations';
 import Base from './Base';
 
-const rawModules: RawModule[] = [
+const rawModules = {
   Base,
   Rename,
   FolderOperations,
-];
+};
 
 function makeShallow(op: RawOperationShallowDeep, info: CommandInfo): ActionFunctionEvall {
   const { paramNames } = getFunctionData(op.getRun(null as any));
@@ -22,7 +22,7 @@ function makeShallow(op: RawOperationShallowDeep, info: CommandInfo): ActionFunc
     return evall(output, info);
   });
 
-  return (body, opts) => {
+  return async (body, opts) => {
     const run = opts.deep ? actionDeep : actionShallow;
     return run(body, opts);
   };
@@ -83,9 +83,8 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
   else action = isSimp(op) ? evalls(op.run_s) : evall(op.run, info);
 
   return {
-    cmdName,
     help,
-    action: (argsString) => {
+    action: async (argsString) => {
       const [body, opts] = parseArgs(argsString, info);
 
       if (opts.help)
@@ -99,11 +98,13 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
   };
 }
 
-
-const modules: Module[] = rawModules.map(m =>
-  Object.entries(m).map(([k, op]) => {
-    return makeOperation(op, k)
-  })
-);
+type IModules = {
+  [K in keyof typeof rawModules]: Module<(typeof rawModules)[K]>;
+}
+const modules: IModules = Object.fromEntries(Object.entries(rawModules).map(([modKey, rawMod]) =>
+  [modKey, Object.fromEntries(Object.entries(rawMod).map(([k, op]) =>
+    [k, makeOperation(op, k)],
+  ))] as [keyof typeof rawModules, Module],
+)) as IModules;
 
 export default modules;

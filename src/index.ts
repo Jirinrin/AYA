@@ -3,7 +3,7 @@ import { createInterface } from 'readline';
 import minimist = require('minimist');
 
 import Modules from './modules';
-import { Operation } from './types';
+import { Module } from './types';
 import './Global';
 import './util/LocalStorage';
 import { config } from './util/LocalStorage';
@@ -19,15 +19,20 @@ const rl = createInterface({
 });
 export let r: repl.REPLServer;
 
-type StartOptions = Partial<{
+type InitOpts = Partial<{
   start: boolean;
+  userscript: string;
+  cmd: string;
+  exitAfterCmd: boolean;
 }>;
+const initOptsAlias: Record<string, keyof InitOpts> = { s: 'start', u: 'userscript', c: 'cmd', e: 'exitAfterCmd' };
+// todo: help option to print these items as help...
 
-const initArgs: StartOptions & Exclude<minimist.ParsedArgs, '_'|'--'> = minimist(process.argv, {alias: {s: 'start'}});
+const initArgs: InitOpts & minimist.ParsedArgs = minimist(process.argv.slice(2), {alias: initOptsAlias});
 const initBody = initArgs._.join(' ');
 
 
-function startRepl() {
+async function startRepl() {
   r = repl.start({
     ignoreUndefined: true,
     useGlobal: true,
@@ -35,15 +40,29 @@ function startRepl() {
     useColors: true,
   });
 
-  Modules.forEach((mod) => {
-    mod.forEach((op: Operation) => {
-      r.defineCommand(op.cmdName, op);
+  Object.values(Modules).forEach((mod: Module) => {
+    Object.entries(mod).forEach(([k, op]) => {
+      r.defineCommand(k, op);
     });
   });
 
   setupReplCustomization(r);
 
   config.validateJson();
+
+  if (initArgs.userscript) {
+    await Modules.Base.userscript.action(initArgs.userscript);
+    // todo: make userscript awaitable somehow
+    // process.exit();
+  } else if (initBody) {
+    r.write(initBody)
+    // todo: await
+    // process.exit();
+  } else if (initArgs.cmd) {
+    await r.commands[initArgs.cmd as any].action.bind(r)(initBody);
+    if (!initArgs.exitAfterCmd)
+      process.exit();
+  }
 }
 
 
@@ -73,14 +92,10 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
 }
 
 (async function start() {
-  if (initArgs.start)
+  if (initArgs.start || initArgs.userscript || initArgs.cmd || initBody)
     changeDirectory(process.cwd());
   else  
     await setFolderRecursive(10);
   rl.close();
-  try {
-    startRepl();
-  } catch (err) {
-    console.trace(err);
-  }
+  startRepl().catch(console.trace);
 })();

@@ -7,7 +7,7 @@ import { forEveryEntry, getEnts } from "../util";
 
 const TEMP_DIR_NAME = "___tmp";
 
-const FolderOperations: RawModule = {
+const FolderOperations = {
   flatten: {
     help: 'Flatten folders that only contain one folder',
     run: async () => {

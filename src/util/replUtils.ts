@@ -82,7 +82,7 @@ export function evalls(func: ActionFunction): ActionFunction {
 export function changeDirectory(newFolderName: string): boolean {
   if (fs.existsSync(newFolderName)) {
     ENV.cwd = newFolderName;
-    console.log(`Set the current directory to "${newFolderName}"`);
+    console.log(`Current directory was set to "${newFolderName}"`);
     return true;
   } else {
     console.error('Provided folder name appears to be invalid. Please try again');

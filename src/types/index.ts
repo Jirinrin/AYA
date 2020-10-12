@@ -35,11 +35,10 @@ export interface RawOperationCompiled extends BaseOperation {
 };
 export interface Operation extends BaseOperation {
   action: ActionFunction;
-  cmdName: string;
 }
 
 export type RawOperation = RawOperationNormal | RawOperationSimple | RawOperationShallowDeep | RawOperationCompiled;
 export type RawModule = Record<string, RawOperation>;
-export type Module = Array<Operation>;
+export type Module<T extends RawModule = any> = {[K in keyof T]: Operation};
 
 export * from './music';

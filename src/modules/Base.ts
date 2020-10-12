@@ -5,7 +5,7 @@ import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util/
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 
-const Base: RawModule = {
+const Base = {
   'ls': {
     help: 'Show entries in current directory',
     getRun: iterator => () => iterator((e) => {
@@ -61,7 +61,7 @@ const Base: RawModule = {
     help: 'Delete userscript with the key {$1}',
     run: (key: string) => userScripts.delete(key),
   },
-  'userscript': {
+  'userscript': { // todo: some way to make this awaitable (i.e. wait until all code in the script is done)
     help: 'Run userscript with the key {$1}',
     run: (key: string) => r.write(userScripts.s[key] + "\n"),
   },
