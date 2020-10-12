@@ -40,7 +40,7 @@ const Base: RawModule = {
     run: () => console.info(`Available config: ${config.getKeysString()}`),
   },
   
-  'fee': {
+  'doForEach': {
     help: 'For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void}',
     getRun: iterate => (callback: FileIteratorCallback) => iterate(callback),
   },
