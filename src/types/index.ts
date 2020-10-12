@@ -14,26 +14,31 @@ export interface Entry extends Dirent, FileMetadata {}
 export type FileIteratorCallback<TReturn extends any = any> = (ent: Entry, folder: string) => TReturn|Promise<TReturn>;
 export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>) => void;
 
-export type OperationFunction = CustomFunction & {(...args: any): any|Promise<any>};
+export type ActionFunction = (argsString: string) => any|Promise<any>;
+export type ActionFunctionEvall = (body: string, opts: Record<string, any>) => any|Promise<any>;
+export type OperationFunction = CustomFunction & {(...args: any[]): any|Promise<any>};
 
-export interface BaseOperation {
+interface BaseOperation {
   help: string;
+}
+export interface RawOperationNormal extends BaseOperation {
   run: OperationFunction;
 }
-export interface ShallowDeepRawOperation {
-  help: string;
+export interface RawOperationShallowDeep extends BaseOperation {
   getRun: (iterator: FileIteratorFunction) => OperationFunction;
 };
-export interface SimpleRawOperation {
-  help: string;
-  run_s: OperationFunction;
+export interface RawOperationSimple extends BaseOperation {
+  run_s: ActionFunction;
+};
+export interface RawOperationCompiled extends BaseOperation {
+  run_c: ActionFunction;
 };
 export interface Operation extends BaseOperation {
+  action: ActionFunction;
   cmdName: string;
-  simple: boolean;
 }
 
-export type RawOperation = BaseOperation | SimpleRawOperation | ShallowDeepRawOperation;
+export type RawOperation = RawOperationNormal | RawOperationSimple | RawOperationShallowDeep | RawOperationCompiled;
 export type RawModule = Record<string, RawOperation>;
 export type Module = Array<Operation>;
 

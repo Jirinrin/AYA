@@ -1,7 +1,7 @@
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
-import { changeDirectory, getCommandHelp, setConfigItem } from "../util";
+import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 
 const Base: RawModule = {
@@ -23,7 +23,7 @@ const Base: RawModule = {
   
   'helpp': {
     help: 'Get help for specific command',
-    run_s: (commandName: string) => getCommandHelp(r, commandName),
+    run_c: evalls((commandName: string) => getCommandHelp(r, commandName)),
   },
   
   'config-get': {

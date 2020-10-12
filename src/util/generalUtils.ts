@@ -28,7 +28,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
       .map(p => p.split('=')?.[0] ?? p)
       .map(p => p.trim())
       .filter(p => !!p);
-  const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts');
+  const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts') ?? false;
   const paramsCount = hasOpts ? paramNames.length-1 : paramNames.length;
   // Prefix string params with `s_` to allow passing them dry, or ask the gods to interpret it as a string
   const paramData = paramNames.map(p => {

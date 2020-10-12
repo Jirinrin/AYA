@@ -12,7 +12,7 @@ interface RenameOptions {
 const eerOpts = "--skipEntType=file|directory, --includeExt, --musicFiles, --imageFiles"
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
-  renameCallback: (fileName: string, metadata?: Object) => string, 
+  renameCallback: (fileName: string, metadata?: Object) => string,
   {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {},
 ) =>
   iterate((ent, folder) => {

@@ -2,7 +2,8 @@ import * as chalk from "chalk";
 import { Completer, CompleterResult, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
-import { cmdInfo, r } from "..";
+import { r } from "..";
+import { cmdInfo } from "../modules";
 import highlightLookup from "./highlightLookup";
 import { config, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
@@ -46,10 +47,10 @@ function getCompletionData(line: string): CustomCompleterResult {
   const typingOption = line.match(/--(\w*)([= ]\w*)?$/);
   if (typingOption && renderOpts) {
     const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
-    global.log('slice', typingOption.index, typOptName, typOptName.length, line, line.slice(typingOption.index+typOptName.length+1))
+    // global.log('slice', typingOption.index, typOptName, typOptName.length, line, line.slice(typingOption.index+typOptName.length+1))
     if (typOptFromEquals)
       return completeCaseIns(line.slice(typingOption.index+typOptName.length+2+1), optsValues[typOptName] ?? []);
-    return completeCaseIns(line.slice(typingOption.index), renderOpts);
+    return completeCaseIns(line.slice(typingOption.index), [...renderOpts, '--help']);
   }
 
   if (cmdName.match(/^userscript(?:-(get|set|delete))?/))

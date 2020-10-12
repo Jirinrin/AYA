@@ -149,7 +149,7 @@ export class Logger extends LocalStorage {
   private logBase(verbose: boolean, ...message: any[]) {
     const toStr = m => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
     const msg = message
-      .map(m => typeof m === 'string' ? toStr(m) : toStr(m).replace(/^"?(.*)"?$/, '$1')).join(' ')
+      .map(m => typeof m === 'string' ? toStr(m) : toStr(m)?.replace(/^"?(.*)"?$/, '$1')).join(' ')
       .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n');
     fs.appendFileSync(this.filePath, msg, 'utf8');
     return msg;
@@ -182,3 +182,6 @@ export class PersistentLogger extends LocalStorage {
 
 export const config = new Config();
 export const userScripts = new UserScripts();
+
+export const logger = new Logger();
+export const pLogger = new PersistentLogger();
