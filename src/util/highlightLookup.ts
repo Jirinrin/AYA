@@ -23,7 +23,7 @@ const highlights: [string[], chalk.Chalk][] = [
   [['atrule', 'attr-name', 'attr-value', 'function', 'method', 'function-variable'], chalk.greenBright], // --green
   [['parameter' /*should be italic*/, 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
   [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier', 'escape', 'special-escape', 'anchor', 'interpolation-punctuation'], chalk.magentaBright], // --pink
-  [['boolean', 'constant', 'number', 'charclass', 'known-class-name'], chalk.magenta], // --purple
+  [['boolean', 'constant', 'number', 'charclass', 'known-class-name', 'null', 'nil', 'range-punctuation', 'range'], chalk.magenta], // --purple
   [['regex', 'regex-delimiter', 'charset-negation'], chalk.red], // --red
   [['string', 'char', 'template-punctuation'], chalk.yellowBright], // --yellow
 
