@@ -7,8 +7,8 @@ import { r } from "..";
 import { cmdInfo } from "../modules";
 import { escapeRegex, splitArgsString } from "./generalUtils";
 import highlightLookup from "./highlightLookup";
-import { jsGlobalObjects, jsKeywords } from "./input/javascriptComplWords";
-import { config, userScripts } from "./LocalStorage";
+import { jsKeywords } from "./input/javascriptKeywords";
+import { config, logger, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
 
 const getCommand = (line: string) =>
@@ -21,24 +21,34 @@ export type CustomCompleterResult = [completions: string[], matchString: string,
 
 let emptyCompl: CompleterResult;
 
-let jsGlobalKeys: string[];
-let jsGlobalKeyValues: Record<string, string[]>;
+let inittedJsGlobalKeys = false;
+let jsGlobalKeys: Set<string> = new Set<string>(jsKeywords);
+let jsGlobalKeyValues: Record<string, string[]> = {};
+const setGlobalKey = (key: string) => {
+  console.llog('key', key);
+  if (key === 'GLOBAL' || key === 'root') return;
+  if (jsGlobalKeys.has(key)) return;
+
+  jsGlobalKeys.add(key);
+  const obj = global[key];
+  if (typeof obj === 'object' || typeof obj === 'function')
+    jsGlobalKeyValues[key] = [...Object.getOwnPropertyNames(obj), ...Object.keys(obj)];
+}
 const setJsGlobalKeys = () => {
-  jsGlobalKeys = [
-    ...jsGlobalObjects.map(([key]) => key),
-    ...jsKeywords,
-  ];
-  jsGlobalKeyValues = jsGlobalObjects.reduce((acc, [key, obj]) => ({
-    ...acc,
-    [key]: key.match(/^[A-Z]/) ? Object.getOwnPropertyNames(obj) : Object.keys(obj),
-  }), {});
-};
+  inittedJsGlobalKeys = true;
+  Object.getOwnPropertyNames(global).forEach(setGlobalKey);
+  Object.keys(global).forEach(setGlobalKey);
+}
 
 function completeJs(line: string): CustomCompleterResult {
-  if (!jsGlobalKeys) setJsGlobalKeys();
+  if (!inittedJsGlobalKeys) setJsGlobalKeys();
 
-  const checkString = line.slice(line.lastIndexOf(' ')+1);
+  const [_, checkString] = line.match(/[ \(]?([^ \(]*)$/) ?? [];
+  if (!checkString)
+    return emptyCompl;
+
   const [objKeyMatch, objKey, objSubKey] = (checkString.match(/(\w+)\.(\w*)/) ?? []);
+  console.llog('complete js', objKeyMatch, objKey, objSubKey, jsGlobalKeyValues[objKey])
   if (!objKeyMatch)
     // Defined variables will only show up in global when you initialized them with `var`
     return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
