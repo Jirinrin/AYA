@@ -1,5 +1,6 @@
 import * as repl from 'repl';
 import { createInterface } from 'readline';
+import minimist = require('minimist');
 
 import Modules from './modules';
 import { Operation } from './types';
@@ -18,6 +19,14 @@ const rl = createInterface({
 });
 export let r: repl.REPLServer;
 
+type StartOptions = Partial<{
+  start: boolean;
+}>;
+
+const initArgs: StartOptions & Exclude<minimist.ParsedArgs, '_'|'--'> = minimist(process.argv, {alias: {s: 'start'}});
+const initBody = initArgs._.join(' ');
+
+
 function startRepl() {
   r = repl.start({
     ignoreUndefined: true,
@@ -26,20 +35,17 @@ function startRepl() {
     useColors: true,
   });
 
-  try {
-    Modules.forEach((mod) => {
-      mod.forEach((op: Operation) => {
-        r.defineCommand(op.cmdName, op);
-      });
+  Modules.forEach((mod) => {
+    mod.forEach((op: Operation) => {
+      r.defineCommand(op.cmdName, op);
     });
-  } catch (err) {
-    console.trace(err);
-  }
+  });
 
   setupReplCustomization(r);
 
   config.validateJson();
 }
+
 
 function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Promise<void> {
   const triesLeft = repeatTimes - 1;
@@ -66,9 +72,15 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
   });
 }
 
-setFolderRecursive(10)
-  .then(() => {
-    rl.close();
+(async function start() {
+  if (initArgs.start)
+    changeDirectory(process.cwd());
+  else  
+    await setFolderRecursive(10);
+  rl.close();
+  try {
     startRepl();
-  })
-  .catch(console.error);
+  } catch (err) {
+    console.trace(err);
+  }
+})();
