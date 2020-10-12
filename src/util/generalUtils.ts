@@ -75,3 +75,8 @@ export function getHashCode(s: string) {
   }
   return hash;
 };
+
+const regexEscapeRegex = /[-\/\\^$*+?.()|[\]{}]/g
+export function escapeRegex(regexString: string): string {
+  return regexString.replace(regexEscapeRegex, '\\$&');
+}
