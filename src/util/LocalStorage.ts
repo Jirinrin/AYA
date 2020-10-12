@@ -3,6 +3,8 @@ import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
 import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
+import * as defaultUserScripts from './input/defaultUserscripts.json';
+import * as moment from 'moment';
 
 class LocalStorage<T extends Record<string, any> = any> {
   protected filePath: string;
@@ -11,7 +13,7 @@ class LocalStorage<T extends Record<string, any> = any> {
   public get s() { return this.state };
 
   constructor(fileName: string, initState: T, reset?: boolean) {
-    const dir = path.resolve('./.ayaStorage');
+    const dir = path.resolve(path.dirname(require.main.filename), './.ayaStorage');
     if (!fs.existsSync(dir))
       fs.mkdirSync(dir);
     
@@ -110,7 +112,7 @@ type UserScript = string;
 type IUserScripts = Record<string, UserScript>;
 class UserScripts extends LocalStorage<IUserScripts> {
   constructor() {
-    super('scripts.json', {});
+    super('userscripts.json', defaultUserScripts);
   }
 
   private keyExists(key: string): boolean {
@@ -146,8 +148,32 @@ export class Logger extends LocalStorage {
     fs.writeFileSync(this.filePath, '', 'utf8');
   }
 
-  public log(...message: any[]) {
-    fs.appendFileSync(this.filePath, message.map(m => JSON.stringify(m)).join(' ') + '\n', 'utf8');
+  private formatMsg(verbose: boolean, ...message: any[]): string {
+    const toStr = (m: any) => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
+    return message
+      .map(m => typeof m === 'undefined' ? 'undefined' : (typeof m === 'string' ? toStr(m) : toStr(m)?.replace(/^"?(.*)"?$/, '$1'))).join(' ')
+      .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n');
+  }
+
+  private logRaw(msg: string) {
+    fs.appendFileSync(this.filePath, `[${moment().locale('en-gb').format('L LTS')}] ` + msg, 'utf8');
+  }
+  private logBase(verbose: boolean, ...message: any[]) {
+    const msg = this.formatMsg(verbose, ...message);
+    this.logRaw(msg);
+    return msg;
+  }
+  public log = (...message: any[]) => {
+    this.logBase(false, ...message);
+  }
+  public logr = (...message: any[]) => {
+    this.logRaw(message.join(' '));
+  }
+  public logv = (...message: any[]) => {
+    this.logBase(true, ...message);
+  }
+  public logl(...message: any[]) {
+    console.log(this.logBase(false, ...message));
   }
 }
 
@@ -156,11 +182,11 @@ export class PersistentLogger extends LocalStorage {
     super('p-log.json', {});
   }
 
-  public log(...message: any[]) {
+  public log = (...message: any[]) => {
     const msg = message.join(' ');
     const key = getHashCode(msg);
     if (!this.state[key]) {
-      this.set(key, msg)
+      this.set(key, `[${moment().locale('en-gb').format('L LTS')}] ` + msg)
       this.writeState();
     }
   }
@@ -168,3 +194,6 @@ export class PersistentLogger extends LocalStorage {
 
 export const config = new Config();
 export const userScripts = new UserScripts();
+
+export const logger = new Logger();
+export const pLogger = new PersistentLogger();

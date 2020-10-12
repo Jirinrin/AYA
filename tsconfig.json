@@ -7,6 +7,7 @@
     "target": "ES2019",
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "module": "commonjs"
+    "module": "commonjs",
+    "resolveJsonModule": true
   }
 }

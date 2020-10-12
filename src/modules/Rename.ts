@@ -12,7 +12,7 @@ interface RenameOptions {
 const eerOpts = "--skipEntType=file|directory, --includeExt, --musicFiles, --imageFiles"
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
-  renameCallback: (fileName: string, metadata?: Object) => string, 
+  renameCallback: (fileName: string, metadata?: Object) => string,
   {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {},
 ) =>
   iterate((ent, folder) => {
@@ -56,12 +56,12 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   });
 
 
-const Rename: RawModule = {
-  'eer': { // everyEntryRename
+const Rename = {
+  'renameEach': { // everyEntryRename
     help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string} | opts: ${eerOpts}`,
     getRun: iterate => renameEveryEntry(iterate),
   },
-  'eer-rx': { // everyEntryRenameRegex
+  'renameEach-rx': { // everyEntryRenameRegex
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern} | opts: ${eerOpts}`,
     getRun: iterate => (
       r_searchRegex: string|RegExp,

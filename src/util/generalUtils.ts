@@ -1,5 +1,6 @@
-import * as chalk from "chalk";
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
+import minimist = require('minimist');
+import { CommandInfo } from "../modules";
 
 export enum ParamData {
   Any,
@@ -28,7 +29,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
       .map(p => p.split('=')?.[0] ?? p)
       .map(p => p.trim())
       .filter(p => !!p);
-  const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts');
+  const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts') ?? false;
   const paramsCount = hasOpts ? paramNames.length-1 : paramNames.length;
   // Prefix string params with `s_` to allow passing them dry, or ask the gods to interpret it as a string
   const paramData = paramNames.map(p => {
@@ -76,42 +77,26 @@ export function getHashCode(s: string) {
   return hash;
 };
 
-export function indent(indents: number): string {
-  return '  '.repeat(indents);
+const regexEscapeRegex = /[-\/\\^$*+?.()|[\]{}]/g
+export function escapeRegex(regexString: string): string {
+  return regexString.replace(regexEscapeRegex, '\\$&');
 }
 
-export function getTrace() {
-  const err = { name: ' ' };
-  Error.captureStackTrace(err, getTrace);
-  return (err as Error).stack.trim().slice(1);
+/**
+ * @return [body (not trimmed), opts]
+ */
+export function parseArgs(argsString: string, info?: CommandInfo): [body: string, opts: Record<string, any>] {
+  const opts: Record<string, any> & minimist.ParsedArgs = minimist(argsString.split(' '), {alias: info?.optsAliases});
+  const body = opts._.join(' ');
+  delete opts._;
+
+  return [body, opts];
 }
 
-const consolePairings: Partial<{[K in keyof Console]: [Console[K], chalk.Chalk]}> = {
-  log: [console.log, chalk.green],
-  warn: [console.warn, chalk.yellow],
-  error: [console.error, chalk.redBright],
-  info: [console.info, chalk.cyan],
-  debug: [console.debug, chalk.gray],
-  dir: [console.dir, chalk.magenta],
-  table: [console.table, chalk.magentaBright],
-}
-const consolePairingsParsed: Array<[keyof Console, (indents: number) => Console['log']]> =
-  Object.entries(consolePairings).map(([k, [consoleFunc, ch]]: [keyof Console, [Console['log'], chalk.Chalk]]) =>
-    [k, (indents: number) => (...args: any[]) => consoleFunc(indent(indents) + ch(...args))]
-  );
-
-export function setConsole(indents: number = 0) {
-  consolePairingsParsed.forEach(([k, getConsoleFunc]) => console[k] = getConsoleFunc(indents));
-}
-
-let currentIndents = 0;
-export function setConsoleIndentRel(indentsDiff: number) {
-  currentIndents = Math.max(currentIndents + indentsDiff, 0);
-  setConsole(currentIndents);
-  return currentIndents;
-}
-export function setConsoleIndent(indents: number) {
-  if (currentIndents === indents) return;
-  currentIndents = indents;
-  setConsole(currentIndents);
+export function splitArgsString(argsString: string): [reverse: boolean, part1: string, part2?: string] {
+  const [body] = parseArgs(argsString);
+  const bodyIndex = argsString.indexOf(body) ?? 0;
+  const reverse = bodyIndex > 3;
+  const splitIndex = reverse ? bodyIndex : body.length;
+  return [reverse, argsString.slice(0, splitIndex), argsString.slice(splitIndex)];
 }

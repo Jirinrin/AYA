@@ -15,24 +15,40 @@ import * as chalk from "chalk";
 //   not sure        '#e2777a',
 // }
 
-const highlights: [string[], chalk.Chalk][] = [
-  [['script', 'prolog', 'punctuation', 'charset'], chalk], // --foreground
+const defaultHighlights: [string[], chalk.Chalk][] = [
+  [['script', 'prolog', 'punctuation', 'charset', 'interpolation'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
-  [['url', 'built-in', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access'], chalk.cyan], // --cyan
-  [['atrule', 'attr-name', 'attr-value', 'function', 'method'], chalk.greenBright], // --green
-  [['property', 'parameter', 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
-  [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier'], chalk.magentaBright], // --pink
-  [['boolean', 'constant', 'number', 'escape', 'charclass', 'special-escape'], chalk.magenta], // --purple
+  [['url', 'built-in', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access', 'property'], chalk.cyan], // --cyan
+  [['atrule', 'attr-name', 'attr-value', 'function', 'method', 'function-variable'], chalk.greenBright], // --green
+  [['parameter' /*should be italic*/, 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
+  [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier', 'escape', 'special-escape', 'anchor', 'interpolation-punctuation', 'module', 'regex-flags'], chalk.magentaBright], // --pink
+  [['boolean', 'constant', 'number', 'charclass', 'known-class-name', 'null', 'nil', 'range-punctuation', 'range'], chalk.magenta], // --purple
   [['regex', 'regex-delimiter', 'charset-negation'], chalk.red], // --red
-  [['string', 'char'], chalk.yellowBright], // --yellow
+  [['string', 'char', 'template-punctuation'], chalk.yellowBright], // --yellow
 
   // not sure: 'inserted', 'deleted', 'namespace'
 
   [['italic'], chalk.italic],
-  [["bold", "important"], chalk.bold],
+  [['bold', 'important'], chalk.bold],
 ];
 
-const highlightLookup: Record<string, chalk.Chalk> = {};
-highlights.forEach(([classes, color]) => classes.forEach(c => highlightLookup[c] = color));
+const languageSpecificHighlights: Record<string, typeof defaultHighlights> = {
+  'language-regex': [
+    [['_', 'escape', 'special-escape', 'charset'], chalk],
+  ],
+};
 
-export default highlightLookup;
+export type IHighlightLookup = Record<string, chalk.Chalk> & {_: chalk.Chalk};
+const toLookup = (h: typeof defaultHighlights): Record<string, chalk.Chalk> => Object.fromEntries( h.flatMap(([colors, ch]) => colors.map(c => [c, ch])) );
+
+export const defaultHighlightLookup: IHighlightLookup = {_: chalk, ...toLookup(defaultHighlights)};
+
+export const languageSpecificHighlightLookup: Record<string, IHighlightLookup> = {};
+
+Object.entries(languageSpecificHighlights).forEach(([k, lookupArr]) => {
+  const newLookup = toLookup(lookupArr);
+  languageSpecificHighlightLookup[k] = {
+    ...defaultHighlightLookup,
+    ...newLookup,
+  };
+});

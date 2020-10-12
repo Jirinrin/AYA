@@ -1,0 +1,1 @@
+& $PSScriptRoot\aya.bat $args

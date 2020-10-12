@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "ts-node src",
+    "watch": "tsc --watch",
+    "start": "tsc && start:dev",
+    "start:dev": "node build",
     "compile": "tsc && pkg -t node10-win-x64 build\\index.js -o ayayatsuri"
   },
   "repository": {
@@ -25,6 +27,7 @@
     "chalk": "^4.1.0",
     "exiftool-vendored": "^8.21.1",
     "minimist": "^1.2.5",
+    "moment": "^2.29.1",
     "music-metadata": "^4.1.0",
     "refractor": "^3.1.0"
   },

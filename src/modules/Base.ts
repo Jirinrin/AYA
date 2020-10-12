@@ -1,10 +1,11 @@
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
-import { changeDirectory, getCommandHelp, setConfigItem } from "../util";
+import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
+import { highlightLine } from "../util/replCustomization";
 
-const Base: RawModule = {
+const Base = {
   'ls': {
     help: 'Show entries in current directory',
     getRun: iterator => () => iterator((e) => {
@@ -23,7 +24,7 @@ const Base: RawModule = {
   
   'helpp': {
     help: 'Get help for specific command',
-    run_s: (commandName: string) => getCommandHelp(r, commandName),
+    run_c: evalls((commandName: string) => getCommandHelp(r, commandName)),
   },
   
   'config-get': {
@@ -39,7 +40,7 @@ const Base: RawModule = {
     run: () => console.info(`Available config: ${config.getKeysString()}`),
   },
   
-  'fee': {
+  'doForEach': {
     help: 'For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void}',
     getRun: iterate => (callback: FileIteratorCallback) => iterate(callback),
   },
@@ -50,7 +51,7 @@ const Base: RawModule = {
   },
   'userscript-get': {
     help: 'Print the contents of the userscript with the key {$1}',
-    run: (key: string) => console.log(userScripts.s[key]),
+    run: (key: string) => console.log(userScripts.s[key].split('\n').map(line => highlightLine(line.trim())).join('\n')),
   },
   'userscript-set': {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
@@ -60,7 +61,7 @@ const Base: RawModule = {
     help: 'Delete userscript with the key {$1}',
     run: (key: string) => userScripts.delete(key),
   },
-  'userscript': {
+  'userscript': { // todo: some way to make this awaitable (i.e. wait until all code in the script is done)
     help: 'Run userscript with the key {$1}',
     run: (key: string) => r.write(userScripts.s[key] + "\n"),
   },
