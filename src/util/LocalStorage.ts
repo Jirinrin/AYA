@@ -110,7 +110,7 @@ type UserScript = string;
 type IUserScripts = Record<string, UserScript>;
 class UserScripts extends LocalStorage<IUserScripts> {
   constructor() {
-    super('scripts.json', {});
+    super('userscripts.json', {});
   }
 
   private keyExists(key: string): boolean {

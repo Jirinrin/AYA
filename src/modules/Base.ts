@@ -3,6 +3,7 @@ import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
 import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
+import { highlightLine } from "../util/replCustomization";
 
 const Base: RawModule = {
   'ls': {
@@ -50,7 +51,7 @@ const Base: RawModule = {
   },
   'userscript-get': {
     help: 'Print the contents of the userscript with the key {$1}',
-    run: (key: string) => console.log(userScripts.s[key]),
+    run: (key: string) => console.log(userScripts.s[key].split('\n').map(line => highlightLine(line.trim())).join('\n')),
   },
   'userscript-set': {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
