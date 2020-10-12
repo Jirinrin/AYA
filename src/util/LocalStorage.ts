@@ -151,7 +151,7 @@ export class Logger extends LocalStorage {
   private formatMsg(verbose: boolean, ...message: any[]): string {
     const toStr = (m: any) => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
     return message
-      .map(m => typeof m === 'string' ? toStr(m) : toStr(m)?.replace(/^"?(.*)"?$/, '$1')).join(' ')
+      .map(m => typeof m === 'undefined' ? 'undefined' : (typeof m === 'string' ? toStr(m) : toStr(m)?.replace(/^"?(.*)"?$/, '$1'))).join(' ')
       .replace(/\\([^\\])/g, '$1') + (verbose ? '\n\n' : '\n');
   }
 
