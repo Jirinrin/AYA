@@ -73,7 +73,7 @@ function completeCaseIns(stringToCheck: string, completions: string[]|Record<str
 function getCompletionData(line: string): CustomCompleterResult {
   emptyCompl = [ [], line ] as CompleterResult;
   if (!line.startsWith('.'))
-    return completeJs(line);   
+    return completeJs(line);
 
   const [cmdMatch, cmdName, space] = getCommand(line);
   if (!space || !r.commands[cmdName]) {
@@ -94,14 +94,16 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(line.slice(typingOption.index), [...renderOpts, '--help']);
   }
 
+  const lineAfterCommand = line.slice(cmdMatch.length);
   if (cmdName.match(/^userscript(?:-(get|set|delete))?/))
-    return completeCaseIns(line.slice(cmdMatch.length), userScripts.s);
+    return completeCaseIns(lineAfterCommand, userScripts.s);
     if (cmdName.match(/^config-[gs]et/))
-    return completeCaseIns(line.slice(cmdMatch.length), config.s);
+    return completeCaseIns(lineAfterCommand, config.s);
     if (cmdName === 'helpp')
-    return completeCaseIns(line.slice(cmdMatch.length), r.commands);
+    return completeCaseIns(lineAfterCommand, r.commands);
 
-  return emptyCompl;
+  // Assuming that in most cases you're going to want javascript-like things after you command
+  return completeJs(lineAfterCommand);
 }
 
 export const completer: Completer = (line: string) => {
