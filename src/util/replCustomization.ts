@@ -92,11 +92,17 @@ function getCompletionData(line: string): CustomCompleterResult {
   }
 
   const lineAfterCommand = line.slice(cmdMatch.length);
-  if (cmdName.match(/^userscript(?:-(get|set|delete))?/))
-    return completeCaseIns(lineAfterCommand, userScripts.s);
-    if (cmdName.match(/^config-[gs]et/))
-    return completeCaseIns(lineAfterCommand, config.s);
-    if (cmdName === 'helpp')
+  const [args] = parseArgs(lineAfterCommand);
+  const lastArg = args[args.length-1] ?? '';
+  const nthArg = args.length || 1;
+
+  if (cmdName.match(/^userscript(?:-(get|set))?/) && nthArg===1)
+    return completeCaseIns(lastArg, userScripts.s);
+  if (cmdName.match(/^userscript-delete/))
+    return completeCaseIns(lastArg, userScripts.s);
+  if (cmdName.match(/^config-[gs]et/) && nthArg===1)
+    return completeCaseIns(lastArg, config.s);
+  if (cmdName === 'helpp')
     return completeCaseIns(lineAfterCommand, r.commands);
 
   // Assuming that in most cases you're going to want javascript-like things after you command
