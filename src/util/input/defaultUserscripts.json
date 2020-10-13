@@ -1,5 +1,4 @@
 {
-  "testtt": ".fee (f, ff) => console.log(ff.name)",
-  "eeee": "var bla = 34;\n .fee () => console.error('waaa', bla)",
-  "teToTa": "ijerier"
+  "zipAll": ".doForEach f => exec(`7za a \"${f.baseName}.zip\" \"${f.name}\" `)",
+  "allMetadata": ".doForEach console.log"
 }
