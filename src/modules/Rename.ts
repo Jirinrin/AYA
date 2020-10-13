@@ -12,24 +12,16 @@ interface RenameOptions {
 const eerOpts = "--skipEntType=file|directory, --includeExt, --musicFiles, --imageFiles"
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
-  renameCallback: (fileName: string, metadata?: Object) => string,
+  renameCallback: (fileName: string, metadata?: FileMetadata) => string,
   {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {},
 ) =>
   iterate((ent, folder) => {
-    let metadata: FileMetadata = {};
-    if (musicFiles) {
-      metadata.mm = ent.mm;
-      if (!metadata.mm) {
-        return;
-      }
-    } else if (imageFiles) {
-      metadata.im = ent.im;
-      if (!metadata.im) {
-        return;
-      }
-    }
+    if (musicFiles && !ent.mm)
+      return;
+    else if (imageFiles && !ent.im)
+      return;
 
-    const rename = (name: string, metadata?: Object) => {
+    const rename = (name: string, metadata?: FileMetadata) => {
       const result = renameCallback(name, metadata);
       if (!result) throw new Error('Please return something from your renaming function');
       return result;
@@ -37,11 +29,9 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
 
     let newName: string;
     if (includeExt) {
-      newName = rename(ent.name, metadata);
+      newName = rename(ent.name, ent);
     } else {
-      const [baseName, ext] = splitFileName(ent.name);
-      metadata.ext = ext.replace('.', '');
-      newName = rename(baseName, metadata) + ext;
+      newName = rename(ent.baseName, ent) + '.'+ent.ext;
     }
 
     if (

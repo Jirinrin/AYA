@@ -1,17 +1,18 @@
 import { Dirent } from "fs";
 import { IAudioMetadata } from "music-metadata";
-import { Tags } from "exiftool-vendored";
+import * as exif from "exiftool-vendored";
 import { CustomFunction } from "../util";
 
 export interface FileMetadata {
   mm?: IAudioMetadata;
-  im?: Tags;
-  ext?: string;
+  im?: exif.Tags;
+  ext: string;
+  baseName: string;
 }
 
-export interface Entry extends Dirent, FileMetadata {}
+export interface DirentWithMetadata extends Dirent, FileMetadata {}
 
-export type FileIteratorCallback<TReturn extends any = any> = (ent: Entry, folder: string) => TReturn|Promise<TReturn>;
+export type FileIteratorCallback<TReturn extends any = any> = (ent: DirentWithMetadata, folder: string) => TReturn|Promise<TReturn>;
 export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>) => void;
 
 export type ActionFunction = (argsString: string) => any|Promise<any>;

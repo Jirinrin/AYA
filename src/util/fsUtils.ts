@@ -4,7 +4,7 @@ import * as path from 'path';
 import { config } from './LocalStorage';
 import { putImageMetadataOnEntity } from '../modules/Image';
 import { putMusicMetadataOnEntity } from '../modules/Music';
-import { Entry, FileIteratorCallback } from '../types';
+import { DirentWithMetadata, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 
 /**
@@ -20,9 +20,8 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
       console.error(err);
       return;
     }
-    files?.forEach(async (ent) => {
-      if (config.s.imageMetadata) ent = await putImageMetadataOnEntity(ent, folder);
-      if (config.s.musicMetadata) ent = await putMusicMetadataOnEntity(ent, folder);
+    files?.forEach(async (ent: DirentWithMetadata) => {
+      await putMetadataOnEntity(ent, folder);
       callback(ent, folder);
     });
   });
@@ -37,16 +36,14 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
   try {
     if (typeof callback !== 'function')
       throw new Error('Callback should be a function');
-    const e = getEnts(folder);
-    const ents: Entry[] = await Promise.all(
-      e?.map(async (ent) => {
-        if (config.s.musicMetadata) ent = await putMusicMetadataOnEntity(ent, folder);
-        if (config.s.imageMetadata) ent = await putImageMetadataOnEntity(ent, folder);
-        return ent;
+    const ents = getEnts(folder);
+    const mEnts: DirentWithMetadata[] = await Promise.all(
+      ents?.map(async (ent: DirentWithMetadata) => {
+        return await putMetadataOnEntity(ent, folder);
       }) ?? [],
     );
 
-    for (const ent of ents) {
+    for (const ent of mEnts) {
       try {
         await callback(ent, folder);
       } catch (err) {
@@ -130,4 +127,17 @@ export function simpleMove(originalFolderPath: string, fileName: string, newFold
     path.join(newFolderPath,      fileName),
     isDirectory,
   );
+}
+
+function putFileDataOnEntity(ent: DirentWithMetadata): void {
+  const [baseName, ext] = splitFileName(ent.name);
+  ent.ext = ext.replace('.', '');
+  ent.baseName = baseName;
+}
+
+async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
+  putFileDataOnEntity(ent);
+  if (config.s.musicMetadata) await putMusicMetadataOnEntity(ent, folder);
+  if (config.s.imageMetadata) await putImageMetadataOnEntity(ent, folder);
+  return ent;
 }
