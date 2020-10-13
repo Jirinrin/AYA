@@ -214,22 +214,20 @@ function /*REPLServer.*/refreshCurrentLine(input: string) {
 }
 
 export function setupReplCustomization(r: REPLServer) {
-  const rr = r as any;
-
   process.stdin.on('keypress', (c, k) => {
     if (!config.s.syntaxHighlighting) return;
 
     if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
       // todo: remove timeout?
       setTimeout(() => {
-        const edited = highlightLine(rr.line);
+        const edited = highlightLine(r.line);
         // global.log('yo', rr.line, '|||', edited);
-        rr._refreshCurrentLine(edited);
+        r._refreshCurrentLine(edited);
       }, 0);
     }
   });
 
-  rr._refreshCurrentLine = refreshCurrentLine;
+  r._refreshCurrentLine = refreshCurrentLine;
 
-  rr._tabComplete = customTabComplete;
+  r._tabComplete = customTabComplete;
 }
