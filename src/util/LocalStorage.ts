@@ -172,7 +172,7 @@ export class Logger extends LocalStorage {
   public logv = (...message: any[]) => {
     this.logBase(true, ...message);
   }
-  public logl(...message: any[]) {
+  public logl = (...message: any[]) => {
     console.log(this.logBase(false, ...message));
   }
 }

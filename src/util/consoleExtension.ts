@@ -34,10 +34,12 @@ export function getTrace() {
 export function formatMsg(verbose: boolean, ...message: any[]): string {
   const toStr = (m: any) => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
   return message
-    .map(m => typeof m === 'string' 
-      ? (verbose ? toStr(m) : m)
-      : highlight( toStr(m)?.replace(/^"?(.*)"?$/, '$1').replace(/\\([^\\])/g, '$1'), 'json' )
-    )
+    .map(m => {
+      if (typeof m === 'string') return (verbose ? toStr(m) : m);
+      if (typeof m === 'undefined') return 'undefined';
+      if (m instanceof Error) return '' + m;
+      return highlight( toStr(m)?.replace(/^"?(.*)"?$/, '$1').replace(/\\([^\\])/g, '$1') ?? '', 'json' );
+    })
     .join(' ') + (verbose ? '\n' : '');
 }
 
