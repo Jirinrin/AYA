@@ -54,7 +54,7 @@ const Rename = {
   'renameEach-rx': { // everyEntryRenameRegex
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern} | opts: ${eerOpts}`,
     getRun: iterate => (
-      r_searchRegex: string|RegExp,
+      ss_searchRegex: string|RegExp,
       s_replacePattern: string,
       opts?: RenameOptions,
     ) => {

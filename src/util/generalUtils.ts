@@ -12,6 +12,7 @@ export enum ParamData {
 interface IFunctionData {
   paramNames: string[];
   hasOpts: boolean;
+  hasInfiniteParams: boolean;
   paramsCount: number;
   paramData: ParamData[];
 }
@@ -23,18 +24,20 @@ export type CustomFunction = { (...args: any): any; paramNames?: string[]; };
 export function getFunctionData(func: CustomFunction): IFunctionData {
   const funcStr = func.toString();
   const paramNames = func.paramNames ??
-    ( funcStr.match(/\(([\w\s,{}=]*)\)/) ?? funcStr.match(/(\w*) *=>/) )[1] 
+    ( funcStr.match(/\(([\w\s,{}=\.]*)\)/) ?? funcStr.match(/(\w*) *=>/) )[1] 
       .replace(/{[\w,\s]+}/g, '_opts')
       .split(/\s*,\s*/)
       .map(p => p.split('=')?.[0] ?? p)
       .map(p => p.trim())
       .filter(p => !!p);
   const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts') ?? false;
+  const hasInfiniteParams = !!paramNames[paramNames.length-1]?.match(/^\.{3}\w+/);
   const paramsCount = hasOpts ? paramNames.length-1 : paramNames.length;
+
   // Prefix string params with `s_` to allow passing them dry, or ask the gods to interpret it as a string
   const paramData = paramNames.map(p => {
-    if (p.includes('s_')) return ParamData.String;
-    if (p.includes('r_')) return ParamData.MaybeString;
+    if (p.startsWith('s_')) return ParamData.String;
+    if (p.startsWith('ss_')) return ParamData.MaybeString;
     return ParamData.Any;
   });
 
@@ -45,7 +48,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
   // console.log('func params count', paramsCount);
   // console.log('func opts', hasOpts);
 
-  return { paramNames, hasOpts, paramsCount, paramData };
+  return { paramNames, hasOpts, hasInfiniteParams, paramsCount, paramData };
 }
 
 type SimpleType = number | string | boolean | null;
