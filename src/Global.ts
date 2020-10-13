@@ -1,4 +1,5 @@
 import { exec } from "child_process";
+import { r } from ".";
 import ENV from "./ENV";
 
 export {};
@@ -7,6 +8,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       exec: (cmd: string) => void;
+      scriptFromHistory(from: number): string;
     }
   }
 }
@@ -21,4 +23,19 @@ global.exec = (cmd) => {
       console.error(stderr);
     }
   });
+};
+
+/**
+ * Generates a script based on the history of what you typed. Three alternatives for specifying this in the params:
+ * [int]: the total number of lines going back that you want
+ * [int, int]: the range of lines that you want (e.g. [2, 4] gets the last 4 lines except the last line you typed)
+ * [...int[]]: the indices of the lines that you wanted, counting back from the current line
+ */
+global.scriptFromHistory = (...items: number[]) => {
+  const lines = items.length === 1 
+    ? r.history.slice(1, items[0]+1)
+    : items.length === 2
+      ? r.history.slice(items[0], items[1])
+      : items.map(i => r.history[i]);
+  return lines.reverse().join('\n');
 };
