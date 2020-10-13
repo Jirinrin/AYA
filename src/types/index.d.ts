@@ -16,7 +16,7 @@ export type FileIteratorCallback<TReturn extends any = any> = (ent: DirentWithMe
 export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>) => void;
 
 export type ActionFunction = (argsString: string) => any|Promise<any>;
-export type ActionFunctionEvall = (body: string, opts: Record<string, any>) => any|Promise<any>;
+export type ActionFunctionEvall = (rawArgs: string[], opts: Record<string, any>) => any|Promise<any>;
 export type OperationFunction = CustomFunction & {(...args: any[]): any|Promise<any>};
 
 interface BaseOperation {

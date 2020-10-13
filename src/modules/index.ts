@@ -1,4 +1,4 @@
-import { Module, Operation, RawOperationShallowDeep, RawModule, RawOperation, RawOperationSimple, RawOperationCompiled, ActionFunction, ActionFunctionEvall } from '../types';
+import { Module, Operation, RawOperationShallowDeep, RawOperation, RawOperationSimple, RawOperationCompiled, ActionFunction, ActionFunctionEvall } from '../types';
 import { forEveryEntry, forEveryEntryDeep, getFunctionData, parseArgs } from '../util';
 import ENV from '../ENV';
 import { evall, evalls } from '../util/replUtils';
@@ -41,6 +41,10 @@ function actionIsSimple(op: RawOperation, a: ActionFunction|ActionFunctionEvall)
   return isCompiled(op) || isSimp(op);
 }
 
+
+// todo: move to better location (?)
+export const getCommand = (line: string) =>
+  (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
 export interface CommandInfo {
   help: string;
@@ -85,7 +89,7 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
   return {
     help,
     action: async (argsString) => {
-      const [body, opts] = parseArgs(argsString, info);
+      const [rawArgs, opts] = parseArgs(argsString, info);
 
       if (opts.help)
         return (Base.helpp as RawOperationCompiled).run_c(cmdName);
@@ -93,7 +97,7 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
       if (actionIsSimple(op, action))
         return action(argsString);
       else
-        return action(body, opts);
+        return action(rawArgs, opts);
     },
   };
 }

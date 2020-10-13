@@ -3,7 +3,8 @@ import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
 import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
-import { getCommand, highlightLine } from "../util/replCustomization";
+import { highlightLine } from "../util/replCustomization";
+import { getCommand } from ".";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
   if (!userScripts.s[key]) return console.error(`Userscript with key ${key} sure doesn\'t seem to exist`);

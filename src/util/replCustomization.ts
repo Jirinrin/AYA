@@ -4,15 +4,12 @@ import * as refractor from "refractor";
 import { REPLServer } from "repl";
 
 import { r } from "..";
-import { cmdInfo } from "../modules";
-import { escapeRegex, splitArgsString } from "./generalUtils";
+import { cmdInfo, getCommand } from "../modules";
+import { escapeRegex, parseArgs, splitArgsString } from "./generalUtils";
 import { defaultHighlightLookup, IHighlightLookup, languageSpecificHighlightLookup } from "./highlightLookup";
 import { jsKeywords } from "./input/javascriptKeywords";
 import { config, userScripts } from "./LocalStorage";
 import { customTabComplete } from "./replCustomizationOverwrite";
-
-const getCommand = (line: string) =>
-  (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
 
 // Auto completion

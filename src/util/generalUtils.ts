@@ -88,16 +88,16 @@ export function escapeRegex(regexString: string): string {
 /**
  * @return [body (not trimmed), opts]
  */
-export function parseArgs(argsString: string, info?: CommandInfo): [body: string, opts: Record<string, any>] {
-  const opts: Record<string, any> & minimist.ParsedArgs = minimist(argsString.split(' '), {alias: info?.optsAliases});
-  const body = opts._.join(' ');
+export function parseArgs(argsString: string, info?: CommandInfo): [args: string[], opts: Record<string, any>] {
+  const opts = minimist(argsString.split(' '), {alias: info?.optsAliases});
+  const args = opts._.join(' ').match(/"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[\S]+/g);
   delete opts._;
 
-  return [body, opts];
+  return [args ?? [], opts];
 }
 
 export function splitArgsString(argsString: string): [reverse: boolean, part1: string, part2?: string] {
-  const [body] = parseArgs(argsString);
+  const body = parseArgs(argsString)[0].join(' ');
   const bodyIndex = argsString.indexOf(body) ?? 0;
   const reverse = bodyIndex > 3;
   const splitIndex = reverse ? bodyIndex : body.length;
