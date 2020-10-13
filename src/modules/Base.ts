@@ -3,7 +3,12 @@ import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
 import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
-import { highlightLine } from "../util/replCustomization";
+import { getCommand, highlightLine } from "../util/replCustomization";
+
+const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
+  if (!userScripts.s[key]) return console.error(`Userscript with key ${key} sure doesn\'t seem to exist`);
+  return fn(key);
+};
 
 const Base = {
   'ls': {
@@ -51,19 +56,23 @@ const Base = {
   },
   'userscript-get': {
     help: 'Print the contents of the userscript with the key {$1}',
-    run: (key: string) => console.log(userScripts.s[key].split('\n').map(line => highlightLine(line.trim())).join('\n')),
+    run: withCheckUserScriptKey((key: string) => console.log( userScripts.s[key].split('\n').map(line => highlightLine(line.trim())).join('\n') )),
   },
   'userscript-set': {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
-    run: (key: string, s_code: string) => userScripts.set(key, s_code.replace(/\\n/g, '\n')),
+    run: (key: string, ss_code: string) => {
+      userScripts.set(key, ss_code.replace(/\\n/g, '\n'));
+    },
   },
   'userscript-delete': {
-    help: 'Delete userscript with the key {$1}',
-    run: (key: string) => userScripts.delete(key),
+    help: 'Delete userscript with the key(s) {$1} {$...}',
+    run: (...keys: string[]) => {
+      keys.forEach(withCheckUserScriptKey(key => userScripts.delete(key)));
+    },
   },
   'userscript': { // todo: some way to make this awaitable (i.e. wait until all code in the script is done)
     help: 'Run userscript with the key {$1}',
-    run: (key: string) => r.write(userScripts.s[key] + "\n"),
+    run: withCheckUserScriptKey((key: string) => runUserscript(userScripts.s[key] + "\n")),
   },
 
   // 'eval': {
@@ -72,5 +81,16 @@ const Base = {
   // },
 };
 
+export async function runUserscript(txt: string) {
+  const lines = txt.split('\n').map(l => l.trim());
+  for (const line of lines) {
+    if (line.startsWith('.')) {
+      const [cmdMatch, cmdName] = getCommand(line);
+      await r.commands[cmdName].action.bind(r)(line.slice(cmdMatch.length));
+    } else if (line !== '') {
+      r.write(line);
+    }
+  }
+}
 
 export default Base;
