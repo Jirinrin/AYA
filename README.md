@@ -41,11 +41,10 @@ ent will get property `mm` for you to access
 
 ## TODO
 - add how-to on using scripts, add examples of things you can do with this thing, supply options, ...
-- Expose specific file explorer methods to fee, e.g. a 'move', 'mkdir', 'copy, etc via a separate 'lib' object in the callback, with extra user friendliness allowing e.g. `../dir1`
-- allow passing arguments to the initial call of the process (e.g. which command to run, or which userscript to run) (=> enables putting a static bat file in a folder which does a thing)
+- Expose specific file explorer methods, e.g. a 'move', 'mkdir', 'copy, etc, with extra user friendliness allowing e.g. `../dir1`
+
 - add ora fancy spinner thingy
 - have some [iter] like (colored?) label in the help of commands that iterate
-- set userscript based on history, e.g. use the last x lines. Or maybe even better: util functie which converts the last x lines to a string, so you can pass that as a variable to .userscript-set
 - go through todos in code
 - do exe releases every once in a while?
 
