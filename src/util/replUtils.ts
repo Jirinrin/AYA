@@ -15,27 +15,21 @@ export const globalEval = eval;
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
 export function evall(func: OperationFunction, info: CommandInfo): ActionFunctionEvall {
-  let { paramsCount, paramData } = getFunctionData(func);
+  let { paramsCount, paramData, hasInfiniteParams } = getFunctionData(func);
 
-  return async (body, opts = {}): Promise<void> => {
+  return async (rawArgs, opts): Promise<void> => {
     try {
       setConsoleIndent(0);
 
-      if (paramsCount > 0 && !body)
-        throw new ValidationError(`This command requires ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
+      if (rawArgs.length < paramsCount)
+        throw new ValidationError(`This command requires at least ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
 
-      let argsArray: string[];
-      if (paramsCount == 0) {
-        argsArray = [];
-      } else if (paramsCount == 1) {
-        argsArray = [body];
-      } else {
-        const partsMatch = body.match(/"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[\S]+/g);
-        if (partsMatch.length < paramsCount)
-          throw new ValidationError(`This command requires ${paramsCount} arguments instead of ${partsMatch.length}`);
-        argsArray = [...partsMatch.slice(0,paramsCount-1), partsMatch.slice(paramsCount-1).join(' ')];
-      }
-      
+      let argsArray = hasInfiniteParams
+        ? rawArgs
+        : paramsCount < 2
+          ? [rawArgs?.join(' ')]
+          : [...rawArgs.slice(0,paramsCount-1), rawArgs.slice(paramsCount-1).join(' ')];
+
       const parsedArgsArray = argsArray.map((arg: string, i) => {
         const argData = paramData[i];
         try {
@@ -50,7 +44,7 @@ export function evall(func: OperationFunction, info: CommandInfo): ActionFunctio
         }
       });
 
-      if (opts)
+      if (!hasInfiniteParams)
         parsedArgsArray.push(opts);
 
       await func(...parsedArgsArray);
