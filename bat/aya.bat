@@ -1,3 +1,3 @@
 @echo off
 
-node %~dp0\..\build %*
+node --enable-source-maps %~dp0\..\build %*

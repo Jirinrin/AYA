@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "watch": "tsc --watch",
-    "start": "tsc && start:dev",
-    "start:dev": "node build",
+    "start": "node --enable-source-maps build",
+    "build-start": "yarn build && yarn start",
     "compile": "tsc && pkg -t node10-win-x64 build\\index.js -o ayayatsuri"
   },
   "repository": {

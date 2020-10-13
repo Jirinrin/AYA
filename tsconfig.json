@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "module": "commonjs",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "sourceMap": true 
   }
 }
