@@ -73,15 +73,20 @@ export function evalls(func: ActionFunction): ActionFunction {
 /**
  * @return boolean indicating whether it was succesful
  */
-export function changeDirectory(newFolderName: string): boolean {
-  if (fs.existsSync(newFolderName)) {
-    ENV.cwd = newFolderName;
-    console.log(`Current directory was set to "${newFolderName}"`);
+export function changeDirectory(dirPath: string): boolean {
+  const newDirectory = getDirectory(dirPath);
+  if (fs.existsSync(newDirectory)) {
+    ENV.cwd = newDirectory;
+    console.log(`Current directory was set to "${newDirectory}"`);
     return true;
   } else {
     console.error('Provided folder name appears to be invalid. Please try again');
     return false;
   }
+}
+
+export function getDirectory(dirPath: string): string {
+  return dirPath.startsWith('.') ? path.resolve(ENV.cwd, dirPath) : dirPath;
 }
 
 export function getCommandHelp(r: REPLServer, commandName: string) {
