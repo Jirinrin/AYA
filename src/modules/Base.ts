@@ -43,8 +43,8 @@ const Base: RawModule = {
     run: setConfigItem,
   },
   'config': {
-    help: 'List all config items',
-    run: () => console.info(`Available config: ${config.getKeysString()}`),
+    help: 'List all config items | opts: --withValues(-v)',
+    run: (opts: {withValues: boolean}) => console.info('Available config:', opts.withValues ? verbose(config.s) :config.getKeysString()),
   },
   
   'doForEach': {

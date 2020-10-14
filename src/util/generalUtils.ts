@@ -1,6 +1,7 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
 import minimist = require('minimist');
 import { CommandInfo } from "../modules";
+import { highlight } from "./replCustomization";
 
 export enum ParamData {
   Any,
@@ -44,7 +45,8 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
     return ParamData.Any;
   });
 
-  // console.info('data', { params, paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData });
+  // if (funcStr.includes('config'))
+  //   console.info('data', { params, paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData });
 
   return { paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData };
 }
@@ -100,4 +102,20 @@ export function splitArgsString(argsString: string): [reverse: boolean, part1: s
   const reverse = bodyIndex > 3;
   const splitIndex = reverse ? bodyIndex : body.length;
   return [reverse, argsString.slice(0, splitIndex), argsString.slice(splitIndex)];
+}
+
+export function formatMsg(verbose: boolean, ...message: any[]): string {
+  const toStr = (m: any) => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
+  return message
+    .map(m => {
+      if (typeof m === 'string') return (verbose ? toStr(m) : m);
+      if (typeof m === 'undefined') return 'undefined';
+      if (m instanceof Error) return '' + m;
+      return highlight( toStr(m)?.replace(/^"?(.*)"?$/, '$1').replace(/\\([^\\])/g, '$1') ?? '', 'json' );
+    })
+    .join(' ');
+}
+
+export function verbose(msg: any) {
+  return formatMsg(true, msg);
 }

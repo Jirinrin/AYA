@@ -1,6 +1,6 @@
 import * as chalk from "chalk";
+import { formatMsg } from ".";
 import {logger, Logger, PersistentLogger, pLogger } from "./LocalStorage";
-import { highlight } from "./replCustomization";
 
 declare global {
   interface Console {
@@ -29,18 +29,6 @@ export function getTrace() {
   const err = { name: ' ' };
   Error.captureStackTrace(err, getTrace);
   return (err as Error).stack.trim().slice(1);
-}
-
-export function formatMsg(verbose: boolean, ...message: any[]): string {
-  const toStr = (m: any) => (verbose ? JSON.stringify(m, null, 2) : JSON.stringify(m));
-  return message
-    .map(m => {
-      if (typeof m === 'string') return (verbose ? toStr(m) : m);
-      if (typeof m === 'undefined') return 'undefined';
-      if (m instanceof Error) return '' + m;
-      return highlight( toStr(m)?.replace(/^"?(.*)"?$/, '$1').replace(/\\([^\\])/g, '$1') ?? '', 'json' );
-    })
-    .join(' ') + (verbose ? '\n' : '');
 }
 
 type ConsolePairing<K extends keyof Console = any> = [log: Console[K], ch: chalk.Chalk, verbose?: boolean];
