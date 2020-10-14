@@ -65,7 +65,7 @@ async function startRepl() {
     await cmd.action.bind(r)(cmdFromArg ? initArgs[1] : initArgs.join(' '));
     if (!initOpts.continueAfterCmd)
       process.exit();
-  } else if (initArgs) {
+  } else if (initArgs[0]) {
     r.write(initArgs.join(' ') + '\n');
   }
 }
