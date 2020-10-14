@@ -15,14 +15,14 @@ export const globalEval = eval;
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
 export function evall(func: OperationFunction, info: CommandInfo): ActionFunctionEvall {
-  let { paramsCount, paramData, hasInfiniteParams } = getFunctionData(func);
+  let { paramsCount, requiredParamsCount, paramData, hasInfiniteParams } = getFunctionData(func);
 
   return async (rawArgs, opts): Promise<void> => {
     try {
       setConsoleIndent(0);
 
-      if (rawArgs.length < paramsCount)
-        throw new ValidationError(`This command requires at least ${paramsCount} argument${paramsCount > 1 ? 's' : ''}`);
+      if (rawArgs.length < requiredParamsCount)
+        throw new ValidationError(`This command requires at least ${requiredParamsCount} argument${requiredParamsCount > 1 ? 's' : ''}`);
 
       let argsArray = hasInfiniteParams
         ? rawArgs

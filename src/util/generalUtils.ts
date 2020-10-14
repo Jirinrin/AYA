@@ -14,6 +14,7 @@ interface IFunctionData {
   hasOpts: boolean;
   hasInfiniteParams: boolean;
   paramsCount: number;
+  requiredParamsCount: number;
   paramData: ParamData[];
 }
 
@@ -23,16 +24,18 @@ export type CustomFunction = { (...args: any): any; paramNames?: string[]; };
 
 export function getFunctionData(func: CustomFunction): IFunctionData {
   const funcStr = func.toString();
-  const paramNames = func.paramNames ??
+  const params = func.paramNames ??
     ( funcStr.match(/\(([\w\s,{}=\.]*)\)/) ?? funcStr.match(/(\w*) *=>/) )[1] 
       .replace(/{[\w,\s]+}/g, '_opts')
       .split(/\s*,\s*/)
-      .map(p => p.split('=')?.[0] ?? p)
       .map(p => p.trim())
       .filter(p => !!p);
+  const paramNames = params.map(p => p.match(/(\w+) *=/)?.[0] ?? p);
+  const requiredParams = params.filter(p => !p.includes('=') && !p.includes('opts'));
   const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts') ?? false;
   const hasInfiniteParams = !!paramNames[paramNames.length-1]?.match(/^\.{3}\w+/);
-  const paramsCount = hasOpts ? paramNames.length-1 : paramNames.length;
+  const paramsCount = hasOpts ? params.length-1 : params.length;
+  const requiredParamsCount = requiredParams.length;
 
   // Prefix string params with `s_` to allow passing them dry, or ask the gods to interpret it as a string
   const paramData = paramNames.map(p => {
@@ -41,14 +44,9 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
     return ParamData.Any;
   });
 
-  // console.info('func name', func.name);
-  // console.info('func str', funcStr);
-  // console.log('func length', func.length);
-  // console.log('func params', paramNames);
-  // console.log('func params count', paramsCount);
-  // console.log('func opts', hasOpts);
+  // console.info('data', { params, paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData });
 
-  return { paramNames, hasOpts, hasInfiniteParams, paramsCount, paramData };
+  return { paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData };
 }
 
 type SimpleType = number | string | boolean | null;
