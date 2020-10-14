@@ -17,7 +17,7 @@ function makeShallow(op: RawOperationShallowDeep, info: CommandInfo): ActionFunc
   const { paramNames } = getFunctionData(op.getRun(null as any));
 
   const [actionShallow, actionDeep] = [forEveryEntry, forEveryEntryDeep].map(iter => {
-    const output = op.getRun(cb => iter(ENV.cwd, cb));
+    const output = op.getRun((cb, dirOverwrite?) => iter(dirOverwrite ?? ENV.cwd, cb));
     output.paramNames = paramNames;
     return evall(output, info);
   });
