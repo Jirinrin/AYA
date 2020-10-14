@@ -14,10 +14,10 @@ const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
 const Base: RawModule = {
   'ls': {
     help: 'Show entries in current directory',
-    getRun: (iterator) => (s_dirOverwrite: string = ENV.cwd) =>
+    getRun: (iterator) => (s_dirOverwrite: string = undefined) =>
       iterator((e) => {
         console.log(e.isDirectory() ? e.name+'/' : e.name);
-      }, getDirectory(s_dirOverwrite)),
+      }, getDirectory(s_dirOverwrite || ENV.cwd))
   },
 
   'cd': {
