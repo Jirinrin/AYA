@@ -22,14 +22,18 @@ export function evall(func: OperationFunction, info: CommandInfo): ActionFunctio
     try {
       setConsoleIndent(0);
 
+      // console.log('eval', opts, paramsCount, requiredParamsCount, paramData, hasInfiniteParams);
+
       if (rawArgs.length < requiredParamsCount)
         throw new ValidationError(`This command requires at least ${requiredParamsCount} argument${requiredParamsCount > 1 ? 's' : ''}`);
 
       let argsArray = hasInfiniteParams
         ? rawArgs
-        : paramsCount < 2
-          ? [rawArgs?.join(' ')]
-          : [...rawArgs.slice(0,paramsCount-1), rawArgs.slice(paramsCount-1).join(' ')];
+        : paramsCount < 1
+          ? []
+          : paramsCount < 2
+            ? [rawArgs?.join(' ')]
+            : [...rawArgs.slice(0,paramsCount-1), rawArgs.slice(paramsCount-1).join(' ')];
 
       const parsedArgsArray = argsArray.map((arg: string, i) => {
         const argData = paramData[i];
