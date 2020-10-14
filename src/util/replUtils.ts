@@ -1,6 +1,7 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { REPLServer } from 'repl';
-import { forEveryEntry, getFunctionData, ValidationError } from '.';
+import { getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
 import { ParamData } from './generalUtils';
@@ -100,11 +101,4 @@ export function getCommandHelp(r: REPLServer, commandName: string) {
 export function setConfigItem<K extends keyof IConfig>(key: K, val: IConfig[K]) {
   if (config.set(key, val))
     console.info(`Successfully set config item "${key}" to ${val}`);
-}
-
-export function ls() {
-  return forEveryEntry(ENV.cwd, e => {
-    if (e.isDirectory()) e.name += '/';
-    console.log(e.name);
-  });
 }

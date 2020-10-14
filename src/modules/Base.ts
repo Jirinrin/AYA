@@ -1,7 +1,7 @@
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
-import { changeDirectory, evalls, getCommandHelp, setConfigItem } from "../util/replUtils";
+import { changeDirectory, evalls, getCommandHelp, getDirectory, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
@@ -11,12 +11,13 @@ const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
   return fn(key);
 };
 
-const Base = {
+const Base: RawModule = {
   'ls': {
     help: 'Show entries in current directory',
-    getRun: iterator => () => iterator((e) => {
-      console.log(e.isDirectory() ? e.name+'/' : e.name);
-    }),
+    getRun: (iterator) => (s_dirOverwrite: string = ENV.cwd) =>
+      iterator((e) => {
+        console.log(e.isDirectory() ? e.name+'/' : e.name);
+      }, getDirectory(s_dirOverwrite)),
   },
 
   'cd': {
@@ -71,7 +72,7 @@ const Base = {
       keys.forEach(withCheckUserScriptKey(key => userScripts.delete(key)));
     },
   },
-  'userscript': { // todo: some way to make this awaitable (i.e. wait until all code in the script is done)
+  'userscript': {
     help: 'Run userscript with the key {$1}',
     run: withCheckUserScriptKey((key: string) => runUserscript(userScripts.s[key] + "\n")),
   },
