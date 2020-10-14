@@ -2,3 +2,6 @@ node_modules
 *.log
 build/*
 .ayaStorage/
+ayayatsuri-win64.exe
+ayayatsuri-linux64
+ayayatsuri-macos64

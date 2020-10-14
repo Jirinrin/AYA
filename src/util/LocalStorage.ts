@@ -13,7 +13,9 @@ class LocalStorage<T extends Record<string, any> = any> {
   public get s() { return this.state };
 
   constructor(fileName: string, initState: T, reset?: boolean) {
-    const dir = path.resolve(path.dirname(require.main.filename), './.ayaStorage');
+    const dir = process.pkg
+      ? path.resolve(process.execPath, '../.ayaStorage')
+      : path.resolve(path.dirname(require.main.filename), './.ayaStorage');
     if (!fs.existsSync(dir))
       fs.mkdirSync(dir);
     

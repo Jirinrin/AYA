@@ -6,3 +6,16 @@ export declare module 'repl' {
     _tabComplete(lastKeypressWasTab: boolean): void;
   }
 }
+
+declare global {
+  namespace NodeJS {
+    interface Process {
+      pkg?: {
+        entrypoint: string;
+        defaultEntrypoint: string;
+        path: { resolve: Function };
+        mount: Function;
+      };
+    }
+  }
+}
