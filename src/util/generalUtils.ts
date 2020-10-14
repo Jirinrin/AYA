@@ -33,7 +33,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
       .filter(p => !!p);
   const paramNames = params.map(p => p.match(/(\w+) *=/)?.[0] ?? p);
   const requiredParams = params.filter(p => !p.includes('=') && !p.includes('opts'));
-  const hasOpts = paramNames[paramNames.length-1]?.endsWith('opts') ?? false;
+  const hasOpts = paramNames[paramNames.length-1]?.includes('opts') ?? false;
   const hasInfiniteParams = !!paramNames[paramNames.length-1]?.match(/^\.{3}\w+/);
   const paramsCount = hasOpts ? params.length-1 : params.length;
   const requiredParamsCount = requiredParams.length;
@@ -45,7 +45,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
     return ParamData.Any;
   });
 
-  // if (funcStr.includes('config'))
+  // if (funcStr.includes('renameCallback'))
   //   console.info('data', { params, paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData });
 
   return { paramNames, hasOpts, hasInfiniteParams, paramsCount, requiredParamsCount, paramData };
