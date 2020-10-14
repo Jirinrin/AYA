@@ -42,6 +42,10 @@ const Base: RawModule = {
     help: 'Set the contents of config with the key {$1} to the code you define {$2}',
     run: setConfigItem,
   },
+  'config-reset': {
+    help: 'Reset the config to its default values',
+    run_s: config.reset,
+  },
   'config': {
     help: 'List all config items | opts: --withValues(-v)',
     run: (opts: {withValues: boolean}) => console.info('Available config:', opts.withValues ? verbose(config.s) :config.getKeysString()),

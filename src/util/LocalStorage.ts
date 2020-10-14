@@ -107,6 +107,11 @@ class Config extends ValidatedLocalStorage<IConfig> {
   constructor() {
     super('config.json', defaultConfig, configSchema);
   }
+  
+  public reset = () => {
+    this.initFile(defaultConfig);
+    console.info(`Successfully reset config to default`);
+  }
 }
 
 
