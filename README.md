@@ -150,11 +150,8 @@ interface {
 - add ora fancy spinner thingy
 - have some [iter] like (colored?) label in the help of commands that iterate
 - go through todos in code
-- do exe releases every once in a while?  (and for macos and debian would need to do in docker container)
-- init userscripts empty for new users
+- do exe releases every once in a while? (and for macos and debian would need to do in docker container)
+- by default init userscripts empty for new users instead of with my own commands
 
-- And clone objects and such
-- Also expose 'path' thingy in callback for every item?
-- Make forEveryEntryDeep capable of going through multiple nested folders asynchronously (and await that with a Promise.All or something)
 - be able to give argument to userscripts?
 - somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command
