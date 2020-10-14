@@ -46,7 +46,7 @@ ent will get property `mm` for you to access
 - add ora fancy spinner thingy
 - have some [iter] like (colored?) label in the help of commands that iterate
 - go through todos in code
-- do exe releases every once in a while?
+- do exe releases every once in a while?  (and for macos and debian would need to do in docker container)
 
 - And clone objects and such
 - Also expose 'path' thingy in callback for every item?
