@@ -5,6 +5,7 @@ import { changeDirectory, evalls, getCommandHelp, getDirectory, setConfigItem } 
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
+import { verbose } from "../util";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
   if (!userScripts.s[key]) return console.error(`Userscript with key ${key} sure doesn\'t seem to exist`);
@@ -13,7 +14,7 @@ const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
 
 const Base: RawModule = {
   'ls': {
-    help: 'Show entries in current directory',
+    help: 'Show entries in current directory or {$1} a relative/absolute directory you specify',
     getRun: (iterator) => (s_dirOverwrite: string = undefined) =>
       iterator((e) => {
         console.log(e.isDirectory() ? e.name+'/' : e.name);
@@ -30,7 +31,7 @@ const Base: RawModule = {
   },
   
   'helpp': {
-    help: 'Get help for specific command',
+    help: 'Get help for a specific command',
     run_c: evalls((commandName: string) => getCommandHelp(r, commandName)),
   },
   
