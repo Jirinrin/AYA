@@ -14,7 +14,8 @@
     "compile:win": "tsc && pkg -t node12-win-x64 . -o ayayatsuri-win64",
     "compile:linux": "tsc && pkg -t node12-linux-x64 . -o ayayatsuri-linux64",
     "compile:macos": "tsc && pkg -t node12-macos-x64 . -o ayayatsuri-macos64",
-    "compile:all": "yarn compile:win && yarn compile:linux && yarn compile:macos"
+    "compile:all": "yarn compile:win && yarn compile:linux && yarn compile:macos",
+    "init": "yarn && yarn build && yarn compile"
   },
   "repository": {
     "type": "git",
