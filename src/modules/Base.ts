@@ -53,7 +53,7 @@ const Base: RawModule = {
     run: (opts: {withValues: boolean}) => console.info('Available config:', opts.withValues ? verbose(config.s) :config.getKeysString()),
   },
   
-  'doForEach': {
+  'doForEach': { // todo: add shorthand for userscripts
     help: 'For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void}',
     getRun: iterate => (callback: FileIteratorCallback) => iterate(callback),
   },
@@ -83,7 +83,7 @@ const Base: RawModule = {
     run: withCheckUserScriptKey((key: string) => runScript(userScripts.s[key] + "\n")),
   },
   'u': {
-    help: 'Run userscript with the key {$1} (shorthand for .userscript)',
+    help: 'Run userscript with the key {$1} (shorthand for .userscript)', // todo: only parse this in userscript and not show in help
     run: withCheckUserScriptKey((key: string) => runScript(userScripts.s[key] + "\n")),
   },
 
