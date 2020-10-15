@@ -110,6 +110,7 @@ export function formatMsg(verbose: boolean, ...message: any[]): string {
     .map(m => {
       if (typeof m === 'string') return (verbose ? toStr(m) : m);
       if (typeof m === 'undefined') return 'undefined';
+      if (typeof m === 'function') return 'Function ' + m.toString();
       if (m instanceof Error) return '' + m;
       return highlight( toStr(m)?.replace(/^"?(.*)"?$/, '$1').replace(/\\([^\\])/g, '$1') ?? '', 'json' );
     })
