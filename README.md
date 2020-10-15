@@ -30,10 +30,13 @@ Or what about another command I personally use a lot in batch renaming things in
 var counter = 0
 .renameEach fileName => `[${counter++}] ` + fileName.replace(/bla[012]/, 'blargh') --skipEntType=directory
 ```
+Or what if you combine this with the built-in `exec()` function (docs [down below](##-Available-JS-globals))? Zip all files in a directory just like that:
+```js
+.doForEach f => exec(`7za a \"${f.baseName}.zip\" \"${f.name}\" `)
+```
 
 And it gets even cooler! To iterating commands like these you can add the `--deep`/`-d` option, which will make things go recursive to the number of levels specified in `config.recursionDepth`.  
 Watch out with this, as things can get ridiculous real quick. Especially when e.g. renaming directories that it then tries to scan items of etc...
-
 
 
 ## Userscripts
@@ -81,12 +84,14 @@ There are still plans to add a bunch of file system related shorthand functions,
 
 There are some arguments available to pass to Aya:
 - `--start` / `-s` => start Aya without asking for a starting directory
-- `--userscript` / `-u` => directly run a userscript you provide
-- `--cmd` / `-c` => directly run a command you provide (and the text after it will be interpreted as arguments to call the command with)
-- Arguments if you no userscript/command option was specified:
-  - If the first word you give is a userscript or command, it will run that as if you had provided the equivalent `--userscript` / `--cmd`
-  - Otherwise, it will just directly type whichever text you provided as the first line.
-- `--continueAfterCmd` / `-co` => When providing a `--userscript` / `--cmd`, Aya will by default close when it's done. Setting this option allows you to continue using it after the command/userscript is done.
+- If you just throw in some arguments, they'll be parsed as being a userscript:
+  - Multiple line splitting with `\n` or `&&`
+  - Can reference to commands with or without dot
+  - Can reference to userscript with or without `.u(serscript)` in front
+  - Random js code also works as usual
+- `--continueAfterCmd` / `-co` => When providing stuff to run on init, Aya will by default close when it's done. Setting this option allows you to continue using it after the command/userscript is done.
+- `--dir` / `-d` => set starting directory as a command line arg
+- `--help`: get the available init args
 
 
 ## File metadata
@@ -146,12 +151,11 @@ interface {
 
 ## TODO
 - Expose specific file explorer methods, e.g. a 'move', 'mkdir', 'copy, etc, with extra user friendliness allowing e.g. `../dir1`
+- by default init userscripts empty for new users instead of with my own commands
 
 - add ora fancy spinner thingy
 - have some [iter] like (colored?) label in the help of commands that iterate
 - go through todos in code
 - do exe releases every once in a while? (and for macos and debian would need to do in docker container)
-- by default init userscripts empty for new users instead of with my own commands
-
 - be able to give argument to userscripts?
 - somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command

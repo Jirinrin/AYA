@@ -6,12 +6,11 @@ import Modules from './modules';
 import { Module } from './types';
 import './Global';
 import './util/LocalStorage';
-import { config, userScripts } from './util/LocalStorage';
+import { config } from './util/LocalStorage';
 import { changeDirectory } from './util/replUtils';
 import { completer, setupReplCustomization } from './util/replCustomization';
 import { setConsole } from './util/consoleExtension';
-import { REPLCommand } from 'repl';
-import { runUserscript } from './modules/Base';
+import { runScript } from './modules/Base';
 
 setConsole();
 
@@ -21,19 +20,18 @@ const rl = createInterface({
 });
 export let r: repl.REPLServer;
 
-type InitOpts = Partial<{
-  start: boolean;
-  userscript: string;
-  cmd: string;
-  continueAfterCmd: boolean;
-  // todo: 'cwd' or sth option
-  // todo: help option to print these items as help...
-}>;
-const initOptsAlias: Record<string, keyof InitOpts> = { s: 'start', u: 'userscript', c: 'cmd', co: 'continueAfterCmd' };
+const initOptBools = ['start', 'continueAfterCmd', 'help'] as const;
+const initOptStrings = ['dir'] as const;
+const initOptsAll = [...initOptBools, ...initOptStrings];
+type InitOptBools = typeof initOptBools[number];
+type InitOptStrings = typeof initOptStrings[number];
+type InitOpts = Record<InitOptBools, boolean> & Record<InitOptStrings, string>;
+const initOptsAlias: Partial<Record<keyof InitOpts, string>> = { start: 's', continueAfterCmd: 'c', dir: 'd' };
+const initOptsAliasReverse = Object.fromEntries(Object.entries(initOptsAlias).map(([k,v]) => [v,k]));
 
 const rawInitArgs = process.argv.slice(2);
-const initOpts: InitOpts & minimist.ParsedArgs = minimist(rawInitArgs, {alias: initOptsAlias, boolean: ['start', 'exitAfterCmd']});
-const initArgs = [initOpts._[0], initOpts._.slice(1).join(' ')] as [string?, string?];
+const initOpts: InitOpts & minimist.ParsedArgs = minimist(rawInitArgs, {alias: initOptsAliasReverse, boolean: initOptBools as any, string: initOptStrings as any}) as InitOpts & minimist.ParsedArgs;
+const initBody = initOpts._.join(' ');
 
 
 async function startRepl() {
@@ -54,19 +52,12 @@ async function startRepl() {
 
   config.validateJson();
 
-  const userscript: string|undefined = userScripts.s[initOpts.userscript ?? initArgs[0]];
-  const [cmd, cmdFromArg]: [REPLCommand|undefined, boolean] = initOpts.cmd ? [r.commands[initOpts.cmd], false] : [r.commands[initArgs[0]], true];
-
-  if (userscript) {
-    await runUserscript(userscript);
+  if (initBody) {
+    console.logv(initBody)
+    await runScript(initBody.replace('\\n', '\n'));
+    
     if (!initOpts.continueAfterCmd)
       process.exit();
-  } else if (cmd) {
-    await cmd.action.bind(r)(cmdFromArg ? initArgs[1] : initArgs.join(' '));
-    if (!initOpts.continueAfterCmd)
-      process.exit();
-  } else if (initArgs[0]) {
-    r.write(initArgs.join(' ') + '\n');
   }
 }
 
@@ -97,8 +88,12 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
 }
 
 (async function start() {
+  if (initOpts.help) {
+    console.log('Available options:\n' + initOptsAll.map(k => `--${k}` + (initOptsAlias[k] ? ` (-${initOptsAlias[k]})` : ``)).join('\n'));
+    process.exit();
+  }
   if (rawInitArgs[0])
-    changeDirectory(process.cwd());
+    changeDirectory(initOpts.dir ?? process.cwd());
   else  
     await setFolderRecursive(10);
   rl.close();

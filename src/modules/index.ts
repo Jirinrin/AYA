@@ -44,7 +44,7 @@ function actionIsSimple(op: RawOperation, a: ActionFunction|ActionFunctionEvall)
 
 // todo: move to better location (?)
 export const getCommand = (line: string) =>
-  (line.match(/^\.([\w-]+)( +)?/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
+  (line.match(/^\.(\S+)( *)/) ?? []) as [cmdMatch?: string, cmdName?: string, space?: string];
 
 export interface CommandInfo {
   help: string;

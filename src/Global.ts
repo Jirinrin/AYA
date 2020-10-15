@@ -40,5 +40,5 @@ global.scriptFromHistory = (...items: number[]) => {
     : items.length === 2
       ? r.history.slice(items[0], items[1])
       : items.map(i => r.history[i]);
-  return lines.reverse().join('\n');
+  return lines.reverse().join(' \n ');
 };

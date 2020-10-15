@@ -8,7 +8,8 @@ import { getCommand } from ".";
 import { verbose } from "../util";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
-  if (!userScripts.s[key]) return console.error(`Userscript with key ${key} sure doesn\'t seem to exist`);
+  if (!userScripts.s[key])
+    return console.error(`Userscript with key "${key}" sure doesn\'t seem to exist`);
   return fn(key);
 };
 
@@ -79,7 +80,11 @@ const Base: RawModule = {
   },
   'userscript': {
     help: 'Run userscript with the key {$1}',
-    run: withCheckUserScriptKey((key: string) => runUserscript(userScripts.s[key] + "\n")),
+    run: withCheckUserScriptKey((key: string) => runScript(userScripts.s[key] + "\n")),
+  },
+  'u': {
+    help: 'Run userscript with the key {$1} (shorthand for .userscript)',
+    run: withCheckUserScriptKey((key: string) => runScript(userScripts.s[key] + "\n")),
   },
 
   // 'eval': {
@@ -88,15 +93,21 @@ const Base: RawModule = {
   // },
 };
 
-export async function runUserscript(txt: string) {
-  const lines = txt.split('\n').map(l => l.trim());
+// todo: also use this flexible logic in the normal REPL environment
+export async function runScript(txt: string) {
+  const lines = txt.split(/&&|\n/).map(l => l.trim());
   for (const line of lines) {
-    if (line.startsWith('.')) {
-      const [cmdMatch, cmdName] = getCommand(line);
+    const userscript: string|undefined = userScripts.s[line.match(/\.u(?:serscript)? +(\S+)/)?.[1] ?? line.match(/^(\S+)/)?.[1]];
+
+    const [cmdMatch, cmdName] = line.startsWith('.') ? getCommand(line) : line.match(/^(\S+) */);
+    const cmd = r.commands[cmdName];
+
+    if (userscript)
+      await runScript(userscript);
+    else if (cmd)
       await r.commands[cmdName].action.bind(r)(line.slice(cmdMatch.length));
-    } else if (line !== '') {
-      r.write(line);
-    }
+    else if (line !== '')
+      r.write(line + '\n');
   }
 }
 
