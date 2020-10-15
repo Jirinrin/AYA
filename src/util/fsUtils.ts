@@ -129,14 +129,15 @@ export function simpleMove(originalFolderPath: string, fileName: string, newFold
   );
 }
 
-function putFileDataOnEntity(ent: DirentWithMetadata): void {
+function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): void {
   const [baseName, ext] = splitFileName(ent.name);
   ent.ext = ext.replace('.', '');
   ent.baseName = baseName;
+  ent.path = path.resolve(folder, ent.name);
 }
 
 async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
-  putFileDataOnEntity(ent);
+  putFileDataOnEntity(ent, folder);
   if (config.s.musicMetadata) await putMusicMetadataOnEntity(ent, folder);
   if (config.s.imageMetadata) await putImageMetadataOnEntity(ent, folder);
   return ent;

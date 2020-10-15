@@ -8,6 +8,7 @@ export interface FileMetadata {
   im?: exif.Tags;
   ext: string;
   baseName: string;
+  path: string;
 }
 
 export interface DirentWithMetadata extends Dirent, FileMetadata {}
