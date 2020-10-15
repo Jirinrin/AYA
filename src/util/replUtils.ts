@@ -12,6 +12,8 @@ import { setConsoleIndent } from './consoleExtension';
 
 export const globalEval = eval;
 
+const evalString = (str: string) => str.replace(/^["'`]?([^"'`]*)["'`]?$/, '$1');
+
 /**
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
@@ -38,7 +40,7 @@ export function evall(func: OperationFunction, info: CommandInfo): ActionFunctio
       const parsedArgsArray = argsArray.map((arg: string, i) => {
         const argData = paramData[i];
         try {
-          return argData === ParamData.String ? arg : globalEval(arg)
+          return argData === ParamData.String ? evalString(arg) : globalEval(arg)
         } catch (err) {
           if (argData === ParamData.MaybeString)
             return arg;

@@ -105,7 +105,7 @@ export function safeRename(oldPath: string, newPath: string, isDirectory?: boole
   return path.basename(newPath);
 }
 
-export function splitFileName(fileName: string, isDirectory?: boolean): [string, string] {
+export function splitFileName(fileName: string, isDirectory?: boolean): [baseName: string, ext: string] {
   if (isDirectory) return [fileName, ''];
 
   const ext = path.extname(fileName);
