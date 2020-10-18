@@ -1,4 +1,5 @@
 {
   "zipAll": ".doForEach f => exec(`7za a \"${f.baseName}.zip\" \"${f.name}\" `)",
+  "unzipAll": ".doForEach f => { if (!f.ext.match(/^(zip1?|7z)$/)) return; if (exists(f.baseName)) return; mkdir(f.baseName); return exec( `7za x -o\"${f.baseName}\" \"${f.name}\" -aoa` ) }",
   "allMetadata": ".doForEach console.log"
 }
