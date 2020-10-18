@@ -45,6 +45,7 @@ const globalAdditions = {
   },
 
   env: ENV,
+  JSONbig: JSONbig,
 };
 
 type GlobalAdditions = typeof globalAdditions;
