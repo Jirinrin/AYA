@@ -3,19 +3,24 @@ import { r } from ".";
 import ENV from "./ENV";
 import * as JSONbig from 'json-bigint';
 import * as fs from "fs";
+import * as path from "path";
 import { resolvePath } from "./util/replUtils";
+import { simpleMove } from "./util";
 
 export {};
 
-const wrapResolvePath = (fn: (path: string) => any): (path: string) => any =>
-  (path: string) => fn(resolvePath(path));
+const wrapResolvePath = <T extends (path: string) => any>(fn: T): T =>
+  ( (path: string) => fn(resolvePath(path)) ) as T;
+const wrapResolvePath2 = <T extends (p1: string, p2: string) => any>(fn: T): T =>
+  ( (p1: string, p2: string) => fn(resolvePath(p1), resolvePath(p2)) ) as T;
 
 const globalAdditions = {
   /**
    * Execute a command that will be executed in the underlying shell environment.
    */
   exec: (cmd: string) =>
-    new Promise((res, rej) => 
+    // todo: promisify
+    new Promise((res, rej) =>
       exec(cmd, {
         cwd: ENV.cwd,
       }, (error, stdout, stderr) => {
@@ -49,6 +54,10 @@ const globalAdditions = {
 
   mkdir: wrapResolvePath(fs.mkdirSync),
   exists: wrapResolvePath(fs.existsSync),
+  move: wrapResolvePath2((filePath: string, moveToFolder: string) => {
+    simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.lstatSync(filePath).isDirectory());
+    console.log(`Moved ${filePath} to ${moveToFolder}`);
+  }),
 };
 
 type GlobalAdditions = typeof globalAdditions;
