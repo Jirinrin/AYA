@@ -46,6 +46,9 @@ const globalAdditions = {
 
   env: ENV,
   JSONbig: JSONbig,
+
+  mkdir: wrapResolvePath(fs.mkdirSync),
+  exists: wrapResolvePath(fs.existsSync),
 };
 
 type GlobalAdditions = typeof globalAdditions;
