@@ -60,7 +60,7 @@ function completeCaseIns(stringToCheck: string, completions: string[]|Record<str
   const completionsArray = Array.isArray(completions) ? completions : Object.keys(completions);
   const checkRegex = new RegExp(`^${escapeRegex(stringToCheck)}`, 'i');
   const actualCompletions = completionsArray.filter(c => c.match(checkRegex));
-  // global.log('completion case ins', stringToCheck, completionsArray, actualCompletions);
+  // console.llog('completion case ins', stringToCheck, completionsArray, actualCompletions);
   if (!actualCompletions.length)
     return emptyCompl;
   const trimmedCompletions = actualCompletions.map(c => c.slice(stringToCheck.length)).filter(c => !!c);
@@ -85,7 +85,7 @@ function getCompletionData(line: string): CustomCompleterResult {
   const typingOption = line.match(/--(\w*)([= ]\w*)?$/);
   if (typingOption && renderOpts) {
     const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
-    // global.log('slice', typingOption.index, typOptName, typOptName.length, line, line.slice(typingOption.index+typOptName.length+1))
+    // console.llog('slice', typingOption.index, typOptName, typOptName.length, line, line.slice(typingOption.index+typOptName.length+1))
     if (typOptFromEquals)
       return completeCaseIns(line.slice(typingOption.index+typOptName.length+2+1), optsValues[typOptName] ?? []);
     return completeCaseIns(line.slice(typingOption.index), [...renderOpts, '--help']);
@@ -96,7 +96,7 @@ function getCompletionData(line: string): CustomCompleterResult {
   const lastArg = args[args.length-1] ?? '';
   const nthArg = args.length || 1;
 
-  if (cmdName.match(/^userscript(?:-(get|set))?/) && nthArg===1)
+  if ((cmdName.match(/^userscript(?:-(get|set))?/) || cmdName === 'u') && nthArg===1)
     return completeCaseIns(lastArg, userScripts.s);
   if (cmdName.match(/^userscript-delete/))
     return completeCaseIns(lastArg, userScripts.s);
@@ -224,7 +224,7 @@ export function setupReplCustomization(r: REPLServer) {
       // todo: remove timeout?
       setTimeout(() => {
         const edited = highlightLine(r.line);
-        // global.log('yo', rr.line, '|||', edited);
+        // console.llog('yo', rr.line, '|||', edited);
         r._refreshCurrentLine(edited);
       }, 0);
     }
