@@ -43,6 +43,8 @@ const globalAdditions = {
         : items.map(i => r.history[i]);
     return lines.reverse().join(' \n ');
   },
+
+  env: ENV,
 };
 
 type GlobalAdditions = typeof globalAdditions;
