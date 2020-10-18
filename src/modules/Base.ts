@@ -1,7 +1,7 @@
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
-import { changeDirectory, evalls, getCommandHelp, getDirectory, setConfigItem } from "../util/replUtils";
+import { changeDirectory, evalls, getCommandHelp, resolvePath, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
@@ -19,7 +19,7 @@ const Base: RawModule = {
     getRun: (iterator) => (s_dirOverwrite: string = undefined) =>
       iterator((e) => {
         console.log(e.isDirectory() ? e.name+'/' : e.name);
-      }, getDirectory(s_dirOverwrite || ENV.cwd))
+      }, resolvePath(s_dirOverwrite || ENV.cwd))
   },
 
   'cd': {
