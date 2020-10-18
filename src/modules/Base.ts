@@ -97,6 +97,8 @@ const Base: RawModule = {
 export async function runScript(txt: string) {
   const lines = txt.split(/&&|\n/).map(l => l.trim());
   for (const line of lines) {
+    if (!line.trim()) continue;
+
     const userscript: string|undefined = userScripts.s[line.match(/\.u(?:serscript)? +(\S+)/)?.[1] ?? line.match(/^(\S+)/)?.[1]];
 
     const [cmdMatch, cmdName] = line.startsWith('.') ? getCommand(line) : line.match(/^(\S+) */);
