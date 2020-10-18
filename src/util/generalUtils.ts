@@ -85,15 +85,18 @@ export function escapeRegex(regexString: string): string {
   return regexString.replace(regexEscapeRegex, '\\$&');
 }
 
+const argsSplitRegex = /"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[\S]+/g;
+
 /**
  * @return [body (not trimmed), opts]
  */
 export function parseArgs(argsString: string, info?: CommandInfo): [args: string[], opts: Record<string, any>] {
-  const opts = minimist(argsString.split(' '), {alias: info?.optsAliases});
-  const args = opts._.join(' ').match(/"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[\S]+/g);
+  const preSplit = argsString.match(argsSplitRegex) ?? [];
+  const opts = minimist(preSplit, {alias: info?.optsAliases});
+  const args = opts._.join(' ').match(argsSplitRegex) ?? []; // todo: matching this again not necessary?
   delete opts._;
 
-  return [args ?? [], opts];
+  return [args, opts];
 }
 
 export function splitArgsString(argsString: string): [reverse: boolean, part1: string, part2?: string] {
