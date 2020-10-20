@@ -64,17 +64,26 @@ There are a few default NodeJS REPL commands which you may want to be aware of: 
 ## Available JS globals
 
 ```ts
-/**
- * Execute a command that will be executed in the underlying shell environment.
- */
-exec: (cmd: string) => void;
-/**
- * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
- * [int]: the total number of lines going back that you want
- * [int, int]: the range of lines that you want (e.g. [2, 4] gets the last 4 lines except the last line you typed)
- * [...int[]]: the indices of the lines that you wanted, counting back from the current line
- */
-scriptFromHistory(from: number): string;
+interface Global {
+  /**
+   * Execute a command that will be executed in the underlying shell environment.
+   */
+  exec: (cmd: string) => void;
+  /**
+   * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
+   * [int]: the total number of lines going back that you want
+   * [int, int]: the range of lines that you want (e.g. [2, 4] gets the last 4 lines except the last line you typed)
+   * [...int[]]: the indices of the lines that you wanted, counting back from the current line
+   */
+  scriptFromHistory(from: number): string;
+
+  // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
+  mkdir: (dirPath: string) => void;
+  exists: (path: string) => void;
+  move: (filePath: string, moveToDirPath: string) => void;
+  copy: (filePath: string, copyToDirPath: string) => void;
+  rename: (filePath: string, newFileName: string) => void;
+}
 ```
 
 There are still plans to add a bunch of file system related shorthand functions, like `mv()`, `cp()`, `rename()`, `mkdir()` etc.
@@ -91,7 +100,7 @@ There are some arguments available to pass to Aya:
   - Random js code also works as usual
 - `--continueAfterCmd` / `-co` => When providing stuff to run on init, Aya will by default close when it's done. Setting this option allows you to continue using it after the command/userscript is done.
 - `--dir` / `-d` => set starting directory as a command line arg
-- `--help`: get the available init args
+- `--help`: get the available init flags
 
 
 ## File metadata
@@ -114,6 +123,7 @@ interface {
   im?: exif.Tags; // If config.imageMetadata == true, I believe this feature isn't really functional ATM
   ext: string;
   baseName: string;
+  path: string;
 }
 ```
 
@@ -150,7 +160,6 @@ interface {
 
 
 ## TODO
-- Expose specific file explorer methods, e.g. a 'move', 'mkdir', 'copy, etc, with extra user friendliness allowing e.g. `../dir1`
 - by default init userscripts empty for new users instead of with my own commands
 
 - add ora fancy spinner thingy
