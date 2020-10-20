@@ -91,6 +91,11 @@ const Base: RawModule = {
   //   help: 'Forcibly execute (eval) code in the underlying node.js environment',
   //   run_s: globalEval,
   // },
+
+  'mkdir': { run_s: dirName => global.mkdir(dirName) },
+  'move': { run: (s_file: string, s_moveTo: string) => global.move(s_file, s_moveTo) },
+  'copy': { run: (s_file: string, s_copyTo: string) => global.copy(s_file, s_copyTo) },
+  'rename': { run: (s_file: string, s_newName: string) => global.rename(s_file, s_newName) },
 };
 
 // todo: also use this flexible logic in the normal REPL environment
