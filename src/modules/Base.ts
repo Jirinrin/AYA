@@ -69,6 +69,7 @@ const Base: RawModule = {
   'userscript-set': {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
     run: (key: string, ss_code: string) => {
+      // todo: allow dashes in key
       userScripts.set(key, ss_code.replace(/\\n/g, '\n'));
     },
   },
