@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as fse from 'fs-extra';
 import * as path from 'path';
 
 import { config } from './LocalStorage';
@@ -86,23 +87,30 @@ export function getEnts(folder: string): fs.Dirent[] {
   return fs.readdirSync(folder, { withFileTypes: true });
 }
 
-export function safeRename(oldPath: string, newPath: string, isDirectory?: boolean): string {
-  if (fs.existsSync(newPath)) {
-    let i = 1;
-    const [baseName, ext] = splitFileName(path.basename(newPath), isDirectory);
-    while (i < 100) {
-      const newNewName = `${baseName} (${i})${ext}`;
-      const newNewPath = path.resolve(newPath, '..', newNewName);
-      if (!fs.existsSync(newNewPath)) {
-        return safeRename(oldPath, newNewPath, isDirectory);
-      }
-      i++;
-    }
-    throw new Error(`Couldn\'t safely rename file in 100 incrementing tries:: ${oldPath} -> ${newPath}`);
-  }
+function getSafePath(unsafePath: string, isDirectory?: boolean) {
+  if (!fs.existsSync(unsafePath))
+    return unsafePath;
 
-  fs.renameSync(oldPath, newPath);
-  return path.basename(newPath);
+  const [baseName, ext] = splitFileName(path.basename(unsafePath), isDirectory);
+  for (let i = 1; i < 100; i++) {
+    const newNewName = `${baseName} (${i})${ext}`;
+    const newNewPath = path.resolve(unsafePath, '..', newNewName);
+    if (!fs.existsSync(newNewPath))
+      return newNewPath;
+  }
+  throw new Error(`Couldn\'t find safe name in 100 incrementing tries for path: ${unsafePath}`);
+}
+
+export function safeRename(oldPath: string, newPath: string, isDirectory?: boolean): string {
+  const safeNewPath = getSafePath(newPath, isDirectory);
+  fs.renameSync(oldPath, safeNewPath);
+  return path.basename(safeNewPath);
+}
+
+export function safeCopy(oldPath: string, newPath: string, isDirectory?: boolean): string {
+  const safeNewPath = getSafePath(newPath, isDirectory);
+  fse.copySync(oldPath, safeNewPath);
+  return path.basename(safeNewPath);
 }
 
 export function splitFileName(fileName: string, isDirectory?: boolean): [baseName: string, ext: string] {
@@ -125,6 +133,14 @@ export function simpleMove(originalFolderPath: string, fileName: string, newFold
   return safeRename(
     path.join(originalFolderPath, fileName),
     path.join(newFolderPath,      fileName),
+    isDirectory,
+  );
+}
+
+export function simpleCopy(containerFolder: string, fileName: string, newFolderPath: string, isDirectory?: boolean): string {
+  return safeCopy(
+    path.join(containerFolder, fileName),
+    path.join(newFolderPath,   fileName),
     isDirectory,
   );
 }

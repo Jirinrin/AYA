@@ -5,14 +5,14 @@ import * as JSONbig from 'json-bigint';
 import * as fs from "fs";
 import * as path from "path";
 import { resolvePath } from "./util/replUtils";
-import { simpleMove } from "./util";
+import { simpleCopy, simpleMove, simpleRename } from "./util";
 
 export {};
 
-const wrapResolvePath = <T extends (path: string) => any>(fn: T): T =>
-  ( (path: string) => fn(resolvePath(path)) ) as T;
-const wrapResolvePath2 = <T extends (p1: string, p2: string) => any>(fn: T): T =>
-  ( (p1: string, p2: string) => fn(resolvePath(p1), resolvePath(p2)) ) as T;
+const wrapResolvePath1 = <T extends (path: string, ...args: any[]) => any>(fn: T): T =>
+  ( (path, ...args) => fn(resolvePath(path), ...args) ) as T;
+const wrapResolvePath2 = <T extends (p1: string, p2: string, ...args: any[]) => any>(fn: T): T =>
+  ( (p1, p2, ...args) => fn(resolvePath(p1), resolvePath(p2), ...args) ) as T;
 
 const globalAdditions = {
   /**
@@ -52,11 +52,19 @@ const globalAdditions = {
   env: ENV,
   JSONbig: JSONbig,
 
-  mkdir: wrapResolvePath(fs.mkdirSync),
-  exists: wrapResolvePath(fs.existsSync),
+  mkdir: wrapResolvePath1(fs.mkdirSync),
+  exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath: string, moveToFolder: string) => {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.lstatSync(filePath).isDirectory());
-    console.log(`Moved ${filePath} to ${moveToFolder}`);
+    console.log(`Moved "${filePath}" to "${moveToFolder}"`);
+  }),
+  copy: wrapResolvePath2((filePath: string, copyToFolder: string) => {
+    const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.lstatSync(filePath).isDirectory());
+    console.log(`Copied "${filePath}" to "${copyToFolder}"`);
+  }),
+  rename: wrapResolvePath1((filePath: string, newFileName: string) => {
+    const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), newFileName, fs.lstatSync(filePath).isDirectory())
+    console.log(`Renamed "${path.basename(filePath)}" to "${finalName}"`);
   }),
 };
 
