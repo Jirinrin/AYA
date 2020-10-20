@@ -16,9 +16,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {},
 ) =>
   iterate((ent, folder) => {
-    if (musicFiles && !ent.mm)
-      return;
-    else if (imageFiles && !ent.im)
+    if ((musicFiles && !ent.mm) || (imageFiles && !ent.im))
       return;
 
     const rename = (name: string, metadata?: FileMetadata) => {
@@ -27,12 +25,9 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
       return result;
     }
 
-    let newName: string;
-    if (includeExt) {
-      newName = rename(ent.name, ent);
-    } else {
-      newName = rename(ent.baseName, ent) + '.'+ent.ext;
-    }
+    const newName = (includeExt || ent.isDirectory())
+      ? rename(ent.name, ent).trim()
+      : rename(ent.baseName, ent) + '.'+ent.ext;
 
     if (
       ent.name !== newName && 
