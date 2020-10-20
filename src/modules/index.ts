@@ -74,7 +74,7 @@ function getCmdInfo(help: string): CommandInfo {
 
 
 function makeOperation(op: RawOperation, cmdName: string): Operation {
-  let help = op.help;
+  let help = op.help ?? '';
   let action: ActionFunction|ActionFunctionEvall = null;
   if (isShallowDeep(op))
     help += `${help.includes('opts:') ? ',' : ' | opts:'} --deep(-d)`;

@@ -21,7 +21,7 @@ export type ActionFunctionEvall = (rawArgs: string[], opts: Record<string, any>)
 export type OperationFunction = CustomFunction & {(...args: any[]): any|Promise<any>};
 
 interface BaseOperation {
-  help: string;
+  help?: string;
 }
 export interface RawOperationNormal extends BaseOperation {
   run: OperationFunction;
