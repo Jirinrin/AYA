@@ -7,6 +7,7 @@ export enum ParamData {
   Any,
   String,
   MaybeString,
+  RegexOrString,
 }
 // todo: use this data in syntax highlighting or sth?
 
@@ -42,6 +43,7 @@ export function getFunctionData(func: CustomFunction): IFunctionData {
   const paramData = paramNames.map(p => {
     if (p.startsWith('s_')) return ParamData.String;
     if (p.startsWith('ss_')) return ParamData.MaybeString;
+    if (p.startsWith('r_')) return ParamData.RegexOrString;
     return ParamData.Any;
   });
 

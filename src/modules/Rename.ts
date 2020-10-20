@@ -54,13 +54,13 @@ const Rename = {
   'renameEach-rx': { // everyEntryRenameRegex
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern} | opts: ${eerOpts}`,
     getRun: iterate => (
-      ss_searchRegex: string|RegExp,
+      r_searchRegex: string|RegExp,
       s_replacePattern: string,
       opts?: RenameOptions,
     ) => {
-      if (typeof ss_searchRegex === 'string')
-        ss_searchRegex = new RegExp(ss_searchRegex);
-      return renameEveryEntry(iterate)(fileName => fileName.replace(ss_searchRegex, s_replacePattern), opts)
+      if (typeof r_searchRegex === 'string')
+        r_searchRegex = new RegExp(r_searchRegex);
+      return renameEveryEntry(iterate)(fileName => fileName.replace(r_searchRegex, s_replacePattern), opts)
     },
   },
 }

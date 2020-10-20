@@ -40,9 +40,11 @@ export function evall(func: OperationFunction, info: CommandInfo): ActionFunctio
       const parsedArgsArray = argsArray.map((arg: string, i) => {
         const argData = paramData[i];
         try {
-          return argData === ParamData.String ? evalString(arg) : globalEval(arg)
+          if (argData === ParamData.RegexOrString)
+            return arg.charAt(0).match(/["']/) ? evalString(arg) : globalEval(arg);
+          return argData === ParamData.String ? evalString(arg) : globalEval(arg);
         } catch (err) {
-          if (argData === ParamData.MaybeString)
+          if (argData === ParamData.MaybeString || argData === ParamData.RegexOrString)
             return arg;
           // It will parse simple string arguments without spaces without having to prefix `s_`
           if (err instanceof ReferenceError && err.message === `${arg} is not defined`)
