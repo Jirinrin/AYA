@@ -103,7 +103,7 @@ function getSafePath(unsafePath: string, isDirectory?: boolean) {
 }
 
 export function safeRename(oldPath: string, newPath: string, isDirectory?: boolean): string {
-  const safeNewPath = getSafePath(newPath, isDirectory);
+  const safeNewPath = (oldPath !== newPath) ? getSafePath(newPath, isDirectory) : newPath;
   fs.renameSync(oldPath, safeNewPath);
   return path.basename(safeNewPath);
 }
