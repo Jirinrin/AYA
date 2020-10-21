@@ -49,7 +49,7 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
       try {
         await callback(ent, folder);
       } catch (err) {
-        console.error(err);
+        console.error('Error during callback:', err);
       }
     }
 
