@@ -78,6 +78,7 @@ interface Global {
   scriptFromHistory(from: number): string;
 
   // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
+  // Exept for exists(), all of these have a command version as well for ease of use.
   mkdir: (dirPath: string) => void;
   exists: (path: string) => void;
   move: (filePath: string, moveToDirPath: string) => void;
@@ -160,11 +161,10 @@ interface {
 
 
 ## TODO
-- by default init userscripts empty for new users instead of with my own commands
-
-- add ora fancy spinner thingy
-- have some [iter] like (colored?) label in the help of commands that iterate
 - go through todos in code
+- add ora fancy spinner thingy on longer running scripts?
+- have some [iter] like (colored?) label in the help of commands that iterate
 - do exe releases every once in a while? (and for macos and debian would need to do in docker container)
 - be able to give argument to userscripts?
 - somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command
+- some system for deep iteration to e.g. rename a folder and then still be able to go through the items in it
