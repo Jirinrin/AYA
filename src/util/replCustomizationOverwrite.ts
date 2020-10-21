@@ -121,7 +121,7 @@ export function customTabComplete(lastKeypressWasTab: boolean) {
     if (actualCompletions) {
       const prefix = commonPrefix(actualCompletions.filter((e) => e !== ''));
       if (prefix.length > actualCompleteOn.length) {
-        const newLine = this.line.slice(0, -actualCompleteOn.length) + prefix;
+        const newLine = (actualCompleteOn.length ? this.line.slice(0, -actualCompleteOn.length) : this.line) + prefix;
         this.line = newLine;
         this.cursor = newLine.length;
         this._refreshLine();
