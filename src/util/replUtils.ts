@@ -96,7 +96,7 @@ export function changeDirectory(dirPath: string): boolean {
 }
 
 export function resolvePath(relOrAbsPath: string): string {
-  return path.isAbsolute(relOrAbsPath) ? relOrAbsPath : path.resolve(ENV.cwd, relOrAbsPath);
+  return path.isAbsolute(relOrAbsPath) ? relOrAbsPath : path.resolve(ENV.cwd ?? '', relOrAbsPath);
 }
 
 export function getCommandHelp(r: REPLServer, commandName: string) {
