@@ -88,7 +88,7 @@ function getCompletionData(line: string): CustomCompleterResult {
     const [typOptMatch, typOptName, typOptFromEquals] = typingOption;
     // console.llog('slice', typingOption.index, typOptName, typOptName.length, line, line.slice(typingOption.index+typOptName.length+1))
     if (typOptFromEquals)
-      return completeCaseIns(line.slice(typingOption.index+typOptName.length+2+1), optsValues[typOptName] ?? []);
+      return completeCaseIns(line.slice(typingOption.index+typOptName.length+2+1), optsValues?.[typOptName] ?? []);
     return completeCaseIns(line.slice(typingOption.index), [...renderOpts, '--help']);
   }
 
