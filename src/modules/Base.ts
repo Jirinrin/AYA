@@ -1,3 +1,4 @@
+import { readdirSync } from "fs";
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, RawModule } from "../types";
@@ -16,10 +17,13 @@ const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
 const Base: RawModule = {
   'ls': {
     help: 'Show entries in current directory or {$1} a relative/absolute directory you specify',
-    getRun: (iterator) => (s_dirOverwrite: string = undefined) =>
-      iterator((e) => {
+    getRun: (iterator) => (s_dirOverwrite: string = undefined) => {
+      const dir = resolvePath(s_dirOverwrite || ENV.cwd)
+      ENV.currentDirItems = readdirSync(dir);
+      return iterator((e) => {
         console.log(e.isDirectory() ? e.name+'/' : e.name);
-      }, resolvePath(s_dirOverwrite || ENV.cwd))
+      }, dir)
+    }
   },
 
   'cd': {
