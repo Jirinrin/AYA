@@ -4,6 +4,7 @@ import * as refractor from "refractor";
 import { REPLServer } from "repl";
 
 import { r } from "..";
+import ENV from "../ENV";
 import { cmdInfo, getCommand } from "../modules";
 import { escapeRegex, parseArgs, splitArgsString } from "./generalUtils";
 import { defaultHighlightLookup, IHighlightLookup, languageSpecificHighlightLookup } from "./highlightLookup";
@@ -104,6 +105,8 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(lastArg, config.s);
   if (cmdName === 'helpp')
     return completeCaseIns(lineAfterCommand, r.commands);
+  if (cmdName === 'cd')
+    return completeCaseIns(lineAfterCommand, ENV.currentDirItems);
 
   // Assuming that in most cases you're going to want javascript-like things after you command
   return completeJs(lineAfterCommand);

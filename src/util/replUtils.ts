@@ -86,6 +86,7 @@ export function changeDirectory(dirPath: string): boolean {
   const newDirectory = resolvePath(dirPath);
   if (fs.existsSync(newDirectory)) {
     ENV.cwd = newDirectory;
+    ENV.currentDirItems = fs.readdirSync(newDirectory);
     console.log(`Current directory was set to "${newDirectory}"`);
     return true;
   } else {
