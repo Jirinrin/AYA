@@ -5,7 +5,6 @@ import minimist = require('minimist');
 import Modules from './modules';
 import { Module } from './types';
 import './Global';
-import './util/LocalStorage';
 import { config } from './util/LocalStorage';
 import { changeDirectory } from './util/replUtils';
 import { completer, setupReplCustomization } from './util/replCustomization';

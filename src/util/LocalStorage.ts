@@ -3,7 +3,6 @@ import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
 import { getHashCode, recordToSchema } from './generalUtils';
 import * as Ajv from 'ajv';
-import * as defaultUserScripts from './input/defaultUserscripts.json';
 import * as moment from 'moment';
 
 class LocalStorage<T extends Record<string, any> = any> {
@@ -119,7 +118,7 @@ type UserScript = string;
 type IUserScripts = Record<string, UserScript>;
 class UserScripts extends LocalStorage<IUserScripts> {
   constructor() {
-    super('userscripts.json', defaultUserScripts);
+    super('userscripts.json', {});
   }
 
   private keyExists(key: string): boolean {
