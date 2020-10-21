@@ -87,22 +87,23 @@ export function escapeRegex(regexString: string): string {
   return regexString.replace(regexEscapeRegex, '\\$&');
 }
 
-const argsSplitRegex = /"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[\S]+/g;
+// It is assumed that you don't put two spaces after one another and don't have leading/trailing spaces
+const argsSplitRegex1 = /(?:"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
 
 /**
  * @return [body (not trimmed), opts]
  */
 export function parseArgs(argsString: string, info: CommandInfo): [args: string[], opts: Record<string, any>] {
-  const preSplit = argsString.match(argsSplitRegex) ?? [];
-  const opts = minimist(preSplit, {alias: info?.optsAliases, boolean: info?.boolOpts});
-  const args = opts._.join(' ').match(argsSplitRegex) ?? []; // todo: matching this again not necessary?
-  delete opts._;
+  const preSplit = argsString.match(argsSplitRegex1) ?? [];
+  const rawOpts = minimist(preSplit, {alias: info?.optsAliases, boolean: info?.boolOpts});
+  const args = rawOpts._.join('').match(argsSplitRegex1) ?? []; // todo: matching this again not necessary?
+  const opts = Object.entries(rawOpts).reduce((acc, [k,v]) => ({...acc, [k.trim()]: (typeof v === 'string') ? v.trim() : v }), {});
 
   return [args, opts];
 }
 
 export function splitArgsString(argsString: string, info: CommandInfo): [reverse: boolean, part1: string, part2?: string] {
-  const body = parseArgs(argsString, info)[0].join(' ');
+  const body = parseArgs(argsString, info)[0].join('');
   const bodyIndex = argsString.indexOf(body) ?? 0;
   const reverse = bodyIndex > 3;
   const splitIndex = reverse ? bodyIndex : body.length;
