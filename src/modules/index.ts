@@ -52,6 +52,7 @@ export interface CommandInfo {
   renderOpts?: string[]; // parallel to opts
   optsValues?: Record<string, string[]>;
   optsAliases?: Record<string, string>;
+  boolOpts?: string[],
 }
 export const cmdInfo: Record<string, CommandInfo> = {};
 
@@ -68,6 +69,8 @@ function getCmdInfo(help: string): CommandInfo {
         (info.optsValues??={})[opt] = val.split('|');
       if (alias)
         (info.optsAliases??={})[alias] = opt;
+      if (!val)
+        (info.boolOpts??=[]).push(opt);
     });
   return info;
 }

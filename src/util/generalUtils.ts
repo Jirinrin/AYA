@@ -92,17 +92,17 @@ const argsSplitRegex = /"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[\S]+/g;
 /**
  * @return [body (not trimmed), opts]
  */
-export function parseArgs(argsString: string, info?: CommandInfo): [args: string[], opts: Record<string, any>] {
+export function parseArgs(argsString: string, info: CommandInfo): [args: string[], opts: Record<string, any>] {
   const preSplit = argsString.match(argsSplitRegex) ?? [];
-  const opts = minimist(preSplit, {alias: info?.optsAliases});
+  const opts = minimist(preSplit, {alias: info?.optsAliases, boolean: info?.boolOpts});
   const args = opts._.join(' ').match(argsSplitRegex) ?? []; // todo: matching this again not necessary?
   delete opts._;
 
   return [args, opts];
 }
 
-export function splitArgsString(argsString: string): [reverse: boolean, part1: string, part2?: string] {
-  const body = parseArgs(argsString)[0].join(' ');
+export function splitArgsString(argsString: string, info: CommandInfo): [reverse: boolean, part1: string, part2?: string] {
+  const body = parseArgs(argsString, info)[0].join(' ');
   const bodyIndex = argsString.indexOf(body) ?? 0;
   const reverse = bodyIndex > 3;
   const splitIndex = reverse ? bodyIndex : body.length;

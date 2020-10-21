@@ -93,7 +93,7 @@ function getCompletionData(line: string): CustomCompleterResult {
   }
 
   const lineAfterCommand = line.slice(cmdMatch.length);
-  const [args] = parseArgs(lineAfterCommand);
+  const [args] = parseArgs(lineAfterCommand, cmdInfo[cmdName]);
   const lastArg = args[args.length-1] ?? '';
   const nthArg = args.length || 1;
 
@@ -176,7 +176,7 @@ export function highlightLine(line: string): string {
     b.eatFromInput(cmdMatch.length, b.l.slice(0, cmdMatch.length))
   }
 
-  const [optsReverse, part1, part2] = splitArgsString(b.l);
+  const [optsReverse, part1, part2] = splitArgsString(b.l, cmdInfo[cmdName]);
   const drawBody = (part: string): string => {
     const p = new ResultBuilder(part);
     if (cmdName === 'renameEach-rx') {
