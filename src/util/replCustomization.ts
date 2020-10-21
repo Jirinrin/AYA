@@ -174,9 +174,10 @@ export function highlightLine(line: string): string {
   if (b.l.startsWith('.')) {
     if (!cmdMatch) return line;
     b.eatFromInput(cmdMatch.length, b.l.slice(0, cmdMatch.length))
+  } else {
+    return b.result + highlight(b.l, 'js');
   }
 
-  const [optsReverse, part1, part2] = splitArgsString(b.l, cmdInfo[cmdName]);
   const drawBody = (part: string): string => {
     const p = new ResultBuilder(part);
     if (cmdName === 'renameEach-rx') {
@@ -199,6 +200,7 @@ export function highlightLine(line: string): string {
     b.eatFromInput(part.length, output);
   } 
 
+  const [optsReverse, part1, part2] = splitArgsString(b.l, cmdInfo[cmdName]);
   if (optsReverse) {
     drawPart(part1, drawOptions);
     drawPart(part2, drawBody);
