@@ -64,7 +64,7 @@ There are a few default NodeJS REPL commands which you may want to be aware of: 
 ## Available JS globals
 
 ```ts
-interface Global {
+interface {
   /**
    * Execute a command that will be executed in the underlying shell environment.
    */
