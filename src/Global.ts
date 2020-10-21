@@ -69,7 +69,7 @@ const globalAdditions = {
   }),
   metadata: wrapResolvePath1(async (filePath: string) => {
     console.log('filepath', filePath);
-    return await putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath));
+    return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
 };
 
