@@ -30,12 +30,12 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
       : rename(ent.baseName, ent) + '.'+ent.ext;
 
     if (
-      ent.name !== newName && 
+      ent.name !== newName &&
       !(ent.isDirectory() && skipEntType === 'directory') && 
       !(ent.isFile() && skipEntType === 'file')
     ) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
-      console.log(`Renamed ${ent.name} to ${renamedName}`);
+      console.log(`Renamed "${ent.name}" to "${renamedName}"`);
       return newName;
     }
   });

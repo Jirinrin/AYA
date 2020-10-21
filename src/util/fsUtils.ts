@@ -19,7 +19,7 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
   }
   fs.readdir(folder, { withFileTypes: true }, (err, files) => {
     if (err) {
-      console.error(err);
+      console.error('Error reading dir:', err);
       return;
     }
     files?.forEach(async (ent: DirentWithMetadata) => {
