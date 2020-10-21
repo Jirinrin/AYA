@@ -5,7 +5,8 @@ import * as JSONbig from 'json-bigint';
 import * as fs from "fs";
 import * as path from "path";
 import { resolvePath } from "./util/replUtils";
-import { simpleCopy, simpleMove, simpleRename } from "./util";
+import { pathToDirent, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
+import { DirentWithMetadata } from "./types";
 
 export {};
 
@@ -55,16 +56,20 @@ const globalAdditions = {
   mkdir: wrapResolvePath1(fs.mkdirSync),
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath: string, moveToFolder: string) => {
-    simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.lstatSync(filePath).isDirectory());
+    simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
     console.log(`Moved "${filePath}" to "${moveToFolder}"`);
   }),
   copy: wrapResolvePath2((filePath: string, copyToFolder: string) => {
-    const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.lstatSync(filePath).isDirectory());
+    const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory());
     console.log(`Copied "${filePath}" to "${copyToFolder}"`);
   }),
   rename: wrapResolvePath1((filePath: string, newFileName: string) => {
-    const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), newFileName, fs.lstatSync(filePath).isDirectory())
+    const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), newFileName, fs.statSync(filePath).isDirectory())
     console.log(`Renamed "${path.basename(filePath)}" to "${finalName}"`);
+  }),
+  metadata: wrapResolvePath1(async (filePath: string) => {
+    console.log('filepath', filePath);
+    return await putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath));
   }),
 };
 

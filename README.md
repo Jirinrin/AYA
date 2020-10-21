@@ -84,6 +84,7 @@ interface {
   move: (filePath: string, moveToDirPath: string) => void;
   copy: (filePath: string, copyToDirPath: string) => void;
   rename: (filePath: string, newFileName: string) => void;
+  metadata: (filePath: string) => Promise<DirentWithMetadata>;
 }
 ```
 

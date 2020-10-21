@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { pick } from 'lodash';
 
 import { config } from './LocalStorage';
 import { putImageMetadataOnEntity } from '../modules/Image';
@@ -152,9 +153,17 @@ function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): void {
   ent.path = path.resolve(folder, ent.name);
 }
 
-async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
+export async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
   putFileDataOnEntity(ent, folder);
   if (config.s.musicMetadata) await putMusicMetadataOnEntity(ent, folder);
   if (config.s.imageMetadata) await putImageMetadataOnEntity(ent, folder);
   return ent;
+}
+
+export function pathToDirent(entPath: string): fs.Dirent {
+  const test = pick(fs.statSync(entPath), 'isFile', 'isDirectory', 'isBlockDevice', 'isCharacterDevice', 'isSymbolicLink', 'isFIFO', 'isSocket');
+  return {
+    ...test,
+    name: path.basename(entPath),
+  }
 }

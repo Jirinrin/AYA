@@ -105,7 +105,7 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(lastArg, config.s);
   if (cmdName === 'helpp')
     return completeCaseIns(lineAfterCommand, r.commands);
-  if (cmdName === 'cd')
+  if (cmdName === 'cd' || cmdName === 'metadata')
     return completeCaseIns(lineAfterCommand, ENV.currentDirItems);
 
   // Assuming that in most cases you're going to want javascript-like things after you command
