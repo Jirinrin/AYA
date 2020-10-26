@@ -120,7 +120,7 @@ export async function runScript(txt: string) {
     else if (cmd)
       await r.commands[cmdName].action.bind(r)(line.slice(cmdMatch.length));
     else if (line !== '')
-      r.write(line + '\n');
+      r.write(line + '\n'); // todo: globalEval? (so you can await it?)
   }
 }
 

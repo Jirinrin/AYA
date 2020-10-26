@@ -52,7 +52,6 @@ async function startRepl() {
   config.validateJson();
 
   if (initBody) {
-    console.logv(initBody)
     await runScript(initBody.replace('\\n', '\n'));
     
     if (!initOpts.continueAfterCmd)

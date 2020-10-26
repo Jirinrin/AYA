@@ -170,3 +170,4 @@ interface {
 - be able to give argument to userscripts?
 - somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command
 - some system for deep iteration to e.g. rename a folder and then still be able to go through the items in it
+- a way to load a userscript as a function from a file, and then the arguments you pass to it will be passed into the function (?)
