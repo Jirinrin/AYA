@@ -4,6 +4,7 @@ import ENV from "./ENV";
 import * as JSONbig from 'json-bigint';
 import * as fs from "fs";
 import * as path from "path";
+import * as lodash from "lodash";
 import { resolvePath } from "./util/replUtils";
 import { pathToDirent, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
 import { DirentWithMetadata } from "./types";
@@ -72,6 +73,8 @@ const globalAdditions = {
     console.log('filepath', filePath);
     return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
+
+  lo: lodash,
 };
 
 type GlobalAdditions = typeof globalAdditions;
