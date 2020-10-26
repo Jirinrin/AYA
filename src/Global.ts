@@ -19,19 +19,20 @@ const globalAdditions = {
   /**
    * Execute a command that will be executed in the underlying shell environment.
    */
-  exec: (cmd: string) =>
+  exec: (cmd: string, printOutput = true) =>
     // todo: promisify
     new Promise((res, rej) =>
       exec(cmd, {
         cwd: ENV.cwd,
       }, (error, stdout, stderr) => {
-        console.log(stdout);
+        if (printOutput)
+          console.log(stdout);
         if (error) {
           console.error('Error encountered:');
           console.error(stderr);
           rej(stderr);
         } else {
-          res();
+          res(stdout);
         }
       })
     ),
