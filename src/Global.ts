@@ -6,7 +6,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as lodash from "lodash";
 import { resolvePath } from "./util/replUtils";
-import { pathToDirent, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
+import { getEnts, getEntsWithMetadata, pathToDirent, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
 import { DirentWithMetadata } from "./types";
 
 export {};
@@ -73,6 +73,9 @@ const globalAdditions = {
     console.log('filepath', filePath);
     return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
+  resolvePath,
+  getEnts,
+  getEntsWithMetadata,
 
   lo: lodash,
 };

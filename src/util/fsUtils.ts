@@ -38,12 +38,7 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
   try {
     if (typeof callback !== 'function')
       throw new Error('Callback should be a function');
-    const ents = getEnts(folder);
-    const mEnts: DirentWithMetadata[] = await Promise.all(
-      ents?.map(async (ent: DirentWithMetadata) => {
-        return await putMetadataOnEntity(ent, folder);
-      }) ?? [],
-    );
+    const mEnts = await getEntsWithMetadata(folder);
 
     for (const ent of mEnts) {
       try {
@@ -86,6 +81,14 @@ export async function forEveryEntryDeep(
 
 export function getEnts(folder: string): fs.Dirent[] {
   return fs.readdirSync(folder, { withFileTypes: true });
+}
+export async function getEntsWithMetadata(folder: string): Promise<DirentWithMetadata[]> {
+  const ents = getEnts(folder);
+  return await Promise.all(
+    ents?.map(async (ent: DirentWithMetadata) => {
+      return await putMetadataOnEntity(ent, folder);
+    }) ?? [],
+  );
 }
 
 function getSafePath(unsafePath: string, isDirectory?: boolean) {
