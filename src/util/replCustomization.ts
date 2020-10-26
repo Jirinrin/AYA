@@ -81,7 +81,7 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(cmdName, r.commands);
   }
 
-  const {renderOpts, optsValues} = cmdInfo[cmdName];
+  const {renderOpts, optsValues} = (cmdInfo[cmdName] || {});
   // Assuming you put only one character between opt and value
   const typingOption = line.match(/--(\w*)([= ]\w*)?$/);
   if (typingOption && renderOpts) {
