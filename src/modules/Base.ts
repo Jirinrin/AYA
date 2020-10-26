@@ -85,11 +85,11 @@ const Base: RawModule = {
   },
   'userscript': {
     help: 'Run userscript with the key {$1}',
-    run: withCheckUserScriptKey((key: string) => runScript(userScripts.s[key] + "\n")),
+    run: withCheckUserScriptKey((s_key: string) => runScript(userScripts.s[s_key] + "\n")),
   },
   'u': {
     help: 'Run userscript with the key {$1} (shorthand for .userscript)', // todo: only parse this in userscript and not show in help
-    run: withCheckUserScriptKey((key: string) => runScript(userScripts.s[key] + "\n")),
+    run: withCheckUserScriptKey((s_key: string) => runScript(userScripts.s[s_key] + "\n")),
   },
 
   // 'eval': {
