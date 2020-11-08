@@ -24,7 +24,7 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
     }
     files?.forEach(async (ent: DirentWithMetadata) => {
       await putMetadataOnEntity(ent, folder);
-      callback(ent, folder);
+      await callback(ent, folder);
     });
   });
 }
