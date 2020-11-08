@@ -1,22 +1,20 @@
-import { splitFileName, simpleRename } from '../util';
-import { FileIteratorFunction, FileMetadata, RawModule } from '../types';
+import { simpleRename, checkMetadata } from '../util';
+import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, RawModule } from '../types';
 
 export type EntityType = 'file' | 'directory';
-interface RenameOptions {
+interface RenameOptions extends IMetadataFilterOpts {
   skipEntType?: EntityType;
   includeExt?: boolean;
-  musicFiles?: boolean; // Only rename music files, exposing metadata of the files
-  imageFiles?: boolean; // Only rename image files, exposing exif metadata of the files
 }
 
 const eerOpts = "--skipEntType=file|directory, --includeExt, --musicFiles, --imageFiles"
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   renameCallback: (fileName: string, metadata?: FileMetadata) => string,
-  {skipEntType, includeExt, musicFiles, imageFiles}: RenameOptions = {},
+  opts: RenameOptions = {},
 ) =>
   iterate((ent, folder) => {
-    if ((musicFiles && !ent.mm) || (imageFiles && !ent.im))
+    if (!checkMetadata(ent, opts))
       return;
 
     const rename = (name: string, metadata?: FileMetadata) => {
@@ -25,14 +23,14 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
       return result;
     }
 
-    const newName = (includeExt || ent.isDirectory())
+    const newName = (opts.includeExt || ent.isDirectory())
       ? rename(ent.name, ent).trim()
       : rename(ent.baseName, ent) + '.'+ent.ext;
 
     if (
       ent.name !== newName &&
-      !(ent.isDirectory() && skipEntType === 'directory') && 
-      !(ent.isFile() && skipEntType === 'file')
+      !(ent.isDirectory() && opts.skipEntType === 'directory') && 
+      !(ent.isFile() && opts.skipEntType === 'file')
     ) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
       console.log(`Renamed "${ent.name}" to "${renamedName}"`);

@@ -1,12 +1,12 @@
 import { readdirSync } from "fs";
 import { r } from "..";
 import ENV from "../ENV";
-import { FileIteratorCallback, RawModule } from "../types";
+import { FileIteratorCallback, IMetadataFilterOpts, RawModule } from "../types";
 import { changeDirectory, evalls, getCommandHelp, resolvePath, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
-import { verbose } from "../util";
+import { checkMetadata, verbose } from "../util";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
   if (!userScripts.s[key])
@@ -58,8 +58,12 @@ const Base: RawModule = {
   },
   
   'doForEach': { // todo: add shorthand for userscripts
-    help: 'For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void}',
-    getRun: iterate => (callback: FileIteratorCallback) => iterate(callback),
+    help: 'For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: --musicFiles, --imageFiles',
+    getRun: iterate => (callback: FileIteratorCallback, opts: IMetadataFilterOpts) => iterate((ent, folder) => {
+      if (!checkMetadata(ent, opts))
+        return;
+      return callback(ent, folder);
+    }),
   },
   
   'userscripts': {

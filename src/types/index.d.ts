@@ -43,4 +43,4 @@ export type RawOperation = RawOperationNormal | RawOperationSimple | RawOperatio
 export type RawModule = Record<string, RawOperation>;
 export type Module<T extends RawModule = any> = {[K in keyof T]: Operation};
 
-export * from './music';
+export * from './metadata';
