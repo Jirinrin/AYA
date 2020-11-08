@@ -70,7 +70,7 @@ function getCmdInfo(help: string): CommandInfo {
       if (alias)
         (info.optsAliases??={})[alias] = opt;
       if (!val)
-        (info.boolOpts??=[]).push(opt);
+        (info.boolOpts??=[]).push(opt, opt+' ');
     });
   return info;
 }
