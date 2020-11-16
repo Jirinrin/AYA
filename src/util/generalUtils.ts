@@ -94,11 +94,14 @@ const argsSplitRegex1 = /(?:"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[^\s`"'\/]+)(?:\s
 /**
  * @return [body (not trimmed), opts]
  */
-export function parseArgs(argsString: string, info: CommandInfo): [args: string[], opts: Record<string, any>] {
+export function parseArgs(argsString: string, info?: CommandInfo): [args: string[], opts: Record<string, any>] {
   const preSplit = argsString.match(argsSplitRegex1) ?? [];
-  const rawOpts = minimist(preSplit, {alias: info?.optsAliases, boolean: info?.boolOpts});
+  const rawOpts = minimist(preSplit, {alias: info?.optsAliases, boolean: info?.boolOptsPadded});
+
   const args = rawOpts._.join('').match(argsSplitRegex1) ?? []; // todo: matching this again not necessary?
-  const opts = Object.entries(rawOpts).reduce((acc, [k,v]) => ({...acc, [k.trim()]: (typeof v === 'string') ? v.trim() : v }), {});
+
+  const opts = Object.fromEntries( Object.entries(rawOpts).map(([k,v]) => [ k.trim(), (typeof v === 'string') ? v.trim() : v ]) );
+  info?.boolOpts?.forEach(optName => opts[optName] = rawOpts[optName] || rawOpts[optName+' ']);
 
   return [args, opts];
 }

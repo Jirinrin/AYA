@@ -53,6 +53,7 @@ export interface CommandInfo {
   optsValues?: Record<string, string[]>;
   optsAliases?: Record<string, string>;
   boolOpts?: string[],
+  boolOptsPadded?: string[], // includes the same values with extra trailing space to account for splitting algorithm
 }
 export const cmdInfo: Record<string, CommandInfo> = {};
 
@@ -69,8 +70,10 @@ function getCmdInfo(help: string): CommandInfo {
         (info.optsValues??={})[opt] = val.split('|');
       if (alias)
         (info.optsAliases??={})[alias] = opt;
-      if (!val)
-        (info.boolOpts??=[]).push(opt, opt+' ');
+      if (!val) {
+        (info.boolOpts??=[]).push(opt);
+        (info.boolOptsPadded??=[]).push(opt, opt+' ');
+      }
     });
   return info;
 }
