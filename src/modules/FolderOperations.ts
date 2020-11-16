@@ -7,7 +7,7 @@ import { RawModule } from "../types";
 
 const FolderOperations: RawModule = {
   flatten: {
-    help: 'Flatten folders that only contain one folder | opts: --all(-a), --allowFiles',
+    help: 'Flatten folders that only contain one folder | opts: --all(-a), --allowFiles(-f)',
     run: async (opts: {all: boolean, allowFiles: boolean}) => {
       console.log('Start flattening...');
 
