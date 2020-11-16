@@ -39,7 +39,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   });
 
 
-const Rename = {
+const Rename: RawModule = {
   'renameEach': { // everyEntryRename
     help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string} | opts: ${eerOpts}`,
     getRun: iterate => renameEveryEntry(iterate),

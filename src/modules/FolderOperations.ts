@@ -3,47 +3,40 @@ import * as path from "path";
 import * as fs from "fs";
 import { simpleMove } from "../util";
 import { forEveryEntry, getEnts } from "../util";
+import { RawModule } from "../types";
 
-const TEMP_DIR_NAME = "___tmp";
-
-const FolderOperations = {
+const FolderOperations: RawModule = {
   flatten: {
-    help: 'Flatten folders that only contain one folder',
-    run: async () => {
+    help: 'Flatten folders that only contain one folder | opts: --all(-a), --allowFiles',
+    run: async (opts: {all: boolean, allowFiles: boolean}) => {
       console.log('Start flattening...');
-
-      const tempDir = path.join(ENV.cwd, TEMP_DIR_NAME);
-      if (!fs.existsSync(tempDir))
-        fs.mkdirSync(tempDir);
-      const errors = [];
 
       await forEveryEntry(ENV.cwd, (dir, folder) => {
         if (!dir.isDirectory()) return;
 
         const currentFolder = path.join(folder, dir.name);
-        
         const ents = getEnts(currentFolder);
-        if (ents.filter(ent => ent.isDirectory()).length !== 1 || ents.some(ent => ent.isFile()))
-        return;
+        if (ents.length === 0)
+          return;
+
+        if (!opts.allowFiles && ents.some(ent => ent.isFile()))
+          return;
         
-        const nestedDir = ents[0];
-        
-        simpleMove(currentFolder, nestedDir.name, tempDir);
+        if (opts.all)
+          ents.forEach(nestedEnt => simpleMove(currentFolder, nestedEnt.name, folder));
+        else {
+          if (ents.length !== 1)
+            return;
+          simpleMove(currentFolder, ents[0].name, folder);
+        }
 
         try {
           fs.rmdirSync(currentFolder);
-          simpleMove(tempDir, nestedDir.name, folder, true);
-          console.log(`Flattened ${dir.name} -> ${nestedDir.name}`);
+          console.log(`Flattened ${dir.name} -> ${ents.map(e => `"${e.name}"`).join(', ')}`);
         } catch (err) {
-          errors.push(err);
+          console.error(`Flattening ${dir.name} failed:`, err);
         }
       });
-      
-      if (fs.readdirSync(tempDir).length) {
-        console.error(`Could not remove ${TEMP_DIR_NAME} because of ${errors.length} errors:`, errors);
-      } else {
-        fs.rmdirSync(tempDir);
-      }
     }
   },
   clean: {
