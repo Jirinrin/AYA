@@ -75,7 +75,7 @@ export async function forEveryEntryDeep(
     }
   });
 
-  if (invDepth === 0)
+  if (invDepth === config.s.recursionDepth)
     console.info('Recursive action done!');
 }
 
