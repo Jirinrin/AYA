@@ -28,7 +28,7 @@ var counter = 0
 Or what about another command I personally use a lot in batch renaming things in my file system:
 ```js
 var counter = 0
-.renameEach fileName => `[${counter++}] ` + fileName.replace(/bla[012]/, 'blargh') --skipEntType=directory
+.renameEach fileName => `[${counter++}] ` + fileName.replace(/bla[012]/, 'blargh') --entType=file
 ```
 Or what if you combine this with the built-in `exec()` function (docs [down below](##-Available-JS-globals))? Zip all files in a directory just like that:
 ```js
