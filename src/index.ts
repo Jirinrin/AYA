@@ -90,7 +90,7 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
     console.log('Available options:\n' + initOptsAll.map(k => `--${k}` + (initOptsAlias[k] ? ` (-${initOptsAlias[k]})` : ``)).join('\n'));
     process.exit();
   }
-  if (rawInitArgs[0])
+  if (rawInitArgs[0] || config.s.alwaysStart)
     changeDirectory(initOpts.dir ?? process.cwd());
   else  
     await setFolderRecursive(10);

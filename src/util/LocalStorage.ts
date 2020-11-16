@@ -99,6 +99,7 @@ const defaultConfig = {
   syntaxHighlighting: true,
   musicMetadata: false,
   imageMetadata: false,
+  alwaysStart: false,
 };
 export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});
 export type IConfig = typeof defaultConfig;
