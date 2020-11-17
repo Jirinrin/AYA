@@ -95,7 +95,7 @@ function getCompletionData(line: string): CustomCompleterResult {
   const lineAfterCommand = line.slice(cmdMatch.length);
   const [args, opts] = parseArgs(lineAfterCommand, cmdInfo[cmdName]);
 
-  const typingOptsPart = (lineAfterCommand.startsWith('-') && !args.length) || (args.length && Object.keys(opts).length);
+  const typingOptsPart = (lineAfterCommand.startsWith('-') && !args.length) || (args.length && Object.keys(opts).filter(o => opts[o] !== false).length);
   if (typingOptsPart)
     return emptyCompl;
 
