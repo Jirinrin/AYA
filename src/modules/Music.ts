@@ -44,7 +44,7 @@ export async function getMusicFileMetadata(filePath: string): Promise<mm.IAudioM
 
 export async function putMusicMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
   const mm = await getMusicFileMetadata(path.join(folder, ent.name));
-  delete mm.common.picture;
+  delete mm?.common.picture;
   ent.mm = mm;
   return ent;
 }
