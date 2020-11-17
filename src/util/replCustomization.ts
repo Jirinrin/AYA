@@ -93,7 +93,12 @@ function getCompletionData(line: string): CustomCompleterResult {
   }
 
   const lineAfterCommand = line.slice(cmdMatch.length);
-  const [args] = parseArgs(lineAfterCommand, cmdInfo[cmdName]);
+  const [args, opts] = parseArgs(lineAfterCommand, cmdInfo[cmdName]);
+
+  const typingOptsPart = (lineAfterCommand.startsWith('-') && !args.length) || (args.length && Object.keys(opts).length);
+  if (typingOptsPart)
+    return emptyCompl;
+
   const lastArg = args[args.length-1] ?? '';
   const nthArg = args.length || 1;
 
