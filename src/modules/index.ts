@@ -75,6 +75,7 @@ function getCmdInfo(help: string): CommandInfo {
         (info.boolOptsPadded??=[]).push(opt, opt+' ');
       }
     });
+  (info.boolOptsPadded??=[]).push(' '); // Hacky thing to prevent an extra ' ' argument taking up some afterlying code as its value
   return info;
 }
 
