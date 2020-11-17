@@ -8,6 +8,7 @@ import * as lodash from "lodash";
 import { resolvePath } from "./util/replUtils";
 import { getEnts, getEntsWithMetadata, pathToDirent, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
 import { DirentWithMetadata } from "./types";
+import { setExifMetadata } from "./util/exif";
 
 export {};
 
@@ -58,19 +59,20 @@ const globalAdditions = {
 
   mkdir: wrapResolvePath1(fs.mkdirSync),
   exists: wrapResolvePath1(fs.existsSync),
-  move: wrapResolvePath2((filePath: string, moveToFolder: string) => {
+  move: wrapResolvePath2((filePath, moveToFolder) => {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
     console.log(`Moved "${filePath}" to "${moveToFolder}"`);
   }),
-  copy: wrapResolvePath2((filePath: string, copyToFolder: string) => {
+  copy: wrapResolvePath2((filePath, copyToFolder) => {
     const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory());
     console.log(`Copied "${filePath}" to "${copyToFolder}"`);
   }),
-  rename: wrapResolvePath1((filePath: string, newFileName: string) => {
+  rename: wrapResolvePath1((filePath, newFileName: string) => {
     const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), newFileName, fs.statSync(filePath).isDirectory())
     console.log(`Renamed "${path.basename(filePath)}" to "${finalName}"`);
   }),
-  metadata: wrapResolvePath1(async (filePath: string) => {
+  // todo: delete / rmdir functions
+  metadata: wrapResolvePath1(async (filePath) => {
     console.log('filepath', filePath);
     return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
@@ -79,6 +81,8 @@ const globalAdditions = {
   getEntsWithMetadata,
 
   lo: lodash,
+
+  setTags: wrapResolvePath1(setExifMetadata),
 };
 
 type GlobalAdditions = typeof globalAdditions;

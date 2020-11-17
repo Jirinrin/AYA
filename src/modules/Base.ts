@@ -7,6 +7,7 @@ import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
 import { checkMetadata, verbose } from "../util";
+import { WriteTags } from "exiftool-vendored";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
   if (!userScripts.s[key])
@@ -106,6 +107,7 @@ const Base: RawModule = {
   'copy': { run: (s_file: string, s_copyTo: string) => global.copy(s_file, s_copyTo) },
   'rename': { run: (s_file: string, s_newName: string) => global.rename(s_file, s_newName) },
   'metadata': { run: async (s_file: string) => console.logv(await global.metadata(s_file)) },
+  'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
 };
 
 // todo: also use this flexible logic in the normal REPL environment
