@@ -98,10 +98,11 @@ export function parseArgs(argsString: string, info?: CommandInfo): [args: string
   const preSplit = argsString.match(argsSplitRegex1) ?? [];
   const rawOpts = minimist(preSplit, {alias: info?.optsAliases, boolean: info?.boolOptsPadded});
 
-  const args = rawOpts._.join('').match(argsSplitRegex1) ?? []; // todo: matching this again not necessary?
+  const args = rawOpts._; // todo: test if should not be `rawOpts._.join('').match(argsSplitRegex1) ?? []`
 
   const opts = Object.fromEntries( Object.entries(rawOpts).map(([k,v]) => [ k.trim(), (typeof v === 'string') ? v.trim() : v ]) );
   info?.boolOpts?.forEach(optName => opts[optName] = rawOpts[optName] || rawOpts[optName+' ']);
+  delete opts._;
 
   return [args, opts];
 }
