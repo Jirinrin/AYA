@@ -89,7 +89,7 @@ export function escapeRegex(regexString: string): string {
 }
 
 // It is assumed that you don't put two spaces after one another and don't have leading/trailing spaces
-const argsSplitRegex1 = /(?:"[^"]+"|'[^']+'|`[^`]+`|\/[^\/]+\/|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
+const argsSplitRegex1 = /(?:"[^"]+"?|'[^']+'?|`[^`]+`?|\/[^\/]+\/?|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
 
 /**
  * @return [body (not trimmed), opts]
