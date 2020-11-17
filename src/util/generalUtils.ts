@@ -1,7 +1,7 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
-import minimist = require('minimist');
 import { CommandInfo } from "../modules";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
+import minimist from "./minimistStringBody";
 import { highlight } from "./replCustomization";
 
 export enum ParamData {
