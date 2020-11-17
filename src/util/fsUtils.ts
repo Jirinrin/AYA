@@ -4,7 +4,7 @@ import * as path from 'path';
 import { pick } from 'lodash';
 
 import { config } from './LocalStorage';
-import { putExifMetadataOnEntity } from '../modules/Image';
+import { putExifMetadataOnEntity } from './exif';
 import { putMusicMetadataOnEntity } from '../modules/Music';
 import { DirentWithMetadata, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
