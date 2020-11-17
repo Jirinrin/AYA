@@ -110,7 +110,7 @@ export function parseArgs(argsString: string, info?: CommandInfo): [args: string
 export function splitArgsString(argsString: string, info: CommandInfo): [reverse: boolean, part1: string, part2?: string] {
   const body = parseArgs(argsString, info)[0].join('');
   const bodyIndex = argsString.indexOf(body) ?? 0;
-  const reverse = bodyIndex > 3;
+  const reverse = bodyIndex > 2;
   const splitIndex = reverse ? bodyIndex : body.length;
   return [reverse, argsString.slice(0, splitIndex), argsString.slice(splitIndex)];
 }
