@@ -1,5 +1,5 @@
 import { simpleRename, checkMetadata } from '../util';
-import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, RawModule } from '../types';
+import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from '../types';
 
 export type EntityType = 'file' | 'directory';
 interface RenameOptions extends IMetadataFilterOpts {
@@ -7,7 +7,7 @@ interface RenameOptions extends IMetadataFilterOpts {
   includeExt?: boolean;
 }
 
-const eerOpts = "--entType=file|directory, --includeExt, --musicFiles, --imageFiles"
+const eerOpts = `--entType=file|directory, --includeExt, ${metadataFiltersOpts}`
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   renameCallback: (fileName: string, metadata?: FileMetadata) => string,

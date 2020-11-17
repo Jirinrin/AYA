@@ -131,6 +131,10 @@ export function verbose(msg: any) {
   return formatMsg(true, msg);
 }
 
-export function checkMetadata(ent: DirentWithMetadata, {musicFiles, imageFiles}: IMetadataFilterOpts) {
-  return !((musicFiles && !ent.mm) || (imageFiles && !ent.em))
+export function checkMetadata(ent: DirentWithMetadata, {musicFiles, imageFiles, videoFiles}: IMetadataFilterOpts) {
+  return !(
+    (musicFiles && !ent.mm) ||
+    (imageFiles && !(ent.em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i))) ||
+    (videoFiles && !(ent.em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i)))
+  );
 }
