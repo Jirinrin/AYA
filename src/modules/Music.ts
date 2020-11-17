@@ -29,6 +29,7 @@ function getTrackInfoFromMusicMetadata(trackMetadata: mm.IAudioMetadata): ITrack
 }
 
 function writeMusicMetadataToFile(filePath: string, trackInfo: ITrackInfo) {
+  console.error('Not implemented:', 'writeMusicMetadataToFile');
   return;
 }
 

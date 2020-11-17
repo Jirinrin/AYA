@@ -165,6 +165,7 @@ interface {
 - go through todos in code
 - refresh ENV.currentDirItems on more occasions / use in all places where you can use relative paths / implement fancier hash-based recursive system or sth
 - allow force quitting a command that's taking a long time
+- replace all dash-case by camelCase
 - add ora fancy spinner thingy on longer running scripts?
 - have some [iter] like (colored?) label in the help of commands that iterate
 - do exe releases every once in a while? (and for macos and debian would need to do in docker container)
