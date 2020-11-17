@@ -122,7 +122,7 @@ interface {
   name: string;
   // Custom metadata
   mm?: IAudioMetadata; // If config.musicMetadata == true
-  im?: exif.Tags; // If config.imageMetadata == true, I believe this feature isn't really functional ATM
+  em?: exif.Tags; // If config.exifMetadata == true
   ext: string;
   baseName: string;
   path: string;

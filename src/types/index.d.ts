@@ -5,7 +5,7 @@ import { CustomFunction } from "../util";
 
 export interface FileMetadata {
   mm?: IAudioMetadata;
-  im?: exif.Tags;
+  em?: exif.Tags;
   ext: string;
   baseName: string;
   path: string;

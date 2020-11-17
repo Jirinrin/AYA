@@ -10,8 +10,8 @@ export async function getImageFileMetadata(filePath?: string): Promise<Tags | nu
   }
 }
 
-export async function putImageMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
-  const im = await getImageFileMetadata(path.join(folder, ent.name));
-  ent.im = im;
+export async function putExifMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
+  const em = await getImageFileMetadata(path.join(folder, ent.name));
+  ent.em = em;
   return ent;
 }

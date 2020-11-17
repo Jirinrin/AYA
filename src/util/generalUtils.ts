@@ -132,5 +132,5 @@ export function verbose(msg: any) {
 }
 
 export function checkMetadata(ent: DirentWithMetadata, {musicFiles, imageFiles}: IMetadataFilterOpts) {
-  return !((musicFiles && !ent.mm) || (imageFiles && !ent.im))
+  return !((musicFiles && !ent.mm) || (imageFiles && !ent.em))
 }

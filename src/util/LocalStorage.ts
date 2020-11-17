@@ -98,7 +98,7 @@ const defaultConfig = {
   recursionDepth: 3,
   syntaxHighlighting: true,
   musicMetadata: false,
-  imageMetadata: false,
+  exifMetadata: false,
   alwaysStart: false,
 };
 export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});

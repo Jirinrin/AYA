@@ -4,7 +4,7 @@ import * as path from 'path';
 import { pick } from 'lodash';
 
 import { config } from './LocalStorage';
-import { putImageMetadataOnEntity } from '../modules/Image';
+import { putExifMetadataOnEntity } from '../modules/Image';
 import { putMusicMetadataOnEntity } from '../modules/Music';
 import { DirentWithMetadata, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
@@ -159,7 +159,7 @@ function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): void {
 export async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
   putFileDataOnEntity(ent, folder);
   if (config.s.musicMetadata) await putMusicMetadataOnEntity(ent, folder);
-  if (config.s.imageMetadata) await putImageMetadataOnEntity(ent, folder);
+  if (config.s.exifMetadata) await putExifMetadataOnEntity(ent, folder);
   return ent;
 }
 
