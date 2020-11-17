@@ -109,9 +109,11 @@ function getCompletionData(line: string): CustomCompleterResult {
   if (cmdName.match(/^config-[gs]et/) && nthArg===1)
     return completeCaseIns(lastArg, config.s);
   if (cmdName === 'helpp')
-    return completeCaseIns(lineAfterCommand, r.commands);
-  if (cmdName === 'cd' || cmdName === 'metadata')
-    return completeCaseIns(lineAfterCommand, ENV.currentDirItems);
+    return completeCaseIns(lastArg, r.commands);
+  if (cmdName.match(/cd|mkdir|rename|metadata|setTags|copy|move/) && nthArg===1 || cmdName.match(/copy|move/) && nthArg<=2) {
+    const dirLine = lastArg.charAt(0).match(/["'`]/) ? lastArg.slice(1) : lastArg;
+    return completeCaseIns(dirLine, ENV.currentDirItems);
+  }
 
   // Assuming that in most cases you're going to want javascript-like things after you command
   return completeJs(lineAfterCommand);
