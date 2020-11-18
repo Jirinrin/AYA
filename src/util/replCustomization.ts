@@ -23,7 +23,7 @@ let inittedJsGlobalKeys = false;
 let jsGlobalKeys: Set<string> = new Set<string>(jsKeywords);
 let jsGlobalKeyValues: Record<string, string[]> = {};
 const setGlobalKey = (key: string) => {
-  if (key === 'GLOBAL' || key === 'root') return;
+  if (key === 'GLOBAL' || key === 'root' || key === 'sys') return;
   if (jsGlobalKeys.has(key)) return;
 
   jsGlobalKeys.add(key);
