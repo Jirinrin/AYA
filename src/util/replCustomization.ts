@@ -108,7 +108,11 @@ function completeCaseIns(stringToCheck: string, completions: string[]|Record<str
   // console.llog('completion case ins', stringToCheck, completionsArray, actualCompletions);
   if (!actualCompletions.length)
     return emptyCompl;
-  const trimmedCompletions = actualCompletions.map(c => c.slice(stringToCheck.length)).filter(c => !!c);
+  let trimmedCompletions = actualCompletions.map(c => c.slice(stringToCheck.length));
+  // This is done because from node 14, if you press enter it does the autocomplete directly.
+  // So we can't just filter out the empty string.
+  if (trimmedCompletions.includes(''))
+    trimmedCompletions = [];
   return [ trimmedCompletions, '', actualCompletions, stringToCheck ];
 }
 
