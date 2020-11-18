@@ -105,6 +105,11 @@ There are some arguments available to pass to Aya:
 - `--help`: get the available init flags
 
 
+## Random info about the REPL
+
+It is recommended that you use `var` instead of `const` or `let`, because autocompletion only works with the former.
+
+
 ## File metadata
 
 The files passed in `doForEach` (and other commands) have some 'metadata' on them, which you can use to make decisions.
