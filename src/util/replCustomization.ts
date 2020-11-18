@@ -24,9 +24,6 @@ const isObj = (item: any): item is Record<any,any>|Function => {
   return type === 'object' || type === 'function';
 };
 
-let inittedJsGlobalKeys = false;
-let jsGlobalKeys = new Set<string>(jsKeywords); // todo: necessary?
-
 interface IObjKeysLookup { [key: string]: {keys: string[], len: number} }
 let jsObjKeysLookup: IObjKeysLookup = {};
 const setObjKeysLookupVal = (key: string, obj: Record<string,any>|Function): string[] => {
@@ -38,23 +35,8 @@ const setObjKeysLookupVal = (key: string, obj: Record<string,any>|Function): str
   return allKeysSet;
 };
 
-const setGlobalKey = (key: string) => {
-  if (key === 'GLOBAL' || key === 'root' || key === 'sys') return;
-  if (jsGlobalKeys.has(key)) return;
-
-  jsGlobalKeys.add(key);
-  const obj = global[key];
-  if (isObj(obj))
-    setObjKeysLookupVal(key, obj);
-};
-const setJsGlobalKeys = () => {
-  inittedJsGlobalKeys = true;
-  Object.getOwnPropertyNames(global).forEach(setGlobalKey);
-  Object.keys(global).forEach(setGlobalKey);
-};
-
 // objKey can contain dots for nested entries
-const getGlobalKeyValues = (objKey: string): string[]|undefined => {
+const getObjectKeys = (objKey: string): string[]|undefined => {
   const valueAtKey = objKey.split('.').reduce((currentObj: Record<string,any>|any, currentKey: string): Record<string,any>|any => {
     if (!currentObj || !isObj(currentObj)) // if it's not an object and you're still trying to get a key in it, fail
       return undefined;
@@ -64,7 +46,6 @@ const getGlobalKeyValues = (objKey: string): string[]|undefined => {
   const valIsObj = isObj(valueAtKey);
 
   const preExistingKeyVals = jsObjKeysLookup[objKey];
-  console.llog('yar', objKey, valueAtKey, preExistingKeyVals)
   if (preExistingKeyVals) {
     // todo: get hasChanged based on hash of keys or something
     const hasChanged = valIsObj && Object.keys(valueAtKey).length !== preExistingKeyVals.len;
@@ -75,6 +56,14 @@ const getGlobalKeyValues = (objKey: string): string[]|undefined => {
   if (valIsObj)
     return setObjKeysLookupVal(objKey, valueAtKey);
   return undefined;
+};
+
+
+let inittedJsGlobalKeys = false;
+let jsGlobalKeys: string[];
+const setJsGlobalKeys = () => {
+  inittedJsGlobalKeys = true;
+  jsGlobalKeys = [...jsKeywords, ...getObjectKeys('global')];
 };
 
 function completeJs(line: string): CustomCompleterResult {
@@ -91,7 +80,7 @@ function completeJs(line: string): CustomCompleterResult {
     // Defined variables will only show up in global when you initialized them with `var`
     return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);}
 
-  const keyValues = getGlobalKeyValues(objKey);
+  const keyValues = getObjectKeys(objKey);
   if (keyValues)
     return completeCaseIns(objSubKey, keyValues);
 
