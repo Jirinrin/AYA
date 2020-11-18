@@ -19,39 +19,81 @@ export type CustomCompleterResult = [completions: string[], matchString: string,
 
 let emptyCompl: CompleterResult;
 
+const isObj = (item: any): item is Record<any,any>|Function => {
+  const type = typeof item;
+  return type === 'object' || type === 'function';
+};
+
 let inittedJsGlobalKeys = false;
-let jsGlobalKeys: Set<string> = new Set<string>(jsKeywords);
-let jsGlobalKeyValues: Record<string, string[]> = {};
+let jsGlobalKeys = new Set<string>(jsKeywords); // todo: necessary?
+
+interface IObjKeysLookup { [key: string]: {keys: string[], len: number} }
+let jsObjKeysLookup: IObjKeysLookup = {};
+const setObjKeysLookupVal = (key: string, obj: Record<string,any>|Function): string[] => {
+  const keys = Object.keys(obj);
+  const allKeysSet = [...new Set([...Object.getOwnPropertyNames(obj), ...keys])];
+  jsObjKeysLookup[key] = {keys: allKeysSet, len: keys.length};
+  console.llog('set', key, keys, allKeysSet, jsObjKeysLookup[key])
+  if (key === 'test') console.llog('testset', obj);
+  return allKeysSet;
+};
+
 const setGlobalKey = (key: string) => {
   if (key === 'GLOBAL' || key === 'root' || key === 'sys') return;
   if (jsGlobalKeys.has(key)) return;
 
   jsGlobalKeys.add(key);
   const obj = global[key];
-  if (typeof obj === 'object' || typeof obj === 'function')
-    jsGlobalKeyValues[key] = [...Object.getOwnPropertyNames(obj), ...Object.keys(obj)];
-}
+  if (isObj(obj))
+    setObjKeysLookupVal(key, obj);
+};
 const setJsGlobalKeys = () => {
   inittedJsGlobalKeys = true;
   Object.getOwnPropertyNames(global).forEach(setGlobalKey);
   Object.keys(global).forEach(setGlobalKey);
-}
+};
+
+// objKey can contain dots for nested entries
+const getGlobalKeyValues = (objKey: string): string[]|undefined => {
+  const valueAtKey = objKey.split('.').reduce((currentObj: Record<string,any>|any, currentKey: string): Record<string,any>|any => {
+    if (!currentObj || !isObj(currentObj)) // if it's not an object and you're still trying to get a key in it, fail
+      return undefined;
+    return currentObj[currentKey];
+  }, global);
+
+  const valIsObj = isObj(valueAtKey);
+
+  const preExistingKeyVals = jsObjKeysLookup[objKey];
+  console.llog('yar', objKey, valueAtKey, preExistingKeyVals)
+  if (preExistingKeyVals) {
+    // todo: get hasChanged based on hash of keys or something
+    const hasChanged = valIsObj && Object.keys(valueAtKey).length !== preExistingKeyVals.len;
+    if (!hasChanged)
+      return preExistingKeyVals.keys;
+  }
+
+  if (valIsObj)
+    return setObjKeysLookupVal(objKey, valueAtKey);
+  return undefined;
+};
 
 function completeJs(line: string): CustomCompleterResult {
   if (!inittedJsGlobalKeys) setJsGlobalKeys();
 
-  const [_, checkString] = line.match(/[ \(]?([^ \(]*)$/) ?? [];
+  // User input is read from a space or opening bracket
+  const [_, checkString] = line.match(/[ \(\[{]?([^ \(\[{]*)$/) ?? [];
   if (!checkString)
     return emptyCompl;
 
-  const [objKeyMatch, objKey, objSubKey] = (checkString.match(/(\w+)\.(\w*)/) ?? []);
+  const [objKeyMatch, objKey, objSubKey] = (checkString.match(/([\w\.]+)\.(\w*)$/) ?? []);
   // console.llog('complete js', objKeyMatch, objKey, objSubKey, jsGlobalKeyValues[objKey])
-  if (!objKeyMatch)
+  if (!objKeyMatch) {
     // Defined variables will only show up in global when you initialized them with `var`
-    return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
-  
-  if (jsGlobalKeyValues[objKey])
-    return completeCaseIns(objSubKey, jsGlobalKeyValues[objKey])
+    return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);}
+
+  const keyValues = getGlobalKeyValues(objKey);
+  if (keyValues)
+    return completeCaseIns(objSubKey, keyValues);
 
   return emptyCompl;
    // todo: even better autocompletion interwoven through javascript? (parse with acorn) or at least some common keywords
