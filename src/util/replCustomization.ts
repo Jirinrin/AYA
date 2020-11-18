@@ -24,26 +24,41 @@ const isObj = (item: any): item is Record<any,any>|Function => {
   return type === 'object' || type === 'function';
 };
 
+const stringPrototypeKeys = Object.getOwnPropertyNames(String.prototype);
+const arrayPrototypeKeys = Object.getOwnPropertyNames(Array.prototype);
+
 interface IObjKeysLookup { [key: string]: {keys: string[], len: number} }
 let jsObjKeysLookup: IObjKeysLookup = {};
 const setObjKeysLookupVal = (key: string, obj: Record<string,any>|Function): string[] => {
   const keys = Object.keys(obj);
   const allKeysSet = [...new Set([...Object.getOwnPropertyNames(obj), ...keys])];
   jsObjKeysLookup[key] = {keys: allKeysSet, len: keys.length};
-  console.llog('set', key, keys, allKeysSet, jsObjKeysLookup[key])
-  if (key === 'test') console.llog('testset', obj);
   return allKeysSet;
 };
 
 // objKey can contain dots for nested entries
-const getObjectKeys = (objKey: string): string[]|undefined => {
+const getObjectKeys = (objKey: string): string[]|null => {
+  // todo: somehow handle e.g. 'blabla'.trim or [12, 34].push like autocompletion
+  // if (objKey.charAt(0) === '[')
+  //   return arrayPrototypeKeys;
+  // if (objKey.charAt(0).match(/"'`/))
+  //   return stringPrototypeKeys;
+
   const valueAtKey = objKey.split('.').reduce((currentObj: Record<string,any>|any, currentKey: string): Record<string,any>|any => {
     if (!currentObj || !isObj(currentObj)) // if it's not an object and you're still trying to get a key in it, fail
-      return undefined;
+      return null;
     return currentObj[currentKey];
   }, global);
 
   const valIsObj = isObj(valueAtKey);
+
+  if (Array.isArray(valueAtKey))
+    return arrayPrototypeKeys;
+  if (!valIsObj) {
+    if (typeof valueAtKey === 'string')
+      return stringPrototypeKeys;
+    return null;
+  }
 
   const preExistingKeyVals = jsObjKeysLookup[objKey];
   if (preExistingKeyVals) {
@@ -53,9 +68,7 @@ const getObjectKeys = (objKey: string): string[]|undefined => {
       return preExistingKeyVals.keys;
   }
 
-  if (valIsObj)
-    return setObjKeysLookupVal(objKey, valueAtKey);
-  return undefined;
+  return setObjKeysLookupVal(objKey, valueAtKey);
 };
 
 
@@ -85,7 +98,7 @@ function completeJs(line: string): CustomCompleterResult {
     return completeCaseIns(objSubKey, keyValues);
 
   return emptyCompl;
-   // todo: even better autocompletion interwoven through javascript? (parse with acorn) or at least some common keywords
+   // todo: even better autocompletion interwoven through javascript? (parse with acorn)
 }
 
 function completeCaseIns(stringToCheck: string, completions: string[]|Record<string,any>): CustomCompleterResult {
