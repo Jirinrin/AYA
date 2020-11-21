@@ -6,8 +6,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as lodash from "lodash";
 import { resolvePath } from "./util/replUtils";
-import { getEnts, getEntsWithMetadata, pathToDirent, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
-import { DirentWithMetadata } from "./types";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, pathToDirent, putFileDataOnEntity, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
+import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 
 export {};
@@ -77,8 +77,13 @@ const globalAdditions = {
     return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
   resolvePath,
-  getEnts,
-  getEntsWithMetadata,
+  getEnts: wrapResolvePath1(getEnts),
+  getEntsWithMetadata: wrapResolvePath1(getEntsWithMetadata),
+
+  doForEach: wrapResolvePath1(doForEach),
+  doForEachDir: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isDirectory() ? callback(e, f) : null)),
+  doForEachFile: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isFile() ? callback(e, f) : null)),
+  doForEachDeep: wrapResolvePath1(doForEachDeep),
 
   lo: lodash,
 
