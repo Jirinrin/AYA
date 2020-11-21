@@ -1,7 +1,6 @@
 import { simpleRename, checkMetadata } from '../util';
-import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from '../types';
+import { EntityType, FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from '../types';
 
-export type EntityType = 'file' | 'directory';
 interface RenameOptions extends IMetadataFilterOpts {
   entType?: EntityType;
   includeExt?: boolean;

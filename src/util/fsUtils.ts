@@ -6,12 +6,9 @@ import { pick } from 'lodash';
 import { config } from './LocalStorage';
 import { putExifMetadataOnEntity } from './exif';
 import { putMusicMetadataOnEntity } from '../modules/Music';
-import { DirentWithMetadata, FileIteratorCallback } from '../types';
+import { DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 
-/**
- * @param folder Is not useful when calling this directly (0 layers deep)
- */
 export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
@@ -29,9 +26,6 @@ export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
   });
 }
 
-/**
- * @param folder Is not useful when calling this directly (0 layers deep)
- */
 export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
   console.info(`Scanning ${folder}...`);
   const indents = setConsoleIndentRel(1);

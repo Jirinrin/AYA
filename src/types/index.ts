@@ -7,7 +7,7 @@ export interface FileMetadata {
   mm?: IAudioMetadata;
   em?: exif.Tags;
   ext: string;
-  baseName: string;
+  baseName: string; // todo: less confusing naming for this? (Because path.basename is incl ext)
   path: string;
 }
 
@@ -42,5 +42,7 @@ export interface Operation extends BaseOperation {
 export type RawOperation = RawOperationNormal | RawOperationSimple | RawOperationShallowDeep | RawOperationCompiled;
 export type RawModule = Record<string, RawOperation>;
 export type Module<T extends RawModule = any> = {[K in keyof T]: Operation};
+
+export type EntityType = 'file' | 'directory';
 
 export * from './metadata';
