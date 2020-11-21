@@ -149,15 +149,15 @@ export function simpleCopy(containerFolder: string, fileName: string, newFolderP
   );
 }
 
-function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): void {
-  const [baseName, ext] = splitFileName(ent.name);
+export function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): DirentWithMetadata {
+  const [baseName, ext] = splitFileName(ent.name, ent.isDirectory());
   ent.ext = ext.replace('.', '');
   ent.baseName = baseName;
   ent.path = path.resolve(folder, ent.name);
+  return ent;
 }
 
 export async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
-  putFileDataOnEntity(ent, folder);
   if (config.s.musicMetadata) await putMusicMetadataOnEntity(ent, folder);
   if (config.s.exifMetadata) await putExifMetadataOnEntity(ent, folder);
   return ent;
