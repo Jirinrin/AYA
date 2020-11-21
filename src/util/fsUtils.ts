@@ -73,8 +73,14 @@ export async function doForEachDeep(
     console.info('Recursive action done!');
 }
 
-export function getEnts(folder: string): fs.Dirent[] {
-  return fs.readdirSync(folder, { withFileTypes: true });
+export function getEnts(folder: string, opts: { entType?: EntityType, filter?: RegExp } = {}): DirentWithMetadata[] {
+  let ents = fs.readdirSync(folder, { withFileTypes: true })
+    .map((ent: DirentWithMetadata) => putFileDataOnEntity(ent, folder));
+  if (opts.entType)
+    ents = ents.filter(e => (opts.entType === 'file' ? e.isFile() : e.isDirectory()));
+  if (opts.filter)
+    ents = ents.filter(e => e.baseName.match(opts.filter));
+  return ents;
 }
 export async function getEntsWithMetadata(folder: string): Promise<DirentWithMetadata[]> {
   const ents = getEnts(folder);
