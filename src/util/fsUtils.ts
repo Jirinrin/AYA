@@ -12,7 +12,7 @@ import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
  */
-export function forEveryEntryAsync(folder: string, callback: FileIteratorCallback) {
+export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
   if (typeof callback !== 'function') {
     console.error('callback does not appear to be a function');
     return;
@@ -32,7 +32,7 @@ export function forEveryEntryAsync(folder: string, callback: FileIteratorCallbac
 /**
  * @param folder Is not useful when calling this directly (0 layers deep)
  */
-export async function forEveryEntry(folder: string, callback: FileIteratorCallback): Promise<void> {
+export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
   console.info(`Scanning ${folder}...`);
   const indents = setConsoleIndentRel(1);
   try {
@@ -56,18 +56,18 @@ export async function forEveryEntry(folder: string, callback: FileIteratorCallba
   }
 }
 
-export async function forEveryEntryDeep(
+export async function doForEachDeep(
   folder: string, 
   callback: FileIteratorCallback,
   invDepth: number = config.s.recursionDepth,
 ): Promise<void> {
-  await forEveryEntry(folder, async (ent, deepFolder) => {
+  await doForEach(folder, async (ent, deepFolder) => {
     await callback(ent, deepFolder);
     if (invDepth <= 0) {
       return;
     }
     if (ent.isDirectory()) {
-      return await forEveryEntryDeep(
+      return await doForEachDeep(
         path.join(deepFolder, ent.name),
         callback,
         invDepth - 1,

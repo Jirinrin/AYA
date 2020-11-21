@@ -2,7 +2,7 @@ import ENV from "../ENV";
 import * as path from "path";
 import * as fs from "fs";
 import { simpleMove } from "../util";
-import { forEveryEntry, getEnts } from "../util";
+import { doForEach, getEnts } from "../util";
 import { RawModule } from "../types";
 
 const FolderOperations: RawModule = {
@@ -11,7 +11,7 @@ const FolderOperations: RawModule = {
     run: async (opts: {all: boolean, allowFiles: boolean}) => {
       console.log('Start flattening...');
 
-      await forEveryEntry(ENV.cwd, (dir, folder) => {
+      await doForEach(ENV.cwd, (dir, folder) => {
         if (!dir.isDirectory()) return;
 
         const currentFolder = path.join(folder, dir.name);

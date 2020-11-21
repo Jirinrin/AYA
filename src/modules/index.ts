@@ -1,5 +1,5 @@
 import { Module, Operation, RawOperationShallowDeep, RawOperation, RawOperationSimple, RawOperationCompiled, ActionFunction, ActionFunctionEvall } from '../types';
-import { forEveryEntry, forEveryEntryDeep, getFunctionData, parseArgs } from '../util';
+import { doForEach, doForEachDeep, getFunctionData, parseArgs } from '../util';
 import ENV from '../ENV';
 import { evall, evalls } from '../util/replUtils';
 
@@ -16,7 +16,7 @@ const rawModules = {
 function makeShallow(op: RawOperationShallowDeep, info: CommandInfo): ActionFunctionEvall {
   const { paramNames } = getFunctionData(op.getRun(null as any));
 
-  const [actionShallow, actionDeep] = [forEveryEntry, forEveryEntryDeep].map(iter => {
+  const [actionShallow, actionDeep] = [doForEach, doForEachDeep].map(iter => {
     const output = op.getRun((cb, dirOverwrite?) => iter(dirOverwrite ?? ENV.cwd, cb));
     output.paramNames = paramNames;
     return evall(output, info);
