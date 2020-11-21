@@ -67,13 +67,13 @@ const globalAdditions = {
     const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory());
     console.log(`Copied "${filePath}" to "${copyToFolder}"`);
   }),
-  rename: wrapResolvePath1((filePath, newFileName: string) => {
-    const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), newFileName, fs.statSync(filePath).isDirectory())
+  rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
+    const ent = pathToDirent(filePath);
+    const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
     console.log(`Renamed "${path.basename(filePath)}" to "${finalName}"`);
   }),
   // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {
-    console.log('filepath', filePath);
     return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
   resolvePath,
