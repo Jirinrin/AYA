@@ -43,7 +43,7 @@ const Rename: RawModule = {
     help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string} | opts: ${eerOpts}`,
     getRun: iterate => renameEveryEntry(iterate),
   },
-  'renameEach-rx': { // everyEntryRenameRegex
+  'renameEachRx': { // everyEntryRenameRegex
     help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern} | opts: ${eerOpts}`,
     getRun: iterate => (
       r_searchRegex: string|RegExp,

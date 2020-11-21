@@ -41,15 +41,15 @@ const Base: RawModule = {
     run_c: evalls((commandName: string) => getCommandHelp(r, commandName)),
   },
   
-  'config-get': {
+  'configGet': {
     help: 'Print the contents of the config item with the key {$1}',
     run: <K extends keyof IConfig>(key: K) => console.log(config.s[key]),
   },
-  'config-set': {
+  'configSet': {
     help: 'Set the contents of config with the key {$1} to the code you define {$2}',
     run: setConfigItem,
   },
-  'config-reset': {
+  'configReset': {
     help: 'Reset the config to its default values',
     run_s: config.reset,
   },
@@ -71,18 +71,18 @@ const Base: RawModule = {
     help: 'List all available userscripts',
     run: () => console.info(`Available userscripts: ${userScripts.getKeysString()}`),
   },
-  'userscript-get': {
+  'userscriptGet': {
     help: 'Print the contents of the userscript with the key {$1}',
     run: withCheckUserScriptKey((key: string) => console.log( userScripts.s[key].split('\n').map(line => highlightLine(line.trim())).join('\n') )),
   },
-  'userscript-set': {
+  'userscriptSet': {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
     run: (key: string, ss_code: string) => {
       // todo: allow dashes in key
       userScripts.set(key, ss_code.replace(/\\n/g, '\n'));
     },
   },
-  'userscript-delete': {
+  'userscriptDelete': {
     help: 'Delete userscript with the key(s) {$1} {$...}',
     run: (...keys: string[]) => {
       keys.forEach(withCheckUserScriptKey(key => userScripts.delete(key)));

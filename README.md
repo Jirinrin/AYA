@@ -169,7 +169,6 @@ interface {
 ## TODO
 - go through todos in code
 - refresh ENV.currentDirItems on more occasions / use in all places where you can use relative paths / implement fancier hash-based recursive system or sth
-- replace all dash-case by camelCase
 - add to readme some gameplay footage
 - allow force quitting a command that's taking a long time
 - add ora fancy spinner thingy on longer running scripts?
