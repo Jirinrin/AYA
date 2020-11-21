@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { pick } from 'lodash';
 
 import { config } from './LocalStorage';
 import { putExifMetadataOnEntity } from './exif';
@@ -163,10 +162,16 @@ export async function putMetadataOnEntity(ent: DirentWithMetadata, folder: strin
   return ent;
 }
 
-export function pathToDirent(entPath: string): fs.Dirent {
-  const test = pick(fs.statSync(entPath), 'isFile', 'isDirectory', 'isBlockDevice', 'isCharacterDevice', 'isSymbolicLink', 'isFIFO', 'isSocket');
-  return {
-    ...test,
+export function pathToDirent(entPath: string): DirentWithMetadata {
+  const ent = fs.statSync(entPath);
+  return putFileDataOnEntity({
     name: path.basename(entPath),
-  }
+    isFile: () => ent.isFile(),
+    isDirectory: () => ent.isDirectory(),
+    isBlockDevice: () => ent.isBlockDevice(),
+    isCharacterDevice: () => ent.isCharacterDevice(),
+    isSymbolicLink: () => ent.isSymbolicLink(),
+    isFIFO: () => ent.isFIFO(),
+    isSocket: () => ent.isSocket(),
+  } as DirentWithMetadata, path.dirname(entPath));
 }
