@@ -46,7 +46,7 @@ const getObjectKeys = (objKey: string): string[]|null => {
 
   const valueAtKey = objKey.split('.').reduce((currentObj: Record<string,any>|any, currentKey: string): Record<string,any>|any => {
     if (!currentObj || !isObj(currentObj)) // if it's not an object and you're still trying to get a key in it, fail
-      return null;
+      return undefined;
     return currentObj[currentKey];
   }, global);
 
