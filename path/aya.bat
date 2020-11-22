@@ -1,1 +1,1 @@
-@node --enable-source-maps %~dp0..\build %*
+@node --enable-source-maps --experimental-repl-await %~dp0..\build %*
