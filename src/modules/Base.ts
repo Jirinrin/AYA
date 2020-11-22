@@ -1,8 +1,8 @@
-import { readdirSync } from "fs";
+import { readdirSync, readFileSync } from "fs";
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from "../types";
-import { changeDirectory, getCommandHelp, resolvePath, setConfigItem } from "../util/replUtils";
+import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem, wrapResolvePath1 } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
@@ -110,6 +110,11 @@ const Base: RawModule = {
   'rename': { run: (s_file: string, s_newName: string) => global.rename(s_file, s_newName) },
   'metadata': { run: async (s_file: string) => console.logv(await global.metadata(s_file)) },
   'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
+
+  'loadScript': {
+    help: 'Load a script from the path {$1} you specify into the REPL context',
+    run: wrapResolvePath1((s_file: string) => globalEval(readFileSync(s_file).toString())),
+  }
 };
 
 // todo: also use this flexible logic in the normal REPL environment

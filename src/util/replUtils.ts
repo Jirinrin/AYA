@@ -91,6 +91,13 @@ export function resolvePath(relOrAbsPath: string): string {
   return path.isAbsolute(relOrAbsPath) ? relOrAbsPath : path.resolve(ENV.cwd ?? '', relOrAbsPath);
 }
 
+export function wrapResolvePath1<T extends (path: string, ...args: any[]) => any>(fn: T): T {
+  return ( (path, ...args) => fn(resolvePath(path), ...args) ) as T;
+}
+export function wrapResolvePath2<T extends (p1: string, p2: string, ...args: any[]) => any>(fn: T): T {
+  return ( (p1, p2, ...args) => fn(resolvePath(p1), resolvePath(p2), ...args) ) as T;
+}
+
 export function getCommandHelp(r: REPLServer, commandName: string) {
   const command = r.commands[commandName];
   if (command)
