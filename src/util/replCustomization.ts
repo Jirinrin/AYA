@@ -150,11 +150,11 @@ function getCompletionData(line: string): CustomCompleterResult {
   const lastArg = args[args.length-1] ?? '';
   const nthArg = args.length || 1;
 
-  if ((cmdName.match(/^userscript(?:-(get|set))?/) || cmdName === 'u') && nthArg===1)
+  if ((cmdName.match(/^userscript(?:[GS]et)?/) || cmdName === 'u') && nthArg===1)
     return completeCaseIns(lastArg, userScripts.s);
-  if (cmdName.match(/^userscript-delete/))
+  if (cmdName.match(/^userscriptDelete/))
     return completeCaseIns(lastArg, userScripts.s);
-  if (cmdName.match(/^config-[gs]et/) && nthArg===1)
+  if (cmdName.match(/^config[GS]et/) && nthArg===1)
     return completeCaseIns(lastArg, config.s);
   if (cmdName === 'helpp')
     return completeCaseIns(lastArg, r.commands);
@@ -235,7 +235,7 @@ export function highlightLine(line: string): string {
 
   const drawBody = (part: string): string => {
     const p = new ResultBuilder(part);
-    if (cmdName === 'renameEach-rx') {
+    if (cmdName === 'renameEachRx') {
       const [arg1Match, quote1, actualRegex, quote2] = p.l.match(/^(")([^"]+)("?)/) ?? p.l.match(/^(')([^']+)('?)/) ?? p.l.match(/^(\/)([^\/]+)(\/?)/) ?? p.l.match(/^(`)([^`]+)(`?)/) ?? p.l.match(/^()(\S+)()/) ?? [];
       if (arg1Match) {
         if (quote1) p.eatFromInput(1, chalk.red(quote1));
