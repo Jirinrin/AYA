@@ -100,6 +100,7 @@ const defaultConfig = {
   musicMetadata: false,
   exifMetadata: false,
   alwaysStart: false,
+  initScriptsDir: '',
 };
 export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});
 export type IConfig = typeof defaultConfig;

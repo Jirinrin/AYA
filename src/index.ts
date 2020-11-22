@@ -6,10 +6,12 @@ import Modules from './modules';
 import { Module } from './types';
 import './Global';
 import { config } from './util/LocalStorage';
-import { changeDirectory } from './util/replUtils';
+import { changeDirectory, globalEval } from './util/replUtils';
 import { completer, setupReplCustomization } from './util/replCustomization';
 import { setConsole } from './util/consoleExtension';
 import { runScript } from './modules/Base';
+import { readFileSync } from 'fs-extra';
+import { getEnts } from './util';
 
 setConsole();
 
@@ -58,6 +60,10 @@ async function startRepl() {
     
     if (!initOpts.continueAfterCmd)
       process.exit();
+  }
+
+  if (config.s.initScriptsDir) {
+    getEnts(config.s.initScriptsDir, { ext: 'js' }).forEach(ent => globalEval(readFileSync(ent.path).toString()));
   }
 }
 
