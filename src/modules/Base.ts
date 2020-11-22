@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "fs";
 import { r } from "..";
 import ENV from "../ENV";
-import { FileIteratorCallback, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from "../types";
+import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
 import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem, wrapResolvePath1 } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
@@ -61,7 +61,7 @@ const Base: RawModule = {
   },
   
   'doForEach': { // todo: add shorthand for userscripts
-    help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFiltersOpts}`,
+    help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFilterOpt}`,
     getRun: iterate => (callback: FileIteratorCallback, opts: IMetadataFilterOpts) => iterate((ent, folder) => {
       if (!checkMetadata(ent, opts))
         return;

@@ -1,12 +1,11 @@
 import { simpleRename, checkMetadata } from '../util';
-import { EntityType, FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from '../types';
+import { EntityType, FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFilterOpt, RawModule } from '../types';
 
 interface RenameOptions extends IMetadataFilterOpts {
-  entType?: EntityType;
   includeExt?: boolean;
 }
 
-const eerOpts = `--entType=file|directory, --includeExt, ${metadataFiltersOpts}`
+const eerOpts = `--includeExt, ${metadataFilterOpt}`
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   renameCallback: (fileName: string, metadata?: FileMetadata) => string,
@@ -26,11 +25,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
       ? rename(ent.name, ent).trim()
       : rename(ent.baseName, ent) + '.'+ent.ext;
 
-    if (
-      ent.name !== newName &&
-      !(ent.isDirectory() && opts.entType === 'file') && 
-      !(ent.isFile() && opts.entType === 'directory')
-    ) {
+    if (ent.name !== newName) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
       console.log(`Renamed "${ent.name}" to "${renamedName}"`);
       return newName;

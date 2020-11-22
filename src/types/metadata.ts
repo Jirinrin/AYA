@@ -1,13 +1,15 @@
 import { IPicture } from "music-metadata";
 
 const metadataFilters = [
+  'file',
+  'directory',
   'musicFiles', // Only use music files, exposing metadata of the files
   'imageFiles', // Only use image files, exposing exif metadata of the files
   'videoFiles', // Only use image files, exposing exif metadata of the files
 ] as const;
 type MetadataFilter = typeof metadataFilters[number];
-export type IMetadataFilterOpts = Partial<Record<MetadataFilter, boolean>>;
-export const metadataFiltersOpts = metadataFilters.map(f => `--${f}`).join(', ');
+export interface IMetadataFilterOpts { filter?: MetadataFilter }
+export const metadataFilterOpt = '--filter=' + metadataFilters.join('|');
 
 export interface ITrackInfo {
   title: string;

@@ -132,10 +132,17 @@ export function verbose(msg: any) {
   return formatMsg(true, msg);
 }
 
-export function checkMetadata(ent: DirentWithMetadata, {musicFiles, imageFiles, videoFiles}: IMetadataFilterOpts) {
-  return !(
-    (musicFiles && !ent.mm) ||
-    (imageFiles && !(ent.em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i))) ||
-    (videoFiles && !(ent.em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i)))
-  );
+export function checkMetadata(ent: DirentWithMetadata, { filter }: IMetadataFilterOpts): boolean {
+  if (!filter)
+    return true;
+  switch (filter) {
+    case 'file': return ent.isFile();
+    case 'directory': return ent.isDirectory();
+    case 'musicFiles': return !!ent.mm;
+    case 'imageFiles': return !!(ent.em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i));
+    case 'videoFiles': return !!(ent.em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i));
+    default:
+      console.warn('Unknown filter:', filter);
+      return true;
+  }
 }
