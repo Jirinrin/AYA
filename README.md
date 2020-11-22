@@ -52,6 +52,13 @@ Useful note: use the `scriptFromHistory()` global function (docs [down below](##
 There are some config values you can set from the CLI, which will be persisted even when closing and reopening Aya.
 Use the `config` commands (see `.help`) to interact with these.
 
+Explanation of the different config keys:
+- `recursionDepth`: Set how many layers the `--deep` versions of iterative commands continue.
+- `syntaxHighlighting`: Toggle syntax highlighting (because it may impact performance).
+- `musicMetadata`: Toggle fetching music-related metadata.
+- `exifMetadata`: Toggle fetching metadata on all kinds of files.
+- `alwaysStart`: Set to true to have aya always start in the current working directory, so you don't have to specify the `-s` flag.
+- `initScriptsDir`: Set this to a directory path for aya to load all scripts in that directory into its context. This allows you to expose custom functions you use a lot.
 
 ## Available commands
 
@@ -59,36 +66,6 @@ I don't really feel like listing all commands here, so just type `.help` to get 
 If you want to get just a single command's help, use the `.helpp` command, or add the `--help` flag to it.
 
 There are a few default NodeJS REPL commands which you may want to be aware of: `.break`, `.clear`, `.editor`, `.exit`, `.load`, `.save`. These probably work as expected but I'm not making any guarantees.
-
-
-## Available JS globals
-
-```ts
-interface {
-  /**
-   * Execute a command that will be executed in the underlying shell environment.
-   */
-  exec: (cmd: string) => void;
-  /**
-   * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
-   * [int]: the total number of lines going back that you want
-   * [int, int]: the range of lines that you want (e.g. [2, 4] gets the last 4 lines except the last line you typed)
-   * [...int[]]: the indices of the lines that you wanted, counting back from the current line
-   */
-  scriptFromHistory(from: number): string;
-
-  // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
-  // Exept for exists(), all of these have a command version as well for ease of use.
-  mkdir: (dirPath: string) => void;
-  exists: (path: string) => void;
-  move: (filePath: string, moveToDirPath: string) => void;
-  copy: (filePath: string, copyToDirPath: string) => void;
-  rename: (filePath: string, newFileName: string) => void;
-  metadata: (filePath: string) => Promise<DirentWithMetadata>;
-}
-```
-
-There are still plans to add a bunch of file system related shorthand functions, like `mv()`, `cp()`, `rename()`, `mkdir()` etc.
 
 
 ## Init args
@@ -107,7 +84,54 @@ There are some arguments available to pass to Aya:
 
 ## Random info about the REPL
 
-It is recommended that you use `var` instead of `const` or `let`, because autocompletion only works with the former.
+It is recommended that you use `var` instead of `const`/`let`, because autocompletion only works with the former.
+
+
+## Available JS globals
+
+```ts
+interface {
+  /**
+   * Execute a command that will be executed in the underlying shell environment.
+   */
+  exec: (cmd: string) => Promise<void>;
+  /**
+   * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
+   * [int]: the total number of lines going back that you want
+   * [int, int]: the range of lines that you want (e.g. [2, 4] gets the last 4 lines except the last line you typed)
+   * [...int[]]: the indices of the lines that you wanted, counting back from the current line
+   */
+  scriptFromHistory(from: number): string;
+
+  // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
+  // Exept for exists(), all of these have a command version as well for ease of use.
+  mkdir: (dirPath: string) => void;
+  exists: (path: string) => void;
+  move: (filePath: string, moveToDirPath: string) => void;
+  copy: (filePath: string, copyToDirPath: string) => void;
+  rename: (filePath: string, newFileName: string) => void;
+  metadata: (filePath: string) => Promise<DirentWithMetadata>;
+  getEnts: (filePath: string) => DirentWithMetadata[];
+  getEntsWithMetadata: (filePath: string) => Promise<DirentWithMetadata[]>;
+
+  doForEach:     (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
+  doForEachDir:  (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
+  doForEachFile: (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
+  doForEachDeep: (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
+
+  // The manual version of resolving a relative/absolute path
+  resolvePath: (filePath: string) => string;
+
+  // Set exif metadata
+  setTags: (filePath: string, tags: Record<string, any>) => Promise<void>;
+
+
+  env: ENV; // Used for some internal stuff, but also contains e.g. cwd
+  JSONbig: JSONBigInt;
+
+  lo: Lodash;
+}
+```
 
 
 ## File metadata
