@@ -26,12 +26,13 @@ const isObj = (item: any): item is Record<any,any>|Function => {
 
 const stringPrototypeKeys = Object.getOwnPropertyNames(String.prototype);
 const arrayPrototypeKeys = Object.getOwnPropertyNames(Array.prototype);
+const functionPrototypeKeys = Object.getOwnPropertyNames(Function.prototype);
 
 interface IObjKeysLookup { [key: string]: {keys: string[], len: number} }
 let jsObjKeysLookup: IObjKeysLookup = {};
 const setObjKeysLookupVal = (key: string, obj: Record<string,any>|Function): string[] => {
   const keys = Object.keys(obj);
-  const allKeysSet = [...new Set([...Object.getOwnPropertyNames(obj), ...keys])];
+  const allKeysSet = [...new Set([...Object.getOwnPropertyNames(obj), ...keys, ...(typeof obj === 'function' ? functionPrototypeKeys : [])])];
   jsObjKeysLookup[key] = {keys: allKeysSet, len: keys.length};
   return allKeysSet;
 };
