@@ -107,7 +107,7 @@ export function getCommandHelp(r: REPLServer, commandName: string) {
     console.error(`Could not find a command named "${commandName}"`);
 }
 
-export function setConfigItem<K extends keyof IConfig>(key: K, val: IConfig[K]) {
-  if (config.set(key, val))
-    console.info(`Successfully set config item "${key}" to ${val}`);
+export function setConfigItem<K extends keyof IConfig>(key: K, ss_val: IConfig[K]) {
+  if (config.set(key, ss_val))
+    console.info(`Successfully set config item "${key}" to ${ss_val}`);
 }
