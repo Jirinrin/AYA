@@ -170,6 +170,7 @@ interface {
 - go through todos in code
 - refresh ENV.currentDirItems on more occasions / use in all places where you can use relative paths / implement fancier hash-based recursive system or sth
 - add to readme some gameplay footage
+- a way to expose certain custom functions / load in certain js files on startup (similar to userscripts)
 - allow force quitting a command that's taking a long time
 - add ora fancy spinner thingy on longer running scripts?
 - have some [iter] like (colored?) label in the help of commands that iterate
