@@ -29,17 +29,11 @@ export interface RawOperationNormal extends BaseOperation {
 export interface RawOperationShallowDeep extends BaseOperation {
   getRun: (iterator: FileIteratorFunction) => OperationFunction;
 };
-export interface RawOperationSimple extends BaseOperation {
-  run_s: ActionFunction;
-};
-export interface RawOperationCompiled extends BaseOperation {
-  run_c: ActionFunction;
-};
 export interface Operation extends BaseOperation {
   action: ActionFunction;
 }
 
-export type RawOperation = RawOperationNormal | RawOperationSimple | RawOperationShallowDeep | RawOperationCompiled;
+export type RawOperation = RawOperationNormal | RawOperationShallowDeep;
 export type RawModule = Record<string, RawOperation>;
 export type Module<T extends RawModule = any> = {[K in keyof T]: Operation};
 

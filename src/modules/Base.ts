@@ -2,7 +2,7 @@ import { readdirSync } from "fs";
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFiltersOpts, RawModule } from "../types";
-import { changeDirectory, evalls, getCommandHelp, resolvePath, setConfigItem } from "../util/replUtils";
+import { changeDirectory, getCommandHelp, resolvePath, setConfigItem } from "../util/replUtils";
 import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
@@ -14,6 +14,8 @@ const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
     return console.error(`Userscript with key "${key}" sure doesn\'t seem to exist`);
   return fn(key);
 };
+
+export const helpp = (s_cmdName: string) => getCommandHelp(r, s_cmdName);
 
 const Base: RawModule = {
   'ls': {
@@ -29,16 +31,16 @@ const Base: RawModule = {
 
   'cd': {
     help: 'Change current directory',
-    run_s: changeDirectory,
+    run: changeDirectory,
   },
   'cwd': {
     help: 'Get current working directory',
-    run_s: () => console.log(ENV.cwd),
+    run: () => console.log(ENV.cwd),
   },
   
   'helpp': {
     help: 'Get help for a specific command',
-    run_c: evalls((commandName: string) => getCommandHelp(r, commandName)),
+    run: helpp,
   },
   
   'configGet': {
@@ -51,7 +53,7 @@ const Base: RawModule = {
   },
   'configReset': {
     help: 'Reset the config to its default values',
-    run_s: config.reset,
+    run: config.reset,
   },
   'config': {
     help: 'List all config items | opts: --withValues(-v)',
@@ -102,7 +104,7 @@ const Base: RawModule = {
   //   run_s: globalEval,
   // },
 
-  'mkdir': { run_s: dirName => global.mkdir(dirName) },
+  'mkdir': { run: s_dirName => global.mkdir(s_dirName) },
   'move': { run: (s_file: string, s_moveTo: string) => global.move(s_file, s_moveTo) },
   'copy': { run: (s_file: string, s_copyTo: string) => global.copy(s_file, s_copyTo) },
   'rename': { run: (s_file: string, s_newName: string) => global.rename(s_file, s_newName) },

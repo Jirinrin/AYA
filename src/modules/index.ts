@@ -1,11 +1,11 @@
-import { Module, Operation, RawOperationShallowDeep, RawOperation, RawOperationSimple, RawOperationCompiled, ActionFunction, ActionFunctionEvall } from '../types';
+import { Module, Operation, RawOperationShallowDeep, RawOperation, ActionFunctionEvall } from '../types';
 import { doForEach, doForEachDeep, getFunctionData, parseArgs } from '../util';
 import ENV from '../ENV';
-import { evall, evalls } from '../util/replUtils';
+import { evall } from '../util/replUtils';
 
 import Rename from './Rename';
 import FolderOperations from './FolderOperations';
-import Base from './Base';
+import Base, { helpp } from './Base';
 
 const rawModules = {
   Base,
@@ -31,16 +31,6 @@ function makeShallow(op: RawOperationShallowDeep, info: CommandInfo): ActionFunc
 function isShallowDeep(op: RawOperation): op is RawOperationShallowDeep {
   return !!op['getRun'];
 }
-function isCompiled(op: RawOperation): op is RawOperationCompiled {
-  return !!op['run_c'];
-}
-function isSimp(op: RawOperation): op is RawOperationSimple {
-  return !!op['run_s'];
-}
-function actionIsSimple(op: RawOperation, a: ActionFunction|ActionFunctionEvall): a is ActionFunction {
-  return isCompiled(op) || isSimp(op);
-}
-
 
 // todo: move to better location (?)
 export const getCommand = (line: string) =>
@@ -82,16 +72,13 @@ function getCmdInfo(help: string): CommandInfo {
 
 function makeOperation(op: RawOperation, cmdName: string): Operation {
   let help = op.help ?? '';
-  let action: ActionFunction|ActionFunctionEvall = null;
   if (isShallowDeep(op))
     help += `${help.includes('opts:') ? ',' : ' | opts:'} --deep(-d)`;
 
   const info = getCmdInfo(help);
   cmdInfo[cmdName] = info;  // side effect yay! Though maybe this whole global variable is unnecessary?
 
-  if (isShallowDeep(op)) action = makeShallow(op, info);
-  else if (isCompiled(op)) action = op.run_c;
-  else action = isSimp(op) ? evalls(op.run_s) : evall(op.run, info);
+  const action = isShallowDeep(op) ? makeShallow(op, info) : evall(op.run, info);
 
   return {
     help,
@@ -99,12 +86,9 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
       const [rawArgs, opts] = parseArgs(argsString, info);
 
       if (opts.help)
-        return (Base.helpp as RawOperationCompiled).run_c(cmdName);
+        return helpp(cmdName);
 
-      if (actionIsSimple(op, action))
-        return action(argsString);
-      else
-        return action(rawArgs, opts);
+      return action(rawArgs, opts);
     },
   };
 }

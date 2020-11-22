@@ -17,7 +17,7 @@ const evalString = (str: string) => str.replace(/^["'`]?([^"'`]*)["'`]?$/, '$1')
 /**
  * Generates from a function you give it a wonderful command with argument parsing etc.
  */
-export function evall(func: OperationFunction, info: CommandInfo): ActionFunctionEvall {
+export function evall(func: OperationFunction, info?: CommandInfo): ActionFunctionEvall {
   let { paramsCount, requiredParamsCount, paramData, hasInfiniteParams } = getFunctionData(func);
 
   return async (rawArgs, opts): Promise<void> => {
@@ -71,19 +71,11 @@ export function evall(func: OperationFunction, info: CommandInfo): ActionFunctio
   };
 }
 
-// evall-simple
-export function evalls(func: ActionFunction): ActionFunction {
-  return async (args) => {
-    await func(args);
-    r.write('\n');
-  };
-}
-
 /**
  * @return boolean indicating whether it was succesful
  */
-export function changeDirectory(dirPath: string): boolean {
-  const newDirectory = resolvePath(dirPath);
+export function changeDirectory(s_dirPath: string): boolean {
+  const newDirectory = resolvePath(s_dirPath);
   if (fs.existsSync(newDirectory)) {
     ENV.cwd = newDirectory;
     ENV.currentDirItems = fs.readdirSync(newDirectory);
