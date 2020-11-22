@@ -41,6 +41,8 @@ async function startRepl() {
     useColors: true,
   });
 
+  r.on('exit', process.exit);
+
   Object.values(Modules).forEach((mod: Module) => {
     Object.entries(mod).forEach(([k, op]) => {
       r.defineCommand(k, op);
