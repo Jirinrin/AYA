@@ -83,6 +83,8 @@ const globalAdditions = {
   lo: lodash,
 
   setTags: wrapResolvePath1(setExifMetadata),
+
+  // todo: some things for reading/writing files
 };
 
 type GlobalAdditions = typeof globalAdditions;
