@@ -149,6 +149,9 @@ export function checkMetadata(ent: DirentWithMetadata, { filter }: IMetadataFilt
 }
 
 export function readJson<T extends any = any>(filePath: string): T {
+  if (!filePath.includes('.'))
+    filePath += '.json';
+
   return readJsonSync(filePath, {encoding: 'utf8'});
 }
 export function writeJson(filePath: string, data: any, log = true): void {
