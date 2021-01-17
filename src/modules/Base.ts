@@ -113,7 +113,7 @@ const Base: RawModule = {
 
   'loadScript': {
     help: 'Load a script from the path {$1} you specify into the REPL context',
-    run: wrapResolvePath1((s_file: string) => globalEval(readFileSync(s_file).toString())),
+    run: (s_file: string) => globalEval(readFileSync(resolvePath(s_file)).toString()),
   }
 };
 
