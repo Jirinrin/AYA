@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
-import { getHashCode, recordToSchema } from './generalUtils';
+import { getHashCode, readJson, recordToSchema, writeJson } from './generalUtils';
 import * as Ajv from 'ajv';
 import * as moment from 'moment';
 
@@ -30,7 +30,7 @@ class LocalStorage<T extends Record<string, any> = any> {
   }
 
   protected readState() {
-    this.state = JSON.parse(fs.readFileSync(this.filePath).toString());
+    this.state = readJson(this.filePath);
   }
 
   protected initFile(initState: T) {
@@ -39,7 +39,7 @@ class LocalStorage<T extends Record<string, any> = any> {
   }
 
   protected writeState() {
-    fs.writeFileSync(this.filePath, JSON.stringify(this.state, null, 2), 'utf8');
+    writeJson(this.filePath, this.state, false);
   }
 
   public set<K extends keyof T>(key: K, val: T[K]): boolean {

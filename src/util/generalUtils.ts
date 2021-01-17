@@ -3,6 +3,7 @@ import { CommandInfo } from "../modules";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
 import { highlight } from "./replCustomization";
+import { readJsonSync, writeJsonSync } from "fs-extra";
 
 export enum ParamData {
   Any,
@@ -145,4 +146,16 @@ export function checkMetadata(ent: DirentWithMetadata, { filter }: IMetadataFilt
       console.warn('Unknown filter:', filter);
       return true;
   }
+}
+
+export function readJson<T extends any = any>(filePath: string): T {
+  return readJsonSync(filePath, {encoding: 'utf8'});
+}
+export function writeJson(filePath: string, data: any, log = true): void {
+  if (!filePath.includes('.'))
+    filePath += '.json';
+
+  writeJsonSync(filePath, data, {encoding: 'utf8', spaces: 2})
+  if (log)
+    console.log(`Successfully wrote data to ${filePath}`);
 }

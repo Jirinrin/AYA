@@ -7,7 +7,7 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, pathToDirent, putFileDataOnEntity, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 
@@ -80,6 +80,9 @@ const globalAdditions = {
   doForEachDir: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isDirectory() ? callback(e, f) : null)),
   doForEachFile: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isFile() ? callback(e, f) : null)),
   doForEachDeep: wrapResolvePath1(doForEachDeep),
+
+  readJson: wrapResolvePath1(readJson),
+  writeJson: wrapResolvePath1(writeJson),
 
   lo: lodash,
   req,
