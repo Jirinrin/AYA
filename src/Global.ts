@@ -5,6 +5,7 @@ import * as JSONbig from 'json-bigint';
 import * as fs from "fs";
 import * as path from "path";
 import * as lodash from "lodash";
+import * as req from 'superagent';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, pathToDirent, putFileDataOnEntity, putMetadataOnEntity, simpleCopy, simpleMove, simpleRename } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
@@ -81,6 +82,7 @@ const globalAdditions = {
   doForEachDeep: wrapResolvePath1(doForEachDeep),
 
   lo: lodash,
+  req,
 
   setTags: wrapResolvePath1(setExifMetadata),
 

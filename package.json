@@ -39,7 +39,8 @@
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
     "music-metadata": "^4.1.0",
-    "refractor": "^3.1.0"
+    "refractor": "^3.1.0",
+    "superagent": "^6.1.0"
   },
   "devDependencies": {
     "@types/exif": "^0.6.0",
@@ -49,6 +50,7 @@
     "@types/minimist": "^1.2.0",
     "@types/node": "^12.0.4",
     "@types/refractor": "^3.0.0",
+    "@types/superagent": "^4.1.10",
     "pkg": "^4.4.8",
     "ts-node": "^8.2.0",
     "typescript": "^4.0.3"
