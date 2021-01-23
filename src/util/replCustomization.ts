@@ -1,4 +1,5 @@
 import * as chalk from "chalk";
+import { readdirSync } from "fs-extra";
 import { Completer, CompleterResult, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
@@ -73,26 +74,36 @@ const getObjectKeys = (objKey: string): string[]|null => {
 };
 
 
-let inittedJsGlobalKeys = false;
+let inittedKeys = false;
 let jsGlobalKeys: string[];
-const setJsGlobalKeys = () => {
-  inittedJsGlobalKeys = true;
+let nodeModuleNames: string[];
+const initKeys = () => {
+  inittedKeys = true;
   jsGlobalKeys = [...jsKeywords, ...getObjectKeys('global')];
+  if (process.env.NODE_PATH)
+    nodeModuleNames = readdirSync(process.env.NODE_PATH, 'utf8');
 };
 
 function completeJs(line: string): CustomCompleterResult {
-  if (!inittedJsGlobalKeys) setJsGlobalKeys();
+  if (!inittedKeys) initKeys();
+
+  if (nodeModuleNames) {
+    const checkRequireString = line.match(/require\(['"`]([^'"`]*)$/)?.[1];
+    if (checkRequireString) {
+      return completeCaseIns(checkRequireString, nodeModuleNames);
+    }
+  }
 
   // User input is read from a space or opening bracket
-  const [_, checkString] = line.match(/[ \(\[{!?=,]?([^ \(\[{]*)$/) ?? [];
+  const [, checkString] = line.match(/[ \(\[{!?=,]?([^ \(\[{]*)$/) ?? [];
   if (!checkString)
     return emptyCompl;
 
   const [objKeyMatch, objKey, objSubKey] = (checkString.match(/([\w\.]+)\.(\w*)$/) ?? []);
   // console.llog('complete js', objKeyMatch, objKey, objSubKey, jsGlobalKeyValues[objKey])
-  if (!objKeyMatch) {
+  if (!objKeyMatch)
     // Defined variables will only show up in global when you initialized them with `var`
-    return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);}
+    return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
 
   const keyValues = getObjectKeys(objKey);
   if (keyValues)
