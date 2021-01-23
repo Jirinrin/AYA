@@ -1,3 +1,4 @@
+import * as chalk from 'chalk';
 import { exec } from "child_process";
 import { r } from ".";
 import ENV from "./ENV";
@@ -83,6 +84,8 @@ const globalAdditions = {
 
   readJson: wrapResolvePath1(readJson),
   writeJson: wrapResolvePath1(writeJson),
+
+  showColor: (hex: string, customStr?: string) => console.log(chalk.bgHex(hex).black(customStr ?? hex)),
 
   lo: lodash,
   req,
