@@ -1,5 +1,5 @@
 import * as chalk from "chalk";
-import { readdirSync } from "fs-extra";
+import { existsSync, readdirSync } from "fs-extra";
 import { Completer, CompleterResult, cursorTo } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
@@ -80,7 +80,7 @@ let nodeModuleNames: string[];
 const initKeys = () => {
   inittedKeys = true;
   jsGlobalKeys = [...jsKeywords, ...getObjectKeys('global')];
-  if (process.env.NODE_PATH)
+  if (existsSync(process.env.NODE_PATH as string|undefined))
     nodeModuleNames = readdirSync(process.env.NODE_PATH, 'utf8');
 };
 
