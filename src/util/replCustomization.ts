@@ -33,7 +33,11 @@ interface IObjKeysLookup { [key: string]: {keys: string[], len: number} }
 let jsObjKeysLookup: IObjKeysLookup = {};
 const setObjKeysLookupVal = (key: string, obj: Record<string,any>|Function): string[] => {
   const keys = Object.keys(obj);
-  const allKeysSet = [...new Set([...Object.getOwnPropertyNames(obj), ...keys, ...(typeof obj === 'function' ? functionPrototypeKeys : [])])];
+  const allKeysSet = [...new Set([
+    ...Object.getOwnPropertyNames(obj),
+    ...keys,
+    ...Object.keys(Object.getPrototypeOf(obj)),
+    ...(typeof obj === 'function' ? functionPrototypeKeys : [])])];
   jsObjKeysLookup[key] = {keys: allKeysSet, len: keys.length};
   return allKeysSet;
 };
