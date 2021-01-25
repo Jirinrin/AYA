@@ -13,6 +13,8 @@ declare global {
     logPink: Console['log'];
     // verbose with json syntax highlighting
     logv: Console['log'];
+    // log on same line
+    logsl: Console['log'];
   }
 }
 
@@ -51,6 +53,7 @@ const consolePairingsParsed: Array<[k: keyof Console, getConsoleFn: (indents: nu
 
 export function setConsole(indents: number = 0) {
   consolePairingsParsed.forEach(([k, getConsoleFn]) => console[k] = getConsoleFn(indents));
+  console.logsl = (...args: any[]) => process.stdout.write(indent(indents) + formatMsg(false, ...args));
 }
 
 let currentIndents = 0;
