@@ -139,7 +139,7 @@ export function checkMetadata(ent: DirentWithMetadata, { filter }: IMetadataFilt
   switch (filter) {
     case 'file': return ent.isFile();
     case 'directory': return ent.isDirectory();
-    case 'musicFiles': return !!ent.mm;
+    case 'musicFiles': return !!((ent.mm || ent.em) && ent.ext.match(/mp3|m4a|ogg|flac|wav|wma|aac/i));
     case 'imageFiles': return !!(ent.em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i));
     case 'videoFiles': return !!(ent.em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i));
     default:
