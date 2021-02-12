@@ -8,22 +8,22 @@ interface RenameOptions extends IMetadataFilterOpts {
 const eerOpts = `--includeExt, ${metadataFilterOpt}`
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
-  renameCallback: (fileName: string, metadata?: FileMetadata) => string,
+  renameCallback: (fileName: string, metadata?: FileMetadata) => string | Promise<string>,
   opts: RenameOptions = {},
 ) =>
-  iterate((ent, folder) => {
+  iterate(async (ent, folder) => {
     if (!checkMetadata(ent, opts))
       return;
 
-    const rename = (name: string, metadata?: FileMetadata) => {
-      const result = renameCallback(name, metadata);
+    const rename = async (name: string, metadata?: FileMetadata) => {
+      const result = await renameCallback(name, metadata);
       if (!result) throw new Error('Please return something from your renaming function');
       return result;
     }
 
     const newName = (opts.includeExt || ent.isDirectory())
-      ? rename(ent.name, ent).trim()
-      : rename(ent.baseName, ent) + '.'+ent.ext;
+      ? (await rename(ent.name, ent)).trim()
+      : (await rename(ent.baseName, ent)) + '.'+ent.ext;
 
     if (ent.name !== newName) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
