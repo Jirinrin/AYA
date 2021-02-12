@@ -5,6 +5,10 @@ import { getHashCode, readJson, recordToSchema, writeJson } from './generalUtils
 import * as Ajv from 'ajv';
 import * as moment from 'moment';
 
+export const ayaStorageDir = process.pkg
+  ? path.resolve(process.execPath, '../.ayaStorage')
+  : path.resolve(path.dirname(require.main.filename), './.ayaStorage');
+
 class LocalStorage<T extends Record<string, any> = any> {
   protected filePath: string;
   protected state: T;
@@ -12,13 +16,10 @@ class LocalStorage<T extends Record<string, any> = any> {
   public get s() { return this.state };
 
   constructor(fileName: string, initState: T, reset?: boolean) {
-    const dir = process.pkg
-      ? path.resolve(process.execPath, '../.ayaStorage')
-      : path.resolve(path.dirname(require.main.filename), './.ayaStorage');
-    if (!fs.existsSync(dir))
-      fs.mkdirSync(dir);
+    if (!fs.existsSync(ayaStorageDir))
+      fs.mkdirSync(ayaStorageDir);
     
-    this.filePath = path.resolve(dir, fileName);
+    this.filePath = path.resolve(ayaStorageDir, fileName);
     if (!fs.existsSync(this.filePath) || reset)
       this.initFile(initState);
 

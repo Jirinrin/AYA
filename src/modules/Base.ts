@@ -3,7 +3,7 @@ import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
 import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem, wrapResolvePath1 } from "../util/replUtils";
-import { config, IConfig, userScripts } from "../util/LocalStorage";
+import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
 import { checkMetadata, verbose } from "../util";
@@ -114,7 +114,12 @@ const Base: RawModule = {
   'loadScript': {
     help: 'Load a script from the path {$1} you specify into the REPL context',
     run: (s_file: string) => globalEval(readFileSync(resolvePath(s_file)).toString()),
-  }
+  },
+
+  'ayaStorageDir': {
+    help: 'See where the aya\'s local files are stored',
+    run: () => console.info(ayaStorageDir),
+  },
 };
 
 // todo: also use this flexible logic in the normal REPL environment
