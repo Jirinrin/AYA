@@ -74,8 +74,8 @@ export async function doForEachDeep(
 
 interface IGetEntsOpts {
   entType?: EntityType;
-  filter?: RegExp;
-  ext?: string;
+  filter?: string|RegExp;
+  ext?: string|RegExp;
 }
 export function getEnts(folder: string, opts: IGetEntsOpts = {}): DirentWithMetadata[] {
   let ents = fs.readdirSync(folder, { withFileTypes: true })
