@@ -55,15 +55,15 @@ async function startRepl() {
 
   config.validateJson();
 
+  if (config.s.initScriptsDir) {
+    getEnts(config.s.initScriptsDir, { ext: 'js' }).forEach(ent => globalEval(readFileSync(ent.path).toString()));
+  }
+
   if (initBody) {
     await runScript(initBody.replace('\\n', '\n'));
     
     if (!initOpts.continueAfterCmd)
       process.exit();
-  }
-
-  if (config.s.initScriptsDir) {
-    getEnts(config.s.initScriptsDir, { ext: 'js' }).forEach(ent => globalEval(readFileSync(ent.path).toString()));
   }
 }
 
