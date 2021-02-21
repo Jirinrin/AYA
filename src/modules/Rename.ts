@@ -5,7 +5,7 @@ interface RenameOptions extends IMetadataFilterOpts {
   includeExt?: boolean;
 }
 
-const eerOpts = `--includeExt, ${metadataFilterOpt}`
+const reeOpts = `--includeExt, ${metadataFilterOpt}`
 
 const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   renameCallback: (fileName: string, metadata?: FileMetadata) => string | Promise<string>,
@@ -35,11 +35,11 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
 
 const Rename: RawModule = {
   'renameEach': { // everyEntryRename
-    help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string} | opts: ${eerOpts}`,
+    help: `Rename every entry in folder using {$1: (fileName: string, metadata?) => string} | opts: ${reeOpts}`,
     getRun: iterate => renameEveryEntry(iterate),
   },
   'renameEachRx': { // everyEntryRenameRegex
-    help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern} | opts: ${eerOpts}`,
+    help: `Rename every entry in folder using {$1: regex}, {$2: replace pattern} | opts: ${reeOpts}`,
     getRun: iterate => (
       r_searchRegex: string|RegExp,
       s_replacePattern: string,

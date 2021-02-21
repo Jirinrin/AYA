@@ -7,6 +7,7 @@ import { putExifMetadataOnEntity } from './exif';
 import { putMusicMetadataOnEntity } from '../modules/Music';
 import { DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
+import ENV from '../ENV';
 
 export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
   if (typeof callback !== 'function') {
@@ -26,7 +27,7 @@ export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
 }
 
 export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
-  console.info(`Scanning ${folder}...`);
+  if (!ENV.dontLogScanning) console.info(`Scanning ${folder}...`);
   const indents = setConsoleIndentRel(1);
   try {
     if (typeof callback !== 'function')
@@ -45,7 +46,7 @@ export async function doForEach(folder: string, callback: FileIteratorCallback):
     console.error('An error occurred:', err);
   } finally {
     setConsoleIndent(indents-1);
-    console.info('Done!');
+    if (!ENV.dontLogScanning) console.info('Done!');
   }
 }
 

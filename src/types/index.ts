@@ -14,7 +14,7 @@ export interface FileMetadata {
 export interface DirentWithMetadata extends Dirent, FileMetadata {}
 
 export type FileIteratorCallback<TReturn extends any = any> = (ent: DirentWithMetadata, folder: string) => TReturn|Promise<TReturn>;
-export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>, dirOverwrite?: string) => void;
+export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>, dirOverwrite?: string) => void|Promise<void>;
 
 export type ActionFunction = (argsString: string) => any|Promise<any>;
 export type ActionFunctionEvall = (rawArgs: string[], opts: Record<string, any>) => any|Promise<any>;
