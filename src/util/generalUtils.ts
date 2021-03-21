@@ -162,3 +162,15 @@ export function writeJson(filePath: string, data: any, log = true): void {
   if (log)
     console.log(`Successfully wrote data to ${filePath}`);
 }
+
+export function makeSafeForFileName(input: string) {
+  return input
+    .replace(/\\/g, '＼')
+    .replace(/\//g, '／')
+    .replace(/:/g, '：')
+    .replace(/\?/g, '？')
+    .replace(/"/g, '”')
+    .replace(/</g, '＜')
+    .replace(/>/g, '＞')
+    .replace(/\|/g, '｜');
+}
