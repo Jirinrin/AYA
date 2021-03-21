@@ -163,7 +163,7 @@ export function writeJson(filePath: string, data: any, log = true): void {
     console.log(`Successfully wrote data to ${filePath}`);
 }
 
-export function makeSafeForFileName(input: string) {
+export function makeSafeForWindowsFileName(input: string) {
   return input
     .replace(/\\/g, '＼')
     .replace(/\//g, '／')

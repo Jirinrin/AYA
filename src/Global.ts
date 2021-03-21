@@ -8,7 +8,7 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, makeSafeForFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeJson } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 
@@ -92,7 +92,7 @@ const globalAdditions = {
 
   setTags: wrapResolvePath1(setExifMetadata),
 
-  makeSafeForFileName,
+  makeSafeForWindowsFileName,
 
   // todo: some things for reading/writing files
 };
