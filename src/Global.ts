@@ -8,7 +8,7 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeJson } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 
@@ -84,6 +84,7 @@ const globalAdditions = {
 
   readJson: wrapResolvePath1(readJson),
   writeJson: wrapResolvePath1(writeJson),
+  writeFile: wrapResolvePath1(writeFile),
 
   showColor: (hex: string, customStr?: string) => console.log(chalk.bgHex(hex).black(customStr ?? hex)),
 
