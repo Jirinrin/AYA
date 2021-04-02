@@ -80,6 +80,7 @@ const Base: RawModule = {
     help: 'Print the contents of the userscript with the key {$1}',
     run: withCheckUserScriptKey((key: string) => console.log( userScripts.s[key].split('\n').map(line => highlightLine(line.trim())).join('\n') )),
   },
+  // todo: somehow allow for difference between using '\n' in the script vs using it to distinguish between lines...
   'userscriptSet': {
     help: 'Set the contents of userscript with the key {$1} to the code you define {$2}',
     run: (key: string, ss_code: string) => {
