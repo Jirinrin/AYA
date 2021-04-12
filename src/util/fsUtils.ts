@@ -84,7 +84,7 @@ export function getEnts(folder: string, opts: IGetEntsOpts = {}): DirentWithMeta
   if (opts.entType)
     ents = ents.filter(e => (opts.entType === 'file' ? e.isFile() : e.isDirectory()));
   if (opts.filter)
-    ents = ents.filter(e => e.baseName.match(opts.filter));
+    ents = ents.filter(e => e.nameBase.match(opts.filter));
   if (opts.ext)
     ents = ents.filter(e => e.ext.match(opts.ext));
   return ents;
@@ -102,9 +102,9 @@ function getSafePath(unsafePath: string, isDirectory?: boolean) {
   if (!fs.existsSync(unsafePath))
     return unsafePath;
 
-  const [baseName, ext] = splitFileName(path.basename(unsafePath), isDirectory);
+  const [nameBase, ext] = splitFileName(path.basename(unsafePath), isDirectory);
   for (let i = 1; i < 100; i++) {
-    const newNewName = `${baseName} (${i})${ext}`;
+    const newNewName = `${nameBase} (${i})${ext}`;
     const newNewPath = path.resolve(unsafePath, '..', newNewName);
     if (!fs.existsSync(newNewPath))
       return newNewPath;
@@ -125,12 +125,12 @@ export function safeCopy(oldPath: string, newPath: string, isDirectory?: boolean
   return path.basename(safeNewPath);
 }
 
-export function splitFileName(fileName: string, isDirectory?: boolean): [baseName: string, ext: string] {
+export function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string] {
   if (isDirectory) return [fileName, ''];
 
   const ext = path.extname(fileName);
-  const baseName = ext ? fileName.split(ext)[0] : fileName;
-  return [baseName, ext];
+  const nameBase = ext ? fileName.split(ext)[0] : fileName;
+  return [nameBase, ext];
 }
 
 export function simpleRename(containerFolder: string, fileName: string, newFileName: string, isDirectory?: boolean): string {
@@ -158,9 +158,9 @@ export function simpleCopy(containerFolder: string, fileName: string, newFolderP
 }
 
 export function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): DirentWithMetadata {
-  const [baseName, ext] = splitFileName(ent.name, ent.isDirectory());
+  const [nameBase, ext] = splitFileName(ent.name, ent.isDirectory());
   ent.ext = ext.replace('.', '');
-  ent.baseName = baseName;
+  ent.nameBase = nameBase;
   ent.path = path.resolve(folder, ent.name);
   return ent;
 }

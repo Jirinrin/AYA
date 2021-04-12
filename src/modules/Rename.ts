@@ -23,7 +23,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
 
     const newName = (opts.includeExt || ent.isDirectory())
       ? (await rename(ent.name, ent)).trim()
-      : (await rename(ent.baseName, ent)) + '.'+ent.ext;
+      : (await rename(ent.nameBase, ent)) + '.'+ent.ext;
 
     if (ent.name !== newName) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());

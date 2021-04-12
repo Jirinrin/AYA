@@ -32,7 +32,7 @@ var counter = 0
 ```
 Or what if you combine this with the built-in `exec()` function (docs [down below](##-Available-JS-globals))? Zip all files in a directory just like that:
 ```js
-.doForEach f => exec(`7za a \"${f.baseName}.zip\" \"${f.name}\" `)
+.doForEach f => exec(`7za a \"${f.nameBase}.zip\" \"${f.name}\" `)
 ```
 
 And it gets even cooler! To iterating commands like these you can add the `--deep`/`-d` option, which will make things go recursive to the number of levels specified in `config.recursionDepth`.  
@@ -148,12 +148,12 @@ interface {
   isSymbolicLink(): boolean;
   isFIFO(): boolean;
   isSocket(): boolean;
-  name: string;
+  name: string; // basename with ext
   // Custom metadata
   mm?: IAudioMetadata; // If config.musicMetadata == true
   em?: exif.Tags; // If config.exifMetadata == true
   ext: string;
-  baseName: string;
+  nameBase: string; // basename without ext
   path: string;
 }
 ```

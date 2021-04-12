@@ -7,7 +7,7 @@ export interface FileMetadata {
   mm?: IAudioMetadata;
   em?: exif.Tags;
   ext: string;
-  baseName: string; // todo: less confusing naming for this? (Because path.basename is incl ext)
+  nameBase: string; // basename without ext
   path: string;
 }
 
