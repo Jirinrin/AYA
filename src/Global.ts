@@ -8,7 +8,7 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 
@@ -58,16 +58,16 @@ const globalAdditions = {
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath, moveToFolder) => {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
-    console.log(`Moved "${filePath}" to "${moveToFolder}"`);
+    console.log(highlightExps`Moved "${filePath}" to "${moveToFolder}"`);
   }),
   copy: wrapResolvePath2((filePath, copyToFolder) => {
     const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory());
-    console.log(`Copied "${filePath}" to "${copyToFolder}"`);
+    console.log(highlightExps`Copied "${filePath}" to "${copyToFolder}"`);
   }),
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
     const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
-    console.log(`Renamed "${path.basename(filePath)}" to "${finalName}"`);
+    console.log(highlightExps`Renamed "${path.basename(filePath)}" to "${finalName}"`);
   }),
   // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {

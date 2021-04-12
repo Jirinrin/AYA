@@ -4,6 +4,7 @@ import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
 import { highlight } from "./replCustomization";
 import { readJsonSync, writeFileSync, writeJsonSync } from "fs-extra";
+import * as chalk from "chalk";
 
 export enum ParamData {
   Any,
@@ -181,4 +182,9 @@ export function makeSafeForWindowsFileName(input: string) {
     .replace(/</g, '＜')
     .replace(/>/g, '＞')
     .replace(/\|/g, '｜');
+}
+
+export function highlightExps(strings: TemplateStringsArray, ...exps: (string|number)[]): string {
+  const highlightedExps = exps.map(e => chalk.blue(e));
+  return strings.reduce((acc, s, i) => acc + s + (highlightedExps[i] ?? ''), '');
 }

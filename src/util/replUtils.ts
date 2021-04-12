@@ -4,7 +4,7 @@ import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
-import { ParamData } from './generalUtils';
+import { highlightExps, ParamData } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
 import { ActionFunction, ActionFunctionEvall, OperationFunction } from '../types';
 import { CommandInfo } from '../modules';
@@ -79,7 +79,7 @@ export function changeDirectory(s_dirPath: string): boolean {
   if (fs.existsSync(newDirectory)) {
     ENV.cwd = newDirectory;
     ENV.currentDirItems = fs.readdirSync(newDirectory);
-    console.log(`Current directory was set to "${newDirectory}"`);
+    console.log(highlightExps`Current directory was set to "${newDirectory}"`);
     return true;
   } else {
     console.error('Provided folder name appears to be invalid. Please try again');

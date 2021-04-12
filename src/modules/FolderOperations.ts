@@ -1,7 +1,7 @@
 import ENV from "../ENV";
 import * as path from "path";
 import * as fs from "fs";
-import { simpleMove } from "../util";
+import { highlightExps, simpleMove } from "../util";
 import { doForEach, getEnts } from "../util";
 import { RawModule } from "../types";
 
@@ -32,9 +32,9 @@ const FolderOperations: RawModule = {
 
         try {
           fs.rmdirSync(currentFolder);
-          console.log(`Flattened ${dir.name} -> ${ents.map(e => `"${e.name}"`).join(', ')}`);
+          console.log(highlightExps`Flattened ${dir.name} -> ${ents.map(e => `"${e.name}"`).join(', ')}`);
         } catch (err) {
-          console.error(`Flattening ${dir.name} failed:`, err);
+          console.error(highlightExps`Flattening ${dir.name} failed:`, err);
         }
       });
     }
