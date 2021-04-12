@@ -6,13 +6,17 @@ import { r } from '..';
 import ENV from '../ENV';
 import { highlightExps, ParamData } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
-import { ActionFunction, ActionFunctionEvall, OperationFunction } from '../types';
+import { ActionFunctionEvall, OperationFunction } from '../types';
 import { CommandInfo } from '../modules';
 import { setConsoleIndent } from './consoleExtension';
 
 export const globalEval = eval;
 
-const evalString = (str: string) => str.replace(/^["'`]?([^"'`]*)["'`]?$/, '$1');
+const evalString = (str: string) => {
+  return str.match(/^(?:".*"|'.*'|`.*`)$/)
+    ? globalEval(str)
+    : str;
+};
 
 /**
  * Generates from a function you give it a wonderful command with argument parsing etc.
