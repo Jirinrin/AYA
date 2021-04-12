@@ -11,6 +11,7 @@ import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtil
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
+import { setConsoleIndent } from './util/consoleExtension';
 
 export {};
 
@@ -94,6 +95,8 @@ const globalAdditions = {
   setTags: wrapResolvePath1(setExifMetadata),
 
   makeSafeForWindowsFileName,
+
+  setConsoleIndent,
 
   // todo: some things for reading/writing files
 };
