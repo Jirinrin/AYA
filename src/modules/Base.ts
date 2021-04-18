@@ -112,6 +112,7 @@ const Base: RawModule = {
   'move': { run: (s_file: string, s_moveTo: string) => global.move(s_file, s_moveTo) },
   'copy': { run: (s_file: string, s_copyTo: string) => global.copy(s_file, s_copyTo) },
   'rename': { run: (s_file: string, s_newName: string) => global.rename(s_file, s_newName) },
+  'remove': { run: (s_file: string) => global.remove(s_file) },
   'metadata': { run: async (s_file: string) => console.logv(await global.metadata(s_file)) },
   'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
 

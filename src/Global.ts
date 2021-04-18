@@ -7,8 +7,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
+import * as trash from 'trash';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -61,14 +62,18 @@ const globalAdditions = {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
     console.log(highlightExps`Moved "${filePath}" to "${moveToFolder}"`);
   }),
-  copy: wrapResolvePath2((filePath, copyToFolder) => {
-    const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory());
-    console.log(highlightExps`Copied "${filePath}" to "${copyToFolder}"`);
+  copy: wrapResolvePath2((filePath, copyToFolder, newFileName?: string) => {
+    const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
+    console.log(highlightExps`Copied "${filePath}" to "${path.join(copyToFolder, finalName)}"`);
   }),
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
     const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
     console.log(highlightExps`Renamed "${path.basename(filePath)}" to "${finalName}"`);
+  }),
+  remove: wrapResolvePath1(async filePath => {
+    await trash(filePath);
+    console.log(highlightExpsC(chalk.red)`Moved "${path.basename(filePath)}" to trash`);
   }),
   // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {

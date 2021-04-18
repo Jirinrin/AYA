@@ -184,7 +184,15 @@ export function makeSafeForWindowsFileName(input: string) {
     .replace(/\|/g, '｜');
 }
 
-export function highlightExps(strings: TemplateStringsArray, ...exps: (string|number)[]): string {
-  const highlightedExps = exps.map(e => chalk.blue(e));
+function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...exps: (string|number)[]) {
+  const highlightedExps = exps.map(e => ch(e));
   return strings.reduce((acc, s, i) => acc + s + (highlightedExps[i] ?? ''), '');
 }
+
+type TemplateTagStringFunction = (strings: TemplateStringsArray, ...exps: (string|number)[]) => string;
+
+export const highlightExps: TemplateTagStringFunction = (strings, ...exps) =>
+  highlightExpsForCh(chalk.blue, strings, ...exps);
+
+export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>
+  highlightExpsForCh(ch, strings, ...exps);

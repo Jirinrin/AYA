@@ -34,13 +34,15 @@
     "chalk": "^4.1.0",
     "exiftool-vendored": "^12.2.0",
     "fs-extra": "^9.0.1",
+    "globby": "^11.0.3",
     "json-bigint": "^1.0.0",
     "lodash": "^4.17.20",
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
     "music-metadata": "^4.1.0",
     "refractor": "^3.1.0",
-    "superagent": "^6.1.0"
+    "superagent": "^6.1.0",
+    "trash": "^7.1.1"
   },
   "devDependencies": {
     "@types/exif": "^0.6.0",
