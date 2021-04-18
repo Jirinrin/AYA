@@ -149,10 +149,10 @@ export function simpleMove(originalFolderPath: string, fileName: string, newFold
   );
 }
 
-export function simpleCopy(containerFolder: string, fileName: string, newFolderPath: string, isDirectory?: boolean): string {
+export function simpleCopy(containerFolder: string, fileName: string, newFolderPath: string, isDirectory?: boolean, newFileName?: string): string {
   return safeCopy(
     path.join(containerFolder, fileName),
-    path.join(newFolderPath,   fileName),
+    path.join(newFolderPath,   newFileName ?? fileName),
     isDirectory,
   );
 }
