@@ -181,7 +181,8 @@ export function makeSafeForWindowsFileName(input: string) {
     .replace(/"/g, '”')
     .replace(/</g, '＜')
     .replace(/>/g, '＞')
-    .replace(/\|/g, '｜');
+    .replace(/\|/g, '｜')
+    .replace(/\*/g, '＊');
 }
 
 function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...exps: (string|number)[]) {
