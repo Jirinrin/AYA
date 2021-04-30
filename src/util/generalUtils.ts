@@ -197,3 +197,17 @@ export const highlightExps: TemplateTagStringFunction = (strings, ...exps) =>
 
 export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>
   highlightExpsForCh(ch, strings, ...exps);
+
+export function evalRawStrings(str: string) {
+  if (str.indexOf('r`') !== -1) {
+    // todo: somehow don't do this if r`...` is part of another string
+    let rawStrs = str.match(/(\W|^)r`[^`]*`/g);
+    if (rawStrs.length) {
+      return rawStrs.reduce((accStr, rs) => {
+        const rStart = rs.startsWith('r');
+        return accStr.replace(rs, (rStart ? '' : rs.charAt(0)) + rs.slice(rStart ? 1 : 2).replace(/\\/g, '\\\\'))
+      }, str);
+    }
+  }
+  return str;
+}

@@ -11,7 +11,8 @@ import { completer, setupReplCustomization } from './util/replCustomization';
 import { setConsole } from './util/consoleExtension';
 import { runScript } from './modules/Base';
 import { readFileSync } from 'fs-extra';
-import { getEnts } from './util';
+import { evalRawStrings, getEnts } from './util';
+import { REPLEval } from 'repl';
 
 setConsole();
 
@@ -42,6 +43,9 @@ async function startRepl() {
     completer,
     useColors: true,
   });
+  const originalEval = r.eval;
+  const newEval: REPLEval = (code, ...etc) => originalEval.call(r, evalRawStrings(code), ...etc);
+  (r as any).eval = newEval;
 
   r.on('exit', process.exit);
 
