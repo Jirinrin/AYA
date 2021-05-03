@@ -7,7 +7,7 @@ import { REPLServer } from "repl";
 import { r } from "..";
 import ENV from "../ENV";
 import { cmdInfo, getCommand } from "../modules";
-import { escapeRegex, parseArgs, splitArgsString } from "./generalUtils";
+import { escapeRegex, matchString, parseArgs, splitArgsString } from "./generalUtils";
 import { defaultHighlightLookup, IHighlightLookup, languageSpecificHighlightLookup } from "./highlightLookup";
 import { jsKeywords } from "./input/javascriptKeywords";
 import { config, userScripts } from "./LocalStorage";
@@ -252,7 +252,7 @@ export function highlightLine(line: string): string {
   const drawBody = (part: string): string => {
     const p = new ResultBuilder(part);
     if (cmdName === 'renameEachRx') {
-      const [arg1Match, quote1, actualRegex, quote2] = p.l.match(/^(")([^"]+)("?)/) ?? p.l.match(/^(')([^']+)('?)/) ?? p.l.match(/^(\/)([^\/]+)(\/?)/) ?? p.l.match(/^(`)([^`]+)(`?)/) ?? p.l.match(/^()(\S+)()/) ?? [];
+      const [arg1Match, quote1, actualRegex, quote2] = matchString(p.l) ?? p.l.match(/^(\/)([^\/]+)(\/?)/) ?? p.l.match(/^()(\S+)()/) ?? [];
       if (arg1Match) {
         if (quote1) p.eatFromInput(1, chalk.red(quote1));
         p.eatFromInput(actualRegex.length, highlight(p.l.slice(0, actualRegex.length), 'regex'));

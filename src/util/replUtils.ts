@@ -4,7 +4,7 @@ import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
-import { evalRawStrings, highlightExps, ParamData } from './generalUtils';
+import { evalRawStrings, highlightExps, matchString, ParamData, parseStringAsRaw } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
 import { ActionFunctionEvall, OperationFunction } from '../types';
 import { CommandInfo } from '../modules';
@@ -45,7 +45,7 @@ export function evall(func: OperationFunction, info?: CommandInfo): ActionFuncti
         const argData = paramData[i];
         try {
           if (argData === ParamData.RegexOrString)
-            return arg.charAt(0).match(/["']/) ? evalString(arg) : globalEval(evalRawStrings(arg));
+            return matchString(arg) ? evalString(parseStringAsRaw(arg)) : globalEval(evalRawStrings(arg));
           return argData === ParamData.String ? evalString(arg) : globalEval(evalRawStrings(arg));
         } catch (err) {
           if (argData === ParamData.MaybeString || argData === ParamData.RegexOrString)

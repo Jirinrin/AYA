@@ -198,6 +198,14 @@ export const highlightExps: TemplateTagStringFunction = (strings, ...exps) =>
 export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>
   highlightExpsForCh(ch, strings, ...exps);
 
+export function matchString(str: string): RegExpMatchArray|null {
+  return str.match(/^(")([^"]+)("?)/) ?? str.match(/^(')([^']+)('?)/) ?? str.match(/^(`)([^`]+)(`?)/);
+}
+
+export function parseStringAsRaw(str: string) {
+  return str.replace(/\\/g, '\\\\');
+}
+
 export function evalRawStrings(str: string) {
   if (str.indexOf('r`') !== -1) {
     // todo: somehow don't do this if r`...` is part of another string
@@ -205,7 +213,7 @@ export function evalRawStrings(str: string) {
     if (rawStrs.length) {
       return rawStrs.reduce((accStr, rs) => {
         const rStart = rs.startsWith('r');
-        return accStr.replace(rs, (rStart ? '' : rs.charAt(0)) + rs.slice(rStart ? 1 : 2).replace(/\\/g, '\\\\'))
+        return accStr.replace(rs, (rStart ? '' : rs.charAt(0)) + parseStringAsRaw(rs.slice(rStart ? 1 : 2)))
       }, str);
     }
   }
