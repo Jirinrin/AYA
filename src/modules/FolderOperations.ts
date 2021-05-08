@@ -49,7 +49,7 @@ const FolderOperations: RawModule = {
       if (fs.readdirSync(dirPath).length) return;
 
       fs.rmdirSync(dirPath);
-      console.log(`Removed ${dirPath}`);
+      console.log(highlightExps`Removed "${dirPath}"`);
     })
   },
 };
