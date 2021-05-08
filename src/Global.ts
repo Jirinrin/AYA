@@ -9,7 +9,7 @@ import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
 import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, writeFile, writeJson } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, makeSafeForWindowsFileName, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -78,6 +78,11 @@ const globalAdditions = {
     await trash(filePath);
     console.log(highlightExpsC(chalk.red)`Moved "${path.basename(filePath)}" to trash`);
   }),
+  removeMulti: async (filePaths: string|string[]) => {
+    console.log(`Going to remove ${typeof filePaths === 'string' ? '1' : filePaths.length} entities...`);
+    await trash(filePaths);
+    console.log(`Moved ${verbose(filePaths)} to trash`);
+  },
   // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {
     return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
