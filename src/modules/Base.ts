@@ -130,7 +130,7 @@ const Base: RawModule = {
 
 // todo: also use this flexible logic in the normal REPL environment
 export async function runScript(txt: string) {
-  const lines = txt.split(/&&|\n/).map(l => l.trim());
+  const lines = txt.split('\n').map(l => l.trim());
   for (const line of lines) {
     if (!line.trim()) continue;
 

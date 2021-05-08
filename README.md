@@ -73,7 +73,7 @@ There are a few default NodeJS REPL commands which you may want to be aware of: 
 There are some arguments available to pass to Aya:
 - `--start` / `-s` => start Aya without asking for a starting directory
 - If you just throw in some arguments, they'll be parsed as being a userscript:
-  - Multiple line splitting with `\n` or `&&`
+  - Multiple line splitting with `\n`
   - Can reference to commands with or without dot
   - Can reference to userscript with or without `.u(serscript)` in front
   - Random js code also works as usual
