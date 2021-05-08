@@ -56,7 +56,10 @@ const globalAdditions = {
   env: ENV,
   JSONbig: JSONbig,
 
-  mkdir: wrapResolvePath1(fs.mkdirSync),
+  mkdir: wrapResolvePath1(path => {
+    fs.mkdirSync(path);
+    console.log(highlightExps`Made dir "${path}"`);
+  }),
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath, moveToFolder) => {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
