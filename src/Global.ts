@@ -90,6 +90,7 @@ const globalAdditions = {
   resolvePath,
   getEnts: wrapResolvePath1(getEnts),
   getEntsWithMetadata: wrapResolvePath1(getEntsWithMetadata),
+  getEntsNames: wrapResolvePath1((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
 
   doForEach: wrapResolvePath1(doForEach),
   doForEachDir: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isDirectory() ? callback(e, f) : null)),
