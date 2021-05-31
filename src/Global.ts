@@ -111,6 +111,7 @@ const globalAdditions = {
   makeSafeForWindowsFileName,
 
   setConsoleIndent,
+  highlightExps,
 
   // todo: some things for reading/writing files
 };
