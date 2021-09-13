@@ -44,10 +44,9 @@ export function evall(func: OperationFunction, info?: CommandInfo): ActionFuncti
       const parsedArgsArray = argsArray.map((arg: string, i) => {
         const argData = paramData[i];
         try {
-          if (argData === ParamData.RegexOrString || argData === ParamData.String)
-            return matchString(arg)
-              ? evalString(parseStringAsRaw(arg))
-              : globalEval(evalRawStrings(arg));
+          if ((argData === ParamData.RegexOrString || argData === ParamData.String) && matchString(arg))
+            return evalString(parseStringAsRaw(arg));
+          return globalEval(evalRawStrings(arg));
         } catch (err) {
           if (argData === ParamData.MaybeString || argData === ParamData.RegexOrString)
             return arg;
