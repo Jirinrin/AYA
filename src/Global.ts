@@ -8,7 +8,8 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
-import { resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
+import { readSync } from 'clipboardy';
+import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
@@ -109,6 +110,9 @@ const globalAdditions = {
   setTags: wrapResolvePath1(setExifMetadata),
 
   esc,
+
+  paste: readSync,
+  pasteJS: () => globalEval(readSync()),
 
   setConsoleIndent,
   highlightExps,
