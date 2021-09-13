@@ -172,21 +172,6 @@ export function writeFile(filePath: string, data: any, log = true): void {
     console.log(`Successfully wrote data to ${filePath}`);
 }
 
-export function makeSafeForWindowsFileName(input: string) {
-  return input
-    .replace(/\\/g, '＼')
-    .replace(/\//g, '／')
-    .replace(/:/g, '：')
-    .replace(/\?/g, '？')
-    .replace(/"/g, '”')
-    .replace(/</g, '＜')
-    .replace(/>/g, '＞')
-    .replace(/\|/g, '｜')
-    .replace(/\*/g, '＊')
-    .trim()
-    .replace(/\.$/g, '∙');
-}
-
 function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...exps: (string|number)[]) {
   const highlightedExps = exps.map(e => ch(e));
   return strings.reduce((acc, s, i) => acc + s + (highlightedExps[i] ?? ''), '');
@@ -209,7 +194,6 @@ export function parseStringAsRaw(str: string) {
 }
 
 export function evalRawStrings(str: string) {
-  console.llog('yo', str);
   if (str.indexOf('r`') !== -1) {
     // todo: somehow don't do this if r`...` is part of another string
     let rawStrs = str.match(/(\W|^)r`[^`]*`/g);

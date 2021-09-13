@@ -120,7 +120,7 @@ export function safeRename(oldPath: string, newPath: string, isDirectory?: boole
 }
 
 export function safeCopy(oldPath: string, newPath: string, isDirectory?: boolean): string {
-  const safeNewPath = getSafePath(newPath, isDirectory);
+  const safeNewPath = getSafePath(esc(newPath), isDirectory);
   fse.copySync(oldPath, safeNewPath);
   return path.basename(safeNewPath);
 }
@@ -136,7 +136,7 @@ export function splitFileName(fileName: string, isDirectory?: boolean): [nameBas
 export function simpleRename(containerFolder: string, fileName: string, newFileName: string, isDirectory?: boolean): string {
   return safeRename(
     path.join(containerFolder, fileName),
-    path.join(containerFolder, newFileName),
+    path.join(containerFolder, esc(newFileName)),
     isDirectory,
   );
 }
@@ -152,7 +152,7 @@ export function simpleMove(originalFolderPath: string, fileName: string, newFold
 export function simpleCopy(containerFolder: string, fileName: string, newFolderPath: string, isDirectory?: boolean, newFileName?: string): string {
   return safeCopy(
     path.join(containerFolder, fileName),
-    path.join(newFolderPath,   newFileName ?? fileName),
+    path.join(newFolderPath,   esc(newFileName ?? fileName)),
     isDirectory,
   );
 }
@@ -183,4 +183,33 @@ export function pathToDirent(entPath: string): DirentWithMetadata {
     isFIFO: () => ent.isFIFO(),
     isSocket: () => ent.isSocket(),
   } as DirentWithMetadata, path.dirname(entPath));
+}
+
+function makeSafeForWindowsFileName(input: string) {
+  return input
+    .replace(/\\/g, '＼')
+    .replace(/\//g, '／')
+    .replace(/:/g, '：')
+    .replace(/\?/g, '？')
+    .replace(/"/g, '”')
+    .replace(/</g, '＜')
+    .replace(/>/g, '＞')
+    .replace(/\|/g, '｜')
+    .replace(/\*/g, '＊')
+    .trim()
+    .replace(/\.$/g, '∙');
+}
+function makeSafeForLinuxFileName(input: string) {
+  return input
+    .replace(/\//g, '／')
+    .trim();
+}
+
+export function esc(input: string) {
+  switch (process.platform) {
+    case 'win32':
+      return makeSafeForWindowsFileName(input);
+    default:
+      return makeSafeForLinuxFileName(input);
+  }
 }
