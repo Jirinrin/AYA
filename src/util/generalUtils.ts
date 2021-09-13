@@ -91,7 +91,7 @@ export function escapeRegex(regexString: string): string {
 }
 
 // It is assumed that you don't put two spaces after one another and don't have leading/trailing spaces
-const argsSplitRegex1 = /(?:"[^"]*"?|'[^']*'?|`[^`]*`?|\/[^\/]+\/?|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
+const argsSplitRegex1 = /(?:"[^"]*"?|'[^']*'?|r?`[^`]*`?|\/[^\/]+\/?|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
 
 /**
  * @return [body (not trimmed), opts]
@@ -209,6 +209,7 @@ export function parseStringAsRaw(str: string) {
 }
 
 export function evalRawStrings(str: string) {
+  console.llog('yo', str);
   if (str.indexOf('r`') !== -1) {
     // todo: somehow don't do this if r`...` is part of another string
     let rawStrs = str.match(/(\W|^)r`[^`]*`/g);
