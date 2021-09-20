@@ -3,7 +3,7 @@ import { CommandInfo } from "../modules";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
 import { highlight } from "./replCustomization";
-import { readJsonSync, writeFileSync, writeJsonSync } from "fs-extra";
+import { readFileSync, readJsonSync, writeFileSync, writeJsonSync } from "fs-extra";
 import * as chalk from "chalk";
 
 export enum ParamData {
@@ -162,6 +162,9 @@ export function writeJson(filePath: string, data: any, log = true): void {
   writeJsonSync(filePath, data, {encoding: 'utf8', spaces: 2})
   if (log)
     console.log(`Successfully wrote data to ${filePath}`);
+}
+export function readFile(filePath: string): string {
+  return readFileSync(filePath, {encoding: 'utf8'});
 }
 export function writeFile(filePath: string, data: any, log = true): void {
   if (!filePath.includes('.'))

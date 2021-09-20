@@ -111,8 +111,9 @@ interface {
   copy: (filePath: string, copyToDirPath: string) => void;
   rename: (filePath: string, newFileName: string) => void;
   metadata: (filePath: string) => Promise<DirentWithMetadata>;
-  getEnts: (filePath: string) => DirentWithMetadata[];
-  getEntsWithMetadata: (filePath: string) => Promise<DirentWithMetadata[]>;
+  getEnts: (filePath: string) => DirentWithMetadata[]; // todo: add options docs
+  getEntsWithMetadata: (filePath: string) => Promise<DirentWithMetadata[]>; // todo: add options docs
+  getEntsNames: // todo
 
   doForEach:     (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
   doForEachDir:  (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
@@ -130,7 +131,19 @@ interface {
   JSONbig: JSONBigInt;
 
   lo: Lodash;
+
+  // todo: docs
+  // setTags: wrapResolvePath1(setExifMetadata),
+
+  // readjson, writejson, readfile, writefile
+
+  // esc
+
+  // paste
+  // pasteJS
 }
+
+// todo: tell about r`oijwe\foi`
 ```
 
 

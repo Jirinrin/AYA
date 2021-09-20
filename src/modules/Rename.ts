@@ -1,5 +1,5 @@
 import { simpleRename, checkMetadata, highlightExps } from '../util';
-import { EntityType, FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFilterOpt, RawModule } from '../types';
+import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFilterOpt, RawModule } from '../types';
 
 interface RenameOptions extends IMetadataFilterOpts {
   includeExt?: boolean;
