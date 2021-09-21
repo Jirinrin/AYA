@@ -8,7 +8,7 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
-import { readSync } from 'clipboardy';
+import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
@@ -111,8 +111,9 @@ const globalAdditions = {
 
   esc,
 
-  paste: readSync,
-  pasteJS: () => globalEval(readSync()),
+  copyClb: writeToClipboard,
+  pasteClb: readFromClipboard,
+  pasteClbJS: () => globalEval(readFromClipboard()),
 
   setConsoleIndent,
   highlightExps,
