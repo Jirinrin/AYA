@@ -138,6 +138,7 @@ interface {
   // readjson, writejson, readfile, writefile
 
   // esc
+  // escPath
 
   // paste
   // pasteJS

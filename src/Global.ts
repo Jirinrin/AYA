@@ -10,7 +10,7 @@ import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath } from "./util";
 import { DirentWithMetadata, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -58,7 +58,7 @@ const globalAdditions = {
   JSONbig: JSONbig,
 
   mkdir: wrapResolvePath1(path => {
-    fs.mkdirSync(esc(path));
+    fs.mkdirSync(escPath(path));
     console.log(highlightExps`Made dir "${path}"`);
   }),
   exists: wrapResolvePath1(fs.existsSync),
@@ -111,6 +111,7 @@ const globalAdditions = {
   setTags: wrapResolvePath1(setExifMetadata),
 
   esc,
+  escPath,
 
   paste: readSync,
   pasteJS: () => globalEval(readSync()),
