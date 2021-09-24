@@ -99,6 +99,7 @@ const globalAdditions = {
   doForEachDeep: wrapResolvePath1(doForEachDeep),
 
   readJson: wrapResolvePath1(readJson),
+  readFile: wrapResolvePath1(readFile),
   writeJson: wrapResolvePath1(writeJson),
   writeFile: wrapResolvePath1(writeFile),
 
