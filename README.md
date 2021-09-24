@@ -140,8 +140,9 @@ interface {
   // esc
   // escPath
 
-  // paste
-  // pasteJS
+  // copyClb
+  // pasteClb
+  // pasteClbJS
 }
 
 // todo: tell about r`oijwe\foi`
