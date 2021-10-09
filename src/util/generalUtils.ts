@@ -5,6 +5,7 @@ import minimist from "./minimistStringBody";
 import { highlight } from "./replCustomization";
 import { readFileSync, readJsonSync, writeFileSync, writeJsonSync } from "fs-extra";
 import * as chalk from "chalk";
+import { config } from "./LocalStorage";
 
 export enum ParamData {
   Any,
@@ -137,12 +138,14 @@ export function verbose(msg: any) {
 export function checkMetadata(ent: DirentWithMetadata, { filter }: IMetadataFilterOpts): boolean {
   if (!filter)
     return true;
+  const em = !config.s.exifMetadata || !!ent.em;
+  const mm = !config.s.musicMetadata || !!ent.mm;
   switch (filter) {
     case 'file': return ent.isFile();
     case 'directory': return ent.isDirectory();
-    case 'musicFiles': return !!((ent.mm || ent.em) && ent.ext.match(/mp3|m4a|ogg|flac|wav|wma|aac/i));
-    case 'imageFiles': return !!(ent.em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i));
-    case 'videoFiles': return !!(ent.em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i));
+    case 'musicFiles': return !!((mm || em) && ent.ext.match(/mp3|m4a|ogg|flac|wav|wma|aac/i));
+    case 'imageFiles': return !!(em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i));
+    case 'videoFiles': return !!(em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i));
     default:
       console.warn('Unknown filter:', filter);
       return true;
