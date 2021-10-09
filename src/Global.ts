@@ -11,7 +11,7 @@ import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath } from "./util";
-import { DirentWithMetadata, FileIteratorCallback } from "./types";
+import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
 
@@ -86,7 +86,7 @@ const globalAdditions = {
   },
   // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {
-    return putMetadataOnEntity(pathToDirent(filePath) as DirentWithMetadata, path.dirname(filePath)).catch(err => console.error('Error with getting metadata:', err));
+    return putMetadataOnEntity(pathToDirent(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
   resolvePath,
   getEnts: wrapResolvePath1(getEnts),

@@ -1,6 +1,5 @@
-import * as path from 'path';
-import * as mm from 'music-metadata';
-import { ITrackInfo, DirentWithMetadata } from '../types';
+import { IAudioMetadata, parseFile } from 'music-metadata';
+import { ITrackInfo } from '../types';
 
 function formatTrackNo(number: number|string, length = 2): string {
   const strNum: string = '' + number;
@@ -13,7 +12,7 @@ function formatMusicFileName(trackInfo: ITrackInfo): string {
   return `${formatTrackNo(trackInfo.trackNo)} ${trackInfo.artist ? trackInfo.artist + ' -' : ''} ${trackInfo.title}`;
 }
 
-function getTrackInfoFromMusicMetadata(trackMetadata: mm.IAudioMetadata): ITrackInfo {
+function getTrackInfoFromMusicMetadata(trackMetadata: IAudioMetadata): ITrackInfo {
   const cmn = trackMetadata.common;
   if (!cmn.title) {
     throw new Error('Track metadata does not even have a title');
@@ -35,19 +34,14 @@ function writeMusicMetadataToFile(filePath: string, trackInfo: ITrackInfo) {
 
 
 
-export async function getMusicFileMetadata(filePath: string): Promise<mm.IAudioMetadata | null> {
+export async function getMusicFileMetadata(filePath: string): Promise<IAudioMetadata | null> {
   try {
-    return await mm.parseFile(filePath);
+    const mm = await parseFile(filePath);
+    delete mm?.common.picture;
+    return mm;
   } catch {
     return null;
   }
-}
-
-export async function putMusicMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
-  const mm = await getMusicFileMetadata(path.join(folder, ent.name));
-  delete mm?.common.picture;
-  ent.mm = mm;
-  return ent;
 }
 
 // todo: have extra methods on mm which will e.g. return a nicely formatted track number (with 0 in front) etc.

@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { clone } from 'lodash';
 
 import { config } from './LocalStorage';
-import { putExifMetadataOnEntity } from './exif';
-import { putMusicMetadataOnEntity } from '../modules/Music';
-import { DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
+import { getExifMetadata } from './exif';
+import { getMusicFileMetadata } from '../modules/Music';
+import { DirentWithData, DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 import ENV from '../ENV';
 
@@ -19,9 +20,9 @@ export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
       console.error('Error reading dir:', err);
       return;
     }
-    files?.forEach(async (ent: DirentWithMetadata) => {
-      await putMetadataOnEntity(ent, folder);
-      await callback(ent, folder);
+    files?.forEach(async ent => {
+      const entWithMetadata = await putMetadataOnEntity(putFileDataOnEntity(ent, folder));
+      await callback(entWithMetadata, folder);
     });
   });
 }
@@ -78,9 +79,9 @@ interface IGetEntsOpts {
   filter?: string|RegExp;
   ext?: string|RegExp;
 }
-export function getEnts(folder: string, opts: IGetEntsOpts = {}): DirentWithMetadata[] {
+export function getEnts(folder: string, opts: IGetEntsOpts = {}): DirentWithData[] {
   let ents = fs.readdirSync(folder, { withFileTypes: true })
-    .map((ent: DirentWithMetadata) => putFileDataOnEntity(ent, folder));
+    .map(ent => putFileDataOnEntity(ent, folder));
   if (opts.entType)
     ents = ents.filter(e => (opts.entType === 'file' ? e.isFile() : e.isDirectory()));
   if (opts.filter)
@@ -92,9 +93,7 @@ export function getEnts(folder: string, opts: IGetEntsOpts = {}): DirentWithMeta
 export async function getEntsWithMetadata(folder: string, opts: IGetEntsOpts = {}): Promise<DirentWithMetadata[]> {
   const ents = getEnts(folder, opts);
   return await Promise.all(
-    ents?.map(async (ent: DirentWithMetadata) => {
-      return await putMetadataOnEntity(ent, folder);
-    }) ?? [],
+    ents?.map(putMetadataOnEntity) ?? [],
   );
 }
 
@@ -157,32 +156,26 @@ export function simpleCopy(containerFolder: string, fileName: string, newFolderP
   );
 }
 
-export function putFileDataOnEntity(ent: DirentWithMetadata, folder: string): DirentWithMetadata {
+export function putFileDataOnEntity(ent: fs.Dirent, folder: string): DirentWithData {
   const [nameBase, ext] = splitFileName(ent.name, ent.isDirectory());
-  ent.ext = ext.replace('.', '');
-  ent.nameBase = nameBase;
-  ent.path = path.resolve(folder, ent.name);
-  return ent;
+  const entWithData = clone(ent) as DirentWithData;
+  entWithData.ext = ext.replace('.', '');
+  entWithData.nameBase = nameBase;
+  entWithData.path = path.resolve(folder, ent.name);
+  return entWithData;
 }
 
-export async function putMetadataOnEntity(ent: DirentWithMetadata, folder: string): Promise<DirentWithMetadata> {
-  if (config.s.musicMetadata) await putMusicMetadataOnEntity(ent, folder);
-  if (config.s.exifMetadata) await putExifMetadataOnEntity(ent, folder);
-  return ent;
+export async function putMetadataOnEntity(ent: DirentWithData): Promise<DirentWithMetadata> {
+  const entWithMetadata = clone(ent) as DirentWithMetadata;
+  if (config.s.musicMetadata) entWithMetadata.mm = await getMusicFileMetadata(ent.path);
+  if (config.s.exifMetadata)  entWithMetadata.em = await getExifMetadata(ent.path);
+  return entWithMetadata;
 }
 
-export function pathToDirent(entPath: string): DirentWithMetadata {
-  const ent = fs.statSync(entPath);
-  return putFileDataOnEntity({
-    name: path.basename(entPath),
-    isFile: () => ent.isFile(),
-    isDirectory: () => ent.isDirectory(),
-    isBlockDevice: () => ent.isBlockDevice(),
-    isCharacterDevice: () => ent.isCharacterDevice(),
-    isSymbolicLink: () => ent.isSymbolicLink(),
-    isFIFO: () => ent.isFIFO(),
-    isSocket: () => ent.isSocket(),
-  } as DirentWithMetadata, path.dirname(entPath));
+export function pathToDirent(entPath: string): DirentWithData {
+  const ent = fs.statSync(entPath) as (fs.Stats & { name: string });
+  ent.name = path.basename(entPath);
+  return putFileDataOnEntity(ent, path.dirname(entPath));
 }
 
 function splitPath(pathOrWhatever: string): [dir: string, base: string] {
