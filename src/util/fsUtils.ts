@@ -167,8 +167,8 @@ export function putFileDataOnEntity(ent: fs.Dirent, folder: string): DirentWithD
 
 export async function putMetadataOnEntity(ent: DirentWithData): Promise<DirentWithMetadata> {
   const entWithMetadata = clone(ent) as DirentWithMetadata;
-  if (config.s.musicMetadata) entWithMetadata.mm = await getMusicFileMetadata(ent.path);
-  if (config.s.exifMetadata)  entWithMetadata.em = await getExifMetadata(ent.path);
+  if (config.s.musicMetadata && !ENV.noMetadata) entWithMetadata.mm = await getMusicFileMetadata(ent.path);
+  if (config.s.exifMetadata  && !ENV.noMetadata) entWithMetadata.em = await getExifMetadata(ent.path);
   return entWithMetadata;
 }
 
