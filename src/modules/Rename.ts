@@ -1,4 +1,4 @@
-import { simpleRename, checkMetadata, highlightExps } from '../util';
+import { simpleRename, checkFilter, highlightExps } from '../util';
 import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFilterOpt, RawModule } from '../types';
 
 interface RenameOptions extends IMetadataFilterOpts {
@@ -12,7 +12,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
   opts: RenameOptions = {},
 ) =>
   iterate(async (ent, folder) => {
-    if (!checkMetadata(ent, opts))
+    if (!checkFilter(ent, opts))
       return;
 
     const rename = async (name: string, metadata?: FileMetadata) => {

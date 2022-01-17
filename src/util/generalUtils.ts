@@ -136,11 +136,16 @@ export function verbose(msg: any) {
   return formatMsg(true, msg);
 }
 
-export function checkMetadata(ent: DirentWithMetadata, { filter }: IMetadataFilterOpts): boolean {
+/** Util function to check if an entity applies for a given operation */
+export function checkFilter(ent: DirentWithMetadata, { filter }: IMetadataFilterOpts): boolean {
   if (!filter)
     return true;
   const em = !config.s.exifMetadata  || ENV.noMetadata || !!ent.em;
   const mm = !config.s.musicMetadata || ENV.noMetadata || !!ent.mm;
+
+  if (filter.startsWith('.'))
+    return ent.ext === filter.slice(1);
+
   switch (filter) {
     case 'file': return ent.isFile();
     case 'directory': return ent.isDirectory();

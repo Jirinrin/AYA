@@ -6,6 +6,7 @@ const metadataFilters = [
   'musicFiles', // Only use music files, exposing metadata of the files
   'imageFiles', // Only use image files, exposing exif metadata of the files
   'videoFiles', // Only use image files, exposing exif metadata of the files
+  '.' as `.${string}` // Used for filtering by file extension
 ] as const;
 type MetadataFilter = typeof metadataFilters[number];
 export interface IMetadataFilterOpts { filter?: MetadataFilter }

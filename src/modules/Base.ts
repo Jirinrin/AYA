@@ -66,7 +66,7 @@ const Base: RawModule = {
       if (opts.dontLogScanning) ENV.dontLogScanning = true;
       if (opts.noMetadata)      ENV.noMetadata = true;
       await iterate((ent, folder) => {
-        if (checkMetadata(ent, opts))
+        if (checkFilter(ent, opts))
           return callback(ent, folder);
       });
       ENV.dontLogScanning = false;
