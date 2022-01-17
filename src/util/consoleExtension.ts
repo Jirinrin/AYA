@@ -52,7 +52,7 @@ const consolePairingsParsed: Array<[k: keyof Console, getConsoleFn: (indents: nu
   );
 
 export function setConsole(indents: number = 0) {
-  consolePairingsParsed.forEach(([k, getConsoleFn]) => console[k] = getConsoleFn(indents));
+  consolePairingsParsed.forEach(([k, getConsoleFn]) => console[k] = getConsoleFn(indents) as any);
   console.logsl = (...args: any[]) => process.stdout.write(indent(indents) + formatMsg(false, ...args));
 }
 
