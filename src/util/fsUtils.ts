@@ -132,7 +132,7 @@ export function splitFileName(fileName: string, isDirectory?: boolean): [nameBas
   return [nameBase, ext];
 }
 
-export function cwdRelPath(absPath: string) {
+export function cwdRel(absPath: string) {
   return path.relative(ENV.cwd, absPath);
 }
 
