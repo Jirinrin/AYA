@@ -51,6 +51,8 @@ const consolePairingsParsed: Array<[k: keyof Console, getConsoleFn: (indents: nu
     [k, (indents: number) => (...args: any[]) => consoleFn(indent(indents) + ch(formatMsg(v ?? false, ...args)))]
   );
 
+// todo: maybe a fancy matching thing that replaces absolute paths by a version relative to the CWD
+
 export function setConsole(indents: number = 0) {
   consolePairingsParsed.forEach(([k, getConsoleFn]) => console[k] = getConsoleFn(indents) as any);
   console.logsl = (...args: any[]) => process.stdout.write(indent(indents) + formatMsg(false, ...args));
