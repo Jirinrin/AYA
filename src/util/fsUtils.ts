@@ -132,6 +132,10 @@ export function splitFileName(fileName: string, isDirectory?: boolean): [nameBas
   return [nameBase, ext];
 }
 
+export function cwdRelPath(absPath: string) {
+  return path.relative(ENV.cwd, absPath);
+}
+
 export function simpleRename(containerFolder: string, fileName: string, newFileName: string, isDirectory?: boolean): string {
   return safeRename(
     path.join(containerFolder, fileName),
