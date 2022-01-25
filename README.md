@@ -139,10 +139,14 @@ interface {
 
   // esc
   // escPath
+  // cwdRel
 
   // copyClb
   // pasteClb
   // pasteClbJS
+
+  // setConsoleIndent,
+  // highlightExp,
 }
 
 // todo: tell about r`oijwe\foi`

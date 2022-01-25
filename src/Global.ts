@@ -10,7 +10,7 @@ import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExps, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -59,21 +59,21 @@ const globalAdditions = {
 
   mkdir: wrapResolvePath1(path => {
     fs.mkdirSync(escPath(path));
-    console.log(highlightExps`Made dir "${path}"`);
+    console.log(highlightExp`Made dir "${path}"`);
   }),
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath, moveToFolder) => {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
-    console.log(highlightExps`Moved "${filePath}" to "${moveToFolder}"`);
+    console.log(highlightExp`Moved "${filePath}" to "${moveToFolder}"`);
   }),
   copy: wrapResolvePath2((filePath, copyToFolder, newFileName?: string) => {
     const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
-    console.log(highlightExps`Copied "${filePath}" to "${path.join(copyToFolder, finalName)}"`);
+    console.log(highlightExp`Copied "${filePath}" to "${path.join(copyToFolder, finalName)}"`);
   }),
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
     const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
-    console.log(highlightExps`Renamed "${path.basename(filePath)}" to "${finalName}"`);
+    console.log(highlightExp`Renamed "${path.basename(filePath)}" to "${finalName}"`);
   }),
   remove: wrapResolvePath1(async filePath => {
     await trash(filePath);
@@ -119,9 +119,7 @@ const globalAdditions = {
   pasteClbJS: () => globalEval(readFromClipboard()),
 
   setConsoleIndent,
-  highlightExps,
-
-  // todo: some things for reading/writing files
+  highlightExp,
 };
 
 type GlobalAdditions = typeof globalAdditions;

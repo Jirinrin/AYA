@@ -1,4 +1,4 @@
-import { simpleRename, checkFilter, highlightExps, cwdRel } from '../util';
+import { simpleRename, checkFilter, highlightExp, cwdRel } from '../util';
 import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFilterOpt, RawModule } from '../types';
 
 interface RenameOptions extends IMetadataFilterOpts {
@@ -27,7 +27,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
 
     if (ent.name !== newName) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
-      console.log(highlightExps`Renamed "${cwdRel(ent.path)}" to "${renamedName}"`);
+      console.log(highlightExp`Renamed "${cwdRel(ent.path)}" to "${renamedName}"`);
       return newName;
     }
   });

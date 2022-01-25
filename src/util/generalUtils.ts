@@ -191,7 +191,7 @@ function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...e
 
 type TemplateTagStringFunction = (strings: TemplateStringsArray, ...exps: (string|number)[]) => string;
 
-export const highlightExps: TemplateTagStringFunction = (strings, ...exps) =>
+export const highlightExp: TemplateTagStringFunction = (strings, ...exps) =>
   highlightExpsForCh(chalk.blue, strings, ...exps);
 
 export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>

@@ -1,7 +1,7 @@
 import ENV from "../ENV";
 import * as path from "path";
 import * as fs from "fs";
-import { highlightExps, simpleMove } from "../util";
+import { highlightExp, simpleMove } from "../util";
 import { doForEach, getEnts } from "../util";
 import { RawModule } from "../types";
 
@@ -13,7 +13,7 @@ const FolderOperations: RawModule = {
 
       const tmpPath = path.join(ENV.cwd, '__tmp__');
       if (fs.existsSync(tmpPath))
-        console.warn(highlightExps`Caution: ${tmpPath} already exists, it will be emptied in ${ENV.cwd} after flattening.`);
+        console.warn(highlightExp`Caution: ${tmpPath} already exists, it will be emptied in ${ENV.cwd} after flattening.`);
       else
         fs.mkdirSync(tmpPath);
 
@@ -38,9 +38,9 @@ const FolderOperations: RawModule = {
           }
 
           fs.rmdirSync(currentFolder);
-          console.log(highlightExps`Flattened ${dir.name} -> ${ents.map(e => `"${e.name}"`).join(', ')}`);
+          console.log(highlightExp`Flattened ${dir.name} -> ${ents.map(e => `"${e.name}"`).join(', ')}`);
         } catch (err) {
-          console.error(highlightExps`Flattening ${dir.name} failed:`, err);
+          console.error(highlightExp`Flattening ${dir.name} failed:`, err);
         }
       });
 
@@ -58,7 +58,7 @@ const FolderOperations: RawModule = {
       if (fs.readdirSync(dirPath).length) return;
 
       fs.rmdirSync(dirPath);
-      console.log(highlightExps`Removed "${dirPath}"`);
+      console.log(highlightExp`Removed "${dirPath}"`);
     })
   },
 };
