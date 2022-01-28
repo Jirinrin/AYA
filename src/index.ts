@@ -64,7 +64,7 @@ async function startRepl() {
   }
 
   if (initBody) {
-    await runScript(initBody.replace('\\n', '\n'));
+    await runScript(initBody.replace('\\n', '\n').replace(';;', '\n'));
     
     if (!initOpts.continueAfterCmd)
       process.exit();
