@@ -73,7 +73,8 @@ const globalAdditions = {
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
     const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
-    console.log(highlightExp`Renamed "${path.basename(filePath)}" to "${finalName}"`);
+    if (finalName !== ent.name)
+      console.log(highlightExp`Renamed "${cwdRel(filePath)}" to "${finalName}"`);
   }),
   remove: wrapResolvePath1(async filePath => {
     await trash(filePath);

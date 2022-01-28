@@ -28,7 +28,7 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
     if (ent.name !== newName) {
       const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
       console.log(highlightExp`Renamed "${cwdRel(ent.path)}" to "${renamedName}"`);
-      return newName;
+      return renamedName;
     }
   });
 
