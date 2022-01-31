@@ -27,6 +27,20 @@ export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
   });
 }
 
+export interface IScanOptions {
+  dontLogScanning?: boolean;
+  noMetadata?: boolean;
+}
+
+// These options are really hard to pass through the (recursive) chain so we just bodge it like this.
+export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promise<void>) {
+  if (opts.dontLogScanning) ENV.dontLogScanning = true;
+  if (opts.noMetadata)      ENV.noMetadata = true;
+  await cb();
+  ENV.dontLogScanning = false;
+  ENV.noMetadata = false;
+}
+
 export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
   if (!ENV.dontLogScanning) console.info(`Scanning ${folder}...`);
   const indents = setConsoleIndentRel(1);
@@ -74,23 +88,25 @@ export async function doForEachDeep(
     console.info('Recursive action done!');
 }
 
-interface IGetEntsOpts {
+export interface IGetEntsFilters {
   entType?: EntityType;
   filter?: string|RegExp;
   ext?: string|RegExp;
 }
-export function getEnts(folder: string, opts: IGetEntsOpts = {}): DirentWithData[] {
-  let ents = fs.readdirSync(folder, { withFileTypes: true })
-    .map(ent => putFileDataOnEntity(ent, folder));
-  if (opts.entType)
-    ents = ents.filter(e => (opts.entType === 'file' ? e.isFile() : e.isDirectory()));
-  if (opts.filter)
-    ents = ents.filter(e => e.nameBase.match(opts.filter));
-  if (opts.ext)
-    ents = ents.filter(e => e.ext.match(opts.ext));
-  return ents;
+
+// todo: somehow unite this with the checkFilter function in generalUtils? They have quite some overlap, you see.
+export function checkEntFilters(e: DirentWithData, opts: IGetEntsFilters): boolean {
+  return ( opts.entType === undefined || (opts.entType === 'file' ? e.isFile() : e.isDirectory()) )
+      && ( opts.filter  === undefined || !!e.nameBase.match(opts.filter) )
+      && ( opts.ext     === undefined || !!e.ext.match(opts.ext) )
 }
-export async function getEntsWithMetadata(folder: string, opts: IGetEntsOpts = {}): Promise<DirentWithMetadata[]> {
+
+export function getEnts(folder: string, opts: IGetEntsFilters = {}): DirentWithData[] {
+  return fs.readdirSync(folder, { withFileTypes: true })
+    .map(ent => putFileDataOnEntity(ent, folder))
+    .filter(ent => checkEntFilters(ent, opts));
+}
+export async function getEntsWithMetadata(folder: string, opts: IGetEntsFilters = {}): Promise<DirentWithMetadata[]> {
   const ents = getEnts(folder, opts);
   return await Promise.all(
     ents?.map(putMetadataOnEntity) ?? [],

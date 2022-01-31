@@ -6,7 +6,7 @@ import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem
 import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
-import { checkMetadata, verbose } from "../util";
+import { checkFilter, IScanOptions, verbose, wrapScanOptions } from "../util";
 import { WriteTags } from "exiftool-vendored";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
@@ -62,16 +62,10 @@ const Base: RawModule = {
   
   'doForEach': { // todo: add shorthand for userscripts
     help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFilterOpt}, --dontLogScanning --noMetadata`,
-    getRun: iterate => async (callback: FileIteratorCallback, opts: IMetadataFilterOpts & { dontLogScanning?: boolean, noMetadata?: boolean }) => {
-      if (opts.dontLogScanning) ENV.dontLogScanning = true;
-      if (opts.noMetadata)      ENV.noMetadata = true;
-      await iterate((ent, folder) => {
-        if (checkFilter(ent, opts))
-          return callback(ent, folder);
-      });
-      ENV.dontLogScanning = false;
-      ENV.noMetadata = false;
-    },
+    getRun: iterate => async (callback: FileIteratorCallback, opts: IMetadataFilterOpts & IScanOptions) =>
+      wrapScanOptions(opts, () =>
+        iterate((ent, folder) => checkFilter(ent, opts) ? callback(ent, folder) : null)
+      ),
   },
   
   'userscripts': {

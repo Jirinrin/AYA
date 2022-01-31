@@ -10,7 +10,7 @@ import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -94,10 +94,16 @@ const globalAdditions = {
   getEntsWithMetadata: wrapResolvePath1(getEntsWithMetadata),
   getEntsNames: wrapResolvePath1((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
 
-  doForEach: wrapResolvePath1(doForEach),
-  doForEachDir: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isDirectory() ? callback(e, f) : null)),
-  doForEachFile: wrapResolvePath1(async (filePath, callback: FileIteratorCallback) => doForEach(filePath, (e, f) => e.isFile() ? callback(e, f) : null)),
-  doForEachDeep: wrapResolvePath1(doForEachDeep),
+  doForEach: wrapResolvePath1(async (filePath, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) =>
+    wrapScanOptions(opts, () => 
+      doForEach(filePath, (e, f) => checkEntFilters(e, opts) ? callback(e, f) : null)
+    )
+  ),
+  doForEachDeep: wrapResolvePath1(async (filePath, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) =>
+    wrapScanOptions(opts, () =>
+      doForEachDeep(filePath, (e, f) => checkEntFilters(e, opts) ? callback(e, f) : null)
+    )
+  ),
 
   readJson: wrapResolvePath1(readJson),
   readFile: wrapResolvePath1(readFile),
