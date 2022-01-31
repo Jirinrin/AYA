@@ -78,12 +78,15 @@ const globalAdditions = {
   }),
   remove: wrapResolvePath1(async filePath => {
     await trash(filePath);
-    console.log(highlightExpsC(chalk.red)`Moved "${path.basename(filePath)}" to trash`);
+    console.log(highlightExpsC(chalk.red)`Moved "${cwdRel(filePath)}" to trash`);
   }),
   removeMulti: async (filePaths: string|string[]) => {
     console.log(`Going to remove ${typeof filePaths === 'string' ? '1' : filePaths.length} entities...`);
+    if (typeof filePaths === 'string')
+      filePaths = [filePaths];
+
     await trash(filePaths);
-    console.log(`Moved ${verbose(filePaths)} to trash`);
+    console.log(`Moved ${verbose(filePaths.map(cwdRel))} to trash`);
   },
   // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {
