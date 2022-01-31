@@ -118,6 +118,7 @@ const globalAdditions = {
   copyClb: writeToClipboard,
   pasteClb: readFromClipboard,
   pasteClbJS: () => globalEval(readFromClipboard()),
+  pasteClbJSON: () => JSON.parse(readFromClipboard()),
 
   setConsoleIndent,
   highlightExp,

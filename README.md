@@ -144,6 +144,7 @@ interface {
   // copyClb
   // pasteClb
   // pasteClbJS
+  // pasteClbJSON
 
   // setConsoleIndent,
   // highlightExp,
