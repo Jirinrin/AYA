@@ -142,6 +142,7 @@ interface {
   // cwdRel
 
   // copyClb
+  // copyClbJSON
   // pasteClb
   // pasteClbJS
   // pasteClbJSON

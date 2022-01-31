@@ -116,6 +116,7 @@ const globalAdditions = {
   cwdRel,
 
   copyClb: writeToClipboard,
+  copyClbJSON: (entity: any) => writeToClipboard(JSON.stringify(entity)),
   pasteClb: readFromClipboard,
   pasteClbJS: () => globalEval(readFromClipboard()),
   pasteClbJSON: () => JSON.parse(readFromClipboard()),
