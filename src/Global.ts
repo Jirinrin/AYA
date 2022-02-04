@@ -64,11 +64,11 @@ const globalAdditions = {
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath, moveToFolder) => {
     simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
-    console.log(highlightExp`Moved "${filePath}" to "${moveToFolder}"`);
+    console.log(highlightExp`Moved "${cwdRel(filePath)}" to "${cwdRel(moveToFolder)}"`);
   }),
   copy: wrapResolvePath2((filePath, copyToFolder, newFileName?: string) => {
     const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
-    console.log(highlightExp`Copied "${filePath}" to "${path.join(copyToFolder, finalName)}"`);
+    console.log(highlightExp`Copied "${cwdRel(filePath)}" to "${cwdRel(path.join(copyToFolder, finalName))}"`);
   }),
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
