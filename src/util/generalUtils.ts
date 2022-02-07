@@ -7,6 +7,7 @@ import { readFileSync, readJsonSync, writeFileSync, writeJsonSync } from "fs-ext
 import * as chalk from "chalk";
 import { config } from "./LocalStorage";
 import ENV from "../ENV";
+import { cwdRel } from "./fsUtils";
 
 export enum ParamData {
   Any,
@@ -170,7 +171,7 @@ export function writeJson(filePath: string, data: any, log = true): void {
 
   writeJsonSync(filePath, data, {encoding: 'utf8', spaces: 2})
   if (log)
-    console.log(`Successfully wrote data to ${filePath}`);
+    console.log(`Successfully wrote data to ${cwdRel(filePath)}`);
 }
 export function readFile(filePath: string): string {
   return readFileSync(filePath, {encoding: 'utf8'});
@@ -181,7 +182,7 @@ export function writeFile(filePath: string, data: any, log = true): void {
 
   writeFileSync(filePath, data, 'utf8');
   if (log)
-    console.log(`Successfully wrote data to ${filePath}`);
+    console.log(`Successfully wrote data to ${cwdRel(filePath)}`);
 }
 
 function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...exps: (string|number)[]) {
