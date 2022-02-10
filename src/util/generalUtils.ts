@@ -182,7 +182,7 @@ export function readFile(filePath: string, encoding = 'utf8'): string {
         // return convert(bf, {to: 'UTF8', from: 'SJIS', type: 'string'});
         encoding = 'latin1'; break;
       case 'UNICODE':
-        encoding = 'utf8'; break;
+        encoding = 'latin1'; break;
       case false:
         break;
       default:
