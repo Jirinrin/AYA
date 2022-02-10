@@ -34,7 +34,7 @@
     "chalk": "^4.1.0",
     "clipboardy": "^2.3.0",
     "encoding-japanese": "^1.0.30",
-    "exiftool-vendored": "^12.2.0",
+    "exiftool-vendored": "^14.3.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.3",
     "json-bigint": "^1.0.0",
