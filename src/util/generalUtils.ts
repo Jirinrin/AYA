@@ -1,4 +1,5 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
+import { detect } from 'encoding-japanese';
 import { CommandInfo } from "../modules";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
@@ -173,15 +174,29 @@ export function writeJson(filePath: string, data: any, log = true): void {
   if (log)
     console.log(`Successfully wrote data to ${cwdRel(filePath)}`);
 }
-export function readFile(filePath: string): string {
-  return readFileSync(filePath, {encoding: 'utf8'});
+export function readFile(filePath: string, encoding = 'utf8'): string {
+  if (encoding === 'auto') {
+    const det = detect(readFileSync(filePath));
+    switch (det) {
+      case 'SJIS':
+        // return convert(bf, {to: 'UTF8', from: 'SJIS', type: 'string'});
+        encoding = 'latin1'; break;
+      case 'UNICODE':
+        encoding = 'utf8'; break;
+      case false:
+        break;
+      default:
+        encoding = det.toLowerCase();
+    }
+  }
+  return readFileSync(filePath, {encoding});
 }
-export function writeFile(filePath: string, data: any, log = true): void {
+export function writeFile(filePath: string, data: any, opts: {log?: boolean, encoding?: string} = {}): void {
   if (!filePath.includes('.'))
     filePath += '.txt';
 
-  writeFileSync(filePath, data, 'utf8');
-  if (log)
+  writeFileSync(filePath, data, opts.encoding ?? 'utf8');
+  if (opts.log !== false)
     console.log(`Successfully wrote data to ${cwdRel(filePath)}`);
 }
 

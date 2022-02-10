@@ -33,6 +33,7 @@
     "ajv": "^6.12.5",
     "chalk": "^4.1.0",
     "clipboardy": "^2.3.0",
+    "encoding-japanese": "^1.0.30",
     "exiftool-vendored": "^12.2.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.3",
@@ -46,6 +47,7 @@
     "trash": "^7.1.1"
   },
   "devDependencies": {
+    "@types/encoding-japanese": "^1.0.18",
     "@types/exif": "^0.6.0",
     "@types/fs-extra": "^9.0.2",
     "@types/json-schema": "^7.0.6",
