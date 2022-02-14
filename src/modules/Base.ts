@@ -56,8 +56,8 @@ const Base: RawModule = {
     run: config.reset,
   },
   'config': {
-    help: 'List all config items | opts: --withValues(-v)',
-    run: (opts: {withValues: boolean}) => console.info('Available config:', opts.withValues ? verbose(config.s) :config.getKeysString()),
+    help: 'List all config items',
+    run: () => console.info('Current config:', verbose(config.s)),
   },
   
   'doForEach': { // todo: add shorthand for userscripts

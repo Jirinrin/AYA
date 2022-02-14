@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
-import { getHashCode, readJson, recordToSchema, writeJson } from './generalUtils';
+import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
 import * as Ajv from 'ajv';
 import * as moment from 'moment';
 
@@ -83,6 +83,10 @@ class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<
 
   public set<K extends keyof T>(key: K, val: T[K]): boolean {
     if (typeof key === 'string') {
+      if (!(key in this.state)) {
+        console.warn(highlightExp`Key "${key}" not available`)
+        return false;
+      }
       const newState = {...this.state, [key]: val};
       if (!this.validate(newState)) {
         console.error(`You can't do that: "${this.validate.errors.map(e => e.message).join('; ')}"`);
