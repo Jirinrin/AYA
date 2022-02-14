@@ -1,5 +1,6 @@
 import * as chalk from "chalk";
 import { formatMsg } from ".";
+import ENV from "../ENV";
 import {logger, Logger, PersistentLogger, pLogger } from "./LocalStorage";
 
 declare global {
@@ -60,6 +61,7 @@ export function setConsole(indents: number = 0) {
 
 let currentIndents = 0;
 export function setConsoleIndentRel(indentsDiff: number) {
+  if (ENV.dontLogScanning) return indentsDiff;
   currentIndents = Math.max(currentIndents + indentsDiff, 0);
   setConsole(currentIndents);
   return currentIndents;
