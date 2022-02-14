@@ -68,7 +68,7 @@ const Base: RawModule = {
       ),
   },
   
-  'userscripts': {
+  'userscriptList': {
     help: 'List all available userscripts',
     run: () => console.info(`Available userscripts: ${userScripts.getKeysString()}`),
   },
