@@ -176,9 +176,9 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(lastArg, r.commands);
   if (cmdName.match(/^(?:cd|mkdir|rename|metadata|setTags|copy|move|load(?:Script)?)$/) && nthArg===1 || cmdName.match(/copy|move/) && nthArg<=2) {
     const dirLine = lastArg.charAt(0).match(/["'`]/) ? lastArg.slice(1) : lastArg;
-    const items = [...ENV.currentDirItems];
-    if (cmdName.match('loadScript'))
-      items.push(...ENV.extraScriptsDirItems);
+    const items = cmdName.match('loadScript')
+      ? [...ENV.currentDirItems.filter(i => i.endsWith('.js')), ...ENV.extraScriptsDirItems]
+      : ENV.currentDirItems
     return completeCaseIns(dirLine, items);
   }
 
