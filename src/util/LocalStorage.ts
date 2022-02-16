@@ -106,6 +106,7 @@ const defaultConfig = {
   exifMetadata: false,
   alwaysStart: false,
   initScriptsDir: '',
+  extraScriptsDir: '',
 };
 export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});
 export type IConfig = typeof defaultConfig;

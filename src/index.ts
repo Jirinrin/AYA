@@ -13,6 +13,7 @@ import { runScript } from './modules/Base';
 import { readFileSync } from 'fs-extra';
 import { evalRawStrings, getEnts } from './util';
 import { REPLEval } from 'repl';
+import ENV from './ENV';
 
 setConsole();
 
@@ -61,6 +62,10 @@ async function startRepl() {
 
   if (config.s.initScriptsDir) {
     getEnts(config.s.initScriptsDir, { ext: 'js' }).forEach(ent => globalEval(readFileSync(ent.path).toString()));
+  }
+
+  if (config.s.extraScriptsDir) {
+    ENV.extraScriptsDirItems = getEnts(config.s.extraScriptsDir, { ext: 'js' }).map(e => e.name);
   }
 
   if (initBody) {

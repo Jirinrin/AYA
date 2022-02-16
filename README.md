@@ -59,6 +59,7 @@ Explanation of the different config keys:
 - `exifMetadata`: Toggle fetching metadata on all kinds of files.
 - `alwaysStart`: Set to true to have aya always start in the current working directory, so you don't have to specify the `-s` flag.
 - `initScriptsDir`: Set this to a directory path for aya to load all scripts in that directory into its context. This allows you to expose custom functions you use a lot.
+- `extraScriptsDir`: Set this to a directory path, from which you can directly load the JS files using `.loadScript`. Useful for scripts you only need once in a while.
 
 ## Available commands
 

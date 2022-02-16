@@ -114,8 +114,13 @@ const Base: RawModule = {
   'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
 
   'loadScript': {
-    help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load)',
-    run: (s_file: string) => globalEval(readFileSync(resolvePath(s_file)).toString()),
+    help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from extraScriptsDir',
+    run: (s_file: string) => {
+      const filePath = ENV.extraScriptsDirItems.includes(s_file)
+        ? path.join(config.s.extraScriptsDir, s_file)
+        : resolvePath(s_file);
+      return globalEval(readFileSync(filePath).toString());
+    },
   },
 
   'ayaStorageDir': {

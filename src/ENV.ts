@@ -4,4 +4,5 @@ export default {
   currentDirItems: [] as string[],
   dontLogScanning: false,
   noMetadata: false,
+  extraScriptsDirItems: [] as string[],
 };
