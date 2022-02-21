@@ -94,8 +94,11 @@ export function escapeRegex(regexString: string): string {
   return regexString.replace(regexEscapeRegex, '\\$&');
 }
 
-// It is assumed that you don't put two spaces after one another and don't have leading/trailing spaces
-const argsSplitRegex1 = /(?:"[^"]*"?|'[^']*'?|r?`[^`]*`?|\/[^\/]+\/?|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
+// It is assumed that you don't put two spaces after one another and don't have leading/trailing spaces.
+// Special case: for regexes it allows extra flags behind it and needs to be merged with an options param in front of it if present
+// todo: possibly simplify this with backreferencing?
+// todo: unit test the functioning of this regex
+const argsSplitRegex1 = /(?:"[^"]*"?|'[^']*'?|r?`[^`]*`?|(?:--\w+=)?\/[^\/]+(?:\/[igmus]*)?|[^\s`"'\/]+)(?:\s*|[^`"'\/]*)/g; // => split by 'contained strings' etc / spaces
 
 /**
  * @return [body (not trimmed), opts]
@@ -145,8 +148,10 @@ export function checkFilter(ent: DirentWithMetadata, { filter }: IMetadataFilter
   const em = !config.s.exifMetadata  || ENV.noMetadata || !!ent.em;
   const mm = !config.s.musicMetadata || ENV.noMetadata || !!ent.mm;
 
+  if (filter.startsWith('/'))
+    return !!ent.nameBase.match(eval(filter));
   if (filter.startsWith('.'))
-    return ent.ext === filter.slice(1);
+    return !!ent.ext.match(new RegExp(`^${filter.slice(1)}$`));
 
   switch (filter) {
     case 'file': return ent.isFile();

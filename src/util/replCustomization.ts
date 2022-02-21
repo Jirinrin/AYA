@@ -266,6 +266,7 @@ export function highlightLine(line: string): string {
   };
 
   const drawOptions = (part: string): string => {
+    // todo: possibly more accurate custom highlighting?
     return highlight(part, 'bash');
   };
 

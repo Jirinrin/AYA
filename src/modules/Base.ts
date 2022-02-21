@@ -64,7 +64,7 @@ const Base: RawModule = {
   },
   
   'doForEach': { // todo: add shorthand for userscripts
-    help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFilterOpt}, --dontLogScanning --noMetadata`,
+    help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFilterOpt} --dontLogScanning --noMetadata`,
     getRun: iterate => async (callback: FileIteratorCallback, opts: IMetadataFilterOpts & IScanOptions) =>
       wrapScanOptions(opts, () =>
         iterate((ent, folder) => checkFilter(ent, opts) ? callback(ent, folder) : null)

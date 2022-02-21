@@ -50,7 +50,7 @@ export const cmdInfo: Record<string, CommandInfo> = {};
 function getCmdInfo(help: string): CommandInfo {
   const info: CommandInfo = { help };
   help
-    .match(/--[\w=|\(\)-]+/g)
+    .match(/--[\w=|\(\)-\./<>]+/g)
     ?.forEach(o => {
       let [_, opt, alias, val] = o.match(/^--([^\(\)=]+)(?:\(-(\w)\))?(?:=(.+))?$/) ?? [];
       if (!_) return;
@@ -73,7 +73,7 @@ function getCmdInfo(help: string): CommandInfo {
 function makeOperation(op: RawOperation, cmdName: string): Operation {
   let help = op.help ?? '';
   if (isShallowDeep(op))
-    help += `${help.includes('opts:') ? ',' : ' | opts:'} --deep(-d)`;
+    help += `${help.includes('opts:') ? '' : ' | opts:'} --deep(-d)`;
 
   const info = getCmdInfo(help);
   cmdInfo[cmdName] = info;  // side effect yay! Though maybe this whole global variable is unnecessary?
