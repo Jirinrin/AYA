@@ -3,11 +3,11 @@ import * as path from 'path';
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
-import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem, wrapResolvePath1 } from "../util/replUtils";
+import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem } from "../util/replUtils";
 import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
-import { checkFilter, IScanOptions, verbose, wrapScanOptions } from "../util";
+import { checkFilter, IScanOptions, scanOpt, verbose } from "../util";
 import { WriteTags } from "exiftool-vendored";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
@@ -21,14 +21,11 @@ export const helpp = (s_cmdName: string) => getCommandHelp(r, s_cmdName);
 const Base: RawModule = {
   'ls': {
     help: 'Show entries in current directory or {$1} a relative/absolute directory you specify',
+    noMetadata: true,
     getRun: (iterator) => (s_dirOverwrite: string = undefined) => {
       const dir = resolvePath(s_dirOverwrite || ENV.cwd)
       ENV.currentDirItems = readdirSync(dir);
-      return wrapScanOptions({ noMetadata: true }, () => 
-        iterator((e) => {
-          console.log(e.isDirectory() ? e.name+'/' : e.name);
-        }, dir),
-      )
+      return iterator((e) => console.log(e.isDirectory() ? e.name+'/' : e.name), dir);
     }
   },
 
@@ -64,11 +61,9 @@ const Base: RawModule = {
   },
   
   'doForEach': { // todo: add shorthand for userscripts
-    help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFilterOpt} --dontLogScanning --noMetadata`,
+    help: `For every entry in cwd execute callback {$1: (entry: Dirent, current directory: string) => void} | opts: ${metadataFilterOpt} ${scanOpt}`,
     getRun: iterate => async (callback: FileIteratorCallback, opts: IMetadataFilterOpts & IScanOptions) =>
-      wrapScanOptions(opts, () =>
-        iterate((ent, folder) => checkFilter(ent, opts) ? callback(ent, folder) : null)
-      ),
+      iterate((ent, folder) => checkFilter(ent, opts) ? callback(ent, folder) : null),
   },
   
   'userscriptList': {

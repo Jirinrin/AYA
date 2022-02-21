@@ -19,8 +19,8 @@ export interface DirentWithMetadata extends DirentWithData, FileMetadata {}
 export type FileIteratorCallback<TReturn extends any = any> = (ent: DirentWithMetadata, containerFolder: string) => TReturn|Promise<TReturn>;
 export type FileIteratorFunction<T=any> = (callback: FileIteratorCallback<T>, dirOverwrite?: string) => void|Promise<void>;
 
-export type ActionFunction = (argsString: string) => any|Promise<any>;
-export type ActionFunctionEvall = (rawArgs: string[], opts: Record<string, any>) => any|Promise<any>;
+export type ActionFunction = (argsString: string) => void|Promise<void>;
+export type ActionFunctionEvall = (rawArgs: string[], opts: Record<string, any>) => void|Promise<void>;
 export type OperationFunction = CustomFunction & {(...args: any[]): any|Promise<any>};
 
 interface BaseOperation {
@@ -30,6 +30,7 @@ export interface RawOperationNormal extends BaseOperation {
   run: OperationFunction;
 }
 export interface RawOperationShallowDeep extends BaseOperation {
+  noMetadata?: boolean;
   getRun: (iterator: FileIteratorFunction) => OperationFunction;
 };
 export interface Operation extends BaseOperation {

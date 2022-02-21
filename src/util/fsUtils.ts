@@ -31,14 +31,18 @@ export interface IScanOptions {
   dontLogScanning?: boolean;
   noMetadata?: boolean;
 }
+export const scanOpt = '--dontLogScanning --noMetadata(-m)';
 
 // These options are really hard to pass through the (recursive) chain so we just bodge it like this.
 export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promise<void>) {
   if (opts.dontLogScanning) ENV.dontLogScanning = true;
   if (opts.noMetadata)      ENV.noMetadata = true;
-  await cb();
-  ENV.dontLogScanning = false;
-  ENV.noMetadata = false;
+  try {
+    return await cb();
+  } finally {
+    ENV.dontLogScanning = false;
+    ENV.noMetadata = false;
+  }
 }
 
 export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {

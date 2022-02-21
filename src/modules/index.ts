@@ -1,5 +1,5 @@
 import { Module, Operation, RawOperationShallowDeep, RawOperation, ActionFunctionEvall } from '../types';
-import { doForEach, doForEachDeep, getFunctionData, parseArgs } from '../util';
+import { doForEach, doForEachDeep, getFunctionData, parseArgs, wrapScanOptions } from '../util';
 import ENV from '../ENV';
 import { evall } from '../util/replUtils';
 
@@ -78,6 +78,7 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
   const info = getCmdInfo(help);
   cmdInfo[cmdName] = info;  // side effect yay! Though maybe this whole global variable is unnecessary?
 
+  // todo: extract isShallowDeep(op) in separate var when upgraded TS
   const action = isShallowDeep(op) ? makeShallow(op, info) : evall(op.run, info);
 
   return {
@@ -88,7 +89,11 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
       if (opts.help)
         return helpp(cmdName);
 
-      return action(rawArgs, opts);
+      return wrapScanOptions(
+        // If the passed args happen to have these options, they're simply included without asking more
+        {noMetadata: opts.noMetadata || isShallowDeep(op) && op.noMetadata, dontLogScanning: opts.dontLogScanning},
+        () => action(rawArgs, opts)
+      );
     },
   };
 }

@@ -8,6 +8,7 @@ import { RawModule } from "../types";
 const FolderOperations: RawModule = {
   flatten: {
     help: 'Flatten folders that only contain one folder | opts: --all(-a), --filesAllowed(-f)',
+    noMetadata: true,
     run: async (opts: {all: boolean, filesAllowed: boolean}) => {
       console.log('Start flattening...');
 
@@ -50,6 +51,7 @@ const FolderOperations: RawModule = {
   },
   clean: {
     help: 'Remove empty folders',
+    noMetadata: true,
     getRun: iterate => async () => iterate((dir, folder) => {
       if (!dir.isDirectory()) return;
 
