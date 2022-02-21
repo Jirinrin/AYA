@@ -24,9 +24,11 @@ const Base: RawModule = {
     getRun: (iterator) => (s_dirOverwrite: string = undefined) => {
       const dir = resolvePath(s_dirOverwrite || ENV.cwd)
       ENV.currentDirItems = readdirSync(dir);
-      return iterator((e) => {
-        console.log(e.isDirectory() ? e.name+'/' : e.name);
-      }, dir)
+      return wrapScanOptions({ noMetadata: true }, () => 
+        iterator((e) => {
+          console.log(e.isDirectory() ? e.name+'/' : e.name);
+        }, dir),
+      )
     }
   },
 
