@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "fs";
+import * as path from 'path';
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
