@@ -71,15 +71,16 @@ function getCmdInfo(help: string): CommandInfo {
 
 
 function makeOperation(op: RawOperation, cmdName: string): Operation {
+  const isShd = isShallowDeep(op);
+
   let help = op.help ?? '';
-  if (isShallowDeep(op))
+  if (isShd)
     help += `${help.includes('opts:') ? '' : ' | opts:'} --deep(-d)`;
 
   const info = getCmdInfo(help);
   cmdInfo[cmdName] = info;  // side effect yay! Though maybe this whole global variable is unnecessary?
 
-  // todo: extract isShallowDeep(op) in separate var when upgraded TS
-  const action = isShallowDeep(op) ? makeShallow(op, info) : evall(op.run, info);
+  const action = isShd ? makeShallow(op, info) : evall(op.run, info);
 
   return {
     help,
@@ -91,7 +92,7 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
 
       return wrapScanOptions(
         // If the passed args happen to have these options, they're simply included without asking more
-        {noMetadata: opts.noMetadata || isShallowDeep(op) && op.noMetadata, dontLogScanning: opts.dontLogScanning},
+        {noMetadata: opts.noMetadata || (isShd && op.noMetadata), dontLogScanning: opts.dontLogScanning},
         () => action(rawArgs, opts)
       );
     },
