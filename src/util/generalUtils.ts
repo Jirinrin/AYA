@@ -177,7 +177,7 @@ export function writeJson(filePath: string, data: any, log = true): void {
 
   writeJsonSync(filePath, data, {encoding: 'utf8', spaces: 2})
   if (log)
-    console.log(`Successfully wrote data to ${cwdRel(filePath)}`);
+    console.log(highlightExp`Successfully wrote data to ${cwdRel(filePath)}`);
 }
 export function readFile(filePath: string, encoding = 'utf8'): string {
   if (encoding === 'auto') {
@@ -202,7 +202,7 @@ export function writeFile(filePath: string, data: any, opts: {log?: boolean, enc
 
   writeFileSync(filePath, data, opts.encoding ?? 'utf8');
   if (opts.log !== false)
-    console.log(`Successfully wrote data to ${cwdRel(filePath)}`);
+    console.log(highlightExp`Successfully wrote data to ${cwdRel(filePath)}`);
 }
 
 function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...exps: (string|number)[]) {
