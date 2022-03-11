@@ -14,7 +14,6 @@
     "compile:win": "tsc && pkg -t node14-win-x64 . -o bin/aya",
     "compile:linux": "tsc && pkg -t node14-linux-x64 . -o bin/aya",
     "compile:macos": "tsc && pkg -t node14-macos-x64 . -o bin/aya",
-    "release": "yarn compile:win && yarn compile:linux && yarn compile:macos",
     "init": "yarn && yarn build && yarn compile"
   },
   "repository": {
