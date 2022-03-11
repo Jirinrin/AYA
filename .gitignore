@@ -5,3 +5,4 @@ build/*
 ayayatsuri-win64.exe
 ayayatsuri-linux64
 ayayatsuri-macos64
+bin/
