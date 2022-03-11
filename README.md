@@ -1,6 +1,6 @@
-# Ayayatsuri
+# AYA
 
-Ayayatsuri (/ あややつり / Aya / Ayaya) is a wonderful/powerful CLI tool which enables you to:
+AYA (Ayaya!) is a wonderful/powerful CLI tool which enables you to:
 - **Manipulate your file system** in all kinds of ways, allowing to **write complex logic and save it for later use**
 - Do all the things a NodeJS REPL does, but with syntax highlighting and better auto-completion
 
