@@ -164,10 +164,10 @@ export function simpleRename(containerFolder: string, fileName: string, newFileN
   );
 }
 
-export function simpleMove(originalFolderPath: string, fileName: string, newFolderPath: string, isDirectory?: boolean): string {
+export function simpleMove(originalFolderPath: string, fileName: string, newFolderPath: string, isDirectory?: boolean, newFileName?: string): string {
   return safeRename(
     path.join(originalFolderPath, fileName),
-    path.join(newFolderPath,      fileName),
+    path.join(newFolderPath,      esc(newFileName ?? fileName)),
     isDirectory,
   );
 }

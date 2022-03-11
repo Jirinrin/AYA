@@ -62,8 +62,8 @@ const globalAdditions = {
     console.log(highlightExp`Made dir "${path}"`);
   }),
   exists: wrapResolvePath1(fs.existsSync),
-  move: wrapResolvePath2((filePath, moveToFolder) => {
-    simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory());
+  move: wrapResolvePath2((filePath, moveToFolder, newFileName?: string) => {
+    simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory(), newFileName);
     console.log(highlightExp`Moved "${cwdRel(filePath)}" to "${cwdRel(moveToFolder)}"`);
   }),
   copy: wrapResolvePath2((filePath, copyToFolder, newFileName?: string) => {
