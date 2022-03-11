@@ -157,10 +157,12 @@ export function cwdRel(absPath: string) {
 }
 
 export function simpleRename(containerFolder: string, fileName: string, newFileName: string, isDirectory?: boolean): string {
-  return safeRename(
-    path.join(containerFolder, fileName),
-    path.join(containerFolder, esc(newFileName)),
-    isDirectory,
+  return path.basename(
+    safeRename(
+      path.join(containerFolder, fileName),
+      path.join(containerFolder, esc(newFileName)),
+      isDirectory,
+    )
   );
 }
 

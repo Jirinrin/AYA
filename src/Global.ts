@@ -63,12 +63,12 @@ const globalAdditions = {
   }),
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath, moveToFolder, newFileName?: string) => {
-    simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory(), newFileName);
-    console.log(highlightExp`Moved "${cwdRel(filePath)}" to "${cwdRel(moveToFolder)}"`);
+    const moved = simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory(), newFileName);
+    console.log(highlightExp`Moved "${cwdRel(filePath)}" to "${cwdRel(moved)}"`);
   }),
   copy: wrapResolvePath2((filePath, copyToFolder, newFileName?: string) => {
-    const finalName = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
-    console.log(highlightExp`Copied "${cwdRel(filePath)}" to "${cwdRel(path.join(copyToFolder, finalName))}"`);
+    const copied = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
+    console.log(highlightExp`Copied "${cwdRel(filePath)}" to "${cwdRel(copied)}"`);
   }),
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
