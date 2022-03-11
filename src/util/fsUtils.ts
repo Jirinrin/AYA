@@ -135,13 +135,13 @@ export function safeRename(oldPath: string, newPath: string, isDirectory?: boole
   const safeNewPath = (oldPath.toLowerCase() !== newPath.toLowerCase()) ? getSafePath(newPath, isDirectory) : newPath;
   if (oldPath !== newPath)
     fs.renameSync(oldPath, safeNewPath);
-  return path.basename(safeNewPath);
+  return safeNewPath;
 }
 
 export function safeCopy(oldPath: string, newPath: string, isDirectory?: boolean): string {
   const safeNewPath = getSafePath(escPath(newPath), isDirectory);
   fse.copySync(oldPath, safeNewPath);
-  return path.basename(safeNewPath);
+  return safeNewPath;
 }
 
 export function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string] {
