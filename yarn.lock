@@ -231,10 +231,10 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
-batch-cluster@^5.11.2:
-  version "5.11.2"
-  resolved "https://registry.yarnpkg.com/batch-cluster/-/batch-cluster-5.11.2.tgz#518cb7dca3459fe74289e4384b68afd849b4eb54"
-  integrity sha512-+9ZL6DKnUS75i1aDH8ltCa4q4P5oHo7LYZkKnH7BBbERPqkTxt2lCtkLHo/p37yv2SSr5BVNABnfRrtgq0fv9g==
+batch-cluster@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/batch-cluster/-/batch-cluster-6.2.1.tgz#3f08140f640827763fbcf40c89d00e43b5ff6a98"
+  integrity sha512-bXvQacBetyYc72WEeVhPiNnqdmGNj40SbviXUgg1S9+jrr+gGmgJz+JsmfL9zU1N7EIoyO8oks004MQvTlHwJQ==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
@@ -531,27 +531,28 @@ execa@^2.0.1:
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
 
-exiftool-vendored.exe@^12.6.0:
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/exiftool-vendored.exe/-/exiftool-vendored.exe-12.6.0.tgz#1dcbbcfa61ae0336fc003aee08cf2547a990c160"
-  integrity sha512-gJSjt1YyVU5B1WfuP7TVv7rGM3MnM0V5zw+Q7mM3zzvKl4WAmkQaPPkRGDoRZUhFqK8bUz2WbcniZOgw5LGcnA==
+exiftool-vendored.exe@^12.28.0:
+  version "12.40.0"
+  resolved "https://registry.yarnpkg.com/exiftool-vendored.exe/-/exiftool-vendored.exe-12.40.0.tgz#0285fb4fc3b4495aa4c41f3784eb69b7d001a1c6"
+  integrity sha512-Ng7CGioXkX3msJzI8HxM5ZbtoUiw/4JFJSxe9d/kOqOo3nMqStB8sqtwjmilsHAyuW2JIGkUtZ+IxPkuzRrmyA==
 
-exiftool-vendored.pl@^12.6.0:
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/exiftool-vendored.pl/-/exiftool-vendored.pl-12.6.0.tgz#af093b98b91770515c65279d23abfd15efdcba84"
-  integrity sha512-XeALcaaPKQWhEYiUik3KmhBLFKYNd44OWZLi7x8lvys5VH1a5ZpSNhErp+teeaPs0PkPWCImieElaXLIo9DG6g==
+exiftool-vendored.pl@^12.28.0:
+  version "12.40.0"
+  resolved "https://registry.yarnpkg.com/exiftool-vendored.pl/-/exiftool-vendored.pl-12.40.0.tgz#484b45114193167d67178f9c59af104fe8d9f177"
+  integrity sha512-yNoDhG6g8ifzgm0PPqgWTiI5vdbuTGyTgIlpy+hxeuf7M2b0x6tGtYNakjIO9Q08VDNxXIr1lEZJR2EMZ5JDTQ==
 
-exiftool-vendored@^12.2.0:
-  version "12.2.0"
-  resolved "https://registry.yarnpkg.com/exiftool-vendored/-/exiftool-vendored-12.2.0.tgz#48a52eff3f481b8ffd0cf7f2c9ec46ead24784de"
-  integrity sha512-1YKbJf1Ttm3TqcRlJQrSUgQGOR0kKhyIpUnD+dFppoinl0E0KHandBKqEtLirwFVOtaUnOjjx9ywRGOoipyumA==
+exiftool-vendored@^14.3.0:
+  version "14.6.2"
+  resolved "https://registry.yarnpkg.com/exiftool-vendored/-/exiftool-vendored-14.6.2.tgz#e6121c82c6cfe1b00324dd33067c4af6e355fc73"
+  integrity sha512-BQ7YKjRKApTaI1ovZoDKqKVxd3YMGG0/9HnJwXQ253BYM5O4mtT7J0WPew6iCRQIYV2fCeaZomuu6knjnX0dYg==
   dependencies:
-    batch-cluster "^5.11.2"
-    luxon "^1.25.0"
+    batch-cluster "^6.2.1"
+    he "^1.2.0"
+    luxon "^1.27.0"
     tz-lookup "^6.1.25"
   optionalDependencies:
-    exiftool-vendored.exe "^12.6.0"
-    exiftool-vendored.pl "^12.6.0"
+    exiftool-vendored.exe "^12.28.0"
+    exiftool-vendored.pl "^12.28.0"
 
 expand-template@^2.0.3:
   version "2.0.3"
@@ -805,6 +806,11 @@ hastscript@^5.0.0:
     property-information "^5.0.0"
     space-separated-tokens "^1.0.0"
 
+he@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
+  integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
+
 http-signature@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/http-signature/-/http-signature-1.2.0.tgz#9aecd925114772f3d95b65a60abb8f7c18fbace1"
@@ -1010,10 +1016,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-luxon@^1.25.0:
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.25.0.tgz#d86219e90bc0102c0eb299d65b2f5e95efe1fe72"
-  integrity sha512-hEgLurSH8kQRjY6i4YLey+mcKVAWXbDNlZRmM6AgWDJ1cY3atl8Ztf5wEY7VBReFbmGnwQPz7KYJblL8B2k0jQ==
+luxon@^1.27.0:
+  version "1.28.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"
+  integrity sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==
 
 make-dir@^3.1.0:
   version "3.1.0"
