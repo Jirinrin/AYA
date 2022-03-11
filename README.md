@@ -1,13 +1,16 @@
 # Ayayatsuri
 
-Ayayatsuri (/ あややつり / Aya / Ayaya) is a wonderful CLI tool which enables you to:
-- **Manipulate your file system** in all kinds of ways, with possibilities to **write complex logic and save it for later use**
+Ayayatsuri (/ あややつり / Aya / Ayaya) is a wonderful/powerful CLI tool which enables you to:
+- **Manipulate your file system** in all kinds of ways, allowing to **write complex logic and save it for later use**
 - Do all the things a NodeJS REPL does, but with syntax highlighting and better auto-completion
 
-If you've pulled the source code (which is recommended), run `yarn init` to start off. This will build JS and generate an executable for your system architecture to use.  
-Then you should be able run `node build` (`yarn start`), or take one of the shell files in [/path](/path) and add it to your PATH environment variable, Start Menu etc.
+To get started, either grab an executable from the releases (currently Windows only) on Github, or clone the repo to get the latest and greatest.  
+For the latter, run `yarn init` to start off. This will build the JS and generate an executable for your system architecture to use.  
+Then make it accessible from your shell by adding either the [/path](/path) directory or the generated `/bin` directory to your PATH.
 
 Have fun with it!
+
+**But tread with care! Aya is powerful and has all the priviledges your shell has, therefore one wrong command can seriously screw with your files and directories.**
 
 
 ## How it works
@@ -41,7 +44,7 @@ Watch out with this, as things can get ridiculous real quick. Especially when e.
 
 ## Userscripts
 
-A useful feature of Aya is user scripts: sequences of lines to be executed which you can save accross sessions.  
+A useful feature of Aya is userscripts: sequences of lines to be executed which you can save accross sessions.  
 Use the `userscript` commands (see `.help`) to interact with these.
 
 Useful note: use the `scriptFromHistory()` global function (docs [down below](##-Available-JS-globals)) e.g. like this: `.userscript-set scriptFromHistory(1, 4)`
@@ -180,48 +183,14 @@ interface {
 }
 ```
 
-### Music info available
-```ts
-{ 
-  format: {
-    tagTypes: [ 'vorbis' ],
-    container: 'FLAC',
-    codec: 'FLAC',
-    lossless: true,
-    numberOfChannels: 2,
-    bitsPerSample: 16,
-    sampleRate: 44100,
-    duration: 254.14285714285714,
-    bitrate: 1065686.516020236 
-  },
-  native: undefined,
-  common: { 
-    track: { no: 6, of: null },
-    disk:  { no: 1, of: null },
-    title: 'Harakirish mind (feat. Numb\'n\'dub)(Riku Remix)',
-    album: 'minority room EP',
-    albumartist: 'Yukiyanagi',
-    isrc: [ 'QM42K1974586' ],
-    artists: [ 'Yukiyanagi' ],
-    artist: 'Yukiyanagi',
-    barcode: '053000406198',
-    composer: [ 'YUKIYA TAKANO' ],
-    picture: [ [Object] ] 
-  } 
-}
-```
-
 
 ## TODO
 - go through todos in code
 - refresh ENV.currentDirItems on more occasions / use in all places where you can use relative paths / implement fancier hash-based recursive system or sth
 - add to readme some gameplay footage
-- a way to expose certain custom functions / load in certain js files on startup (similar to userscripts)
 - allow force quitting a command that's taking a long time
 - add ora fancy spinner thingy on longer running scripts?
 - have some [iter] like (colored?) label in the help of commands that iterate
 - do exe releases every once in a while? (and for macos and debian would need to do in docker container)
 - be able to give argument to userscripts?
-- somehow catch e.g. 'Uncaught ReferenceError: ls is not defined' and then attempt to find it as a command
 - some system for deep iteration to e.g. rename a folder and then still be able to go through the items in it
-- a way to load a userscript as a function from a file, and then the arguments you pass to it will be passed into the function (?)
