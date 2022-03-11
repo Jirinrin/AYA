@@ -301,12 +301,8 @@ export function setupReplCustomization(r: REPLServer) {
     if (!config.s.syntaxHighlighting) return;
 
     if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
-      // todo: remove timeout?
-      setTimeout(() => {
-        const edited = highlightLine(r.line);
-        // console.llog('yo', rr.line, '|||', edited);
-        r._refreshCurrentLine(edited);
-      }, 0);
+      const edited = highlightLine(r.line);
+      r._refreshCurrentLine(edited);
     }
   });
 
