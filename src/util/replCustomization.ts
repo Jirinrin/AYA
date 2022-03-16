@@ -195,11 +195,15 @@ export const completer: Completer = (line: string) => {
 
 // Syntax highlighting
 
-function parseClasses(classNames: string[]): [classes: string[], language?: string] {
+function parseClasses(classNames?: string[]): [classes?: string[], language?: string] {
+  if (!classNames) return [];
+
   let language: string;
   const classes = classNames.filter(c => {
-    if (c.startsWith('language-')) {
-      language = c;
+    // A text node which is a certain language (e.g. "regex") will have the classes: "regex-source" and "language-regex"
+    if (c.startsWith('language-') || c.endsWith('-source')) {
+      language = c.match(/^language-(\w+)$/)?.[1] ?? c.match(/^(\w+)-source$/)?.[1];
+      if (!language) console.error('Language not found this is weird!', classNames);
       return false;
     }
     return !(c === 'token'); // Can add more conditions hyah
@@ -207,28 +211,32 @@ function parseClasses(classNames: string[]): [classes: string[], language?: stri
   return [classes, language];
 }
 
-function parseHighlightNode(node: refractor.RefractorNode, classNames: string[] = [], parentHighlights: IHighlightLookup = defaultHighlightLookup): string {
+function parseHighlightNode(node: refractor.RefractorNode, lang: string, classNames?: string[], parentHighlights: IHighlightLookup = defaultHighlightLookup): string {
+  const highlights = languageSpecificHighlightLookup[lang] || parentHighlights;
+
+  if (node.type === 'element') // This element has nested element children, or (usually just 1) text children with the classes on this element node
+    return node.children.map(c => parseHighlightNode(c, lang, node.properties.className, highlights)).join('');
+
+  // It is a text node from here on, end of tree branch.
+
   const [classes, language] = parseClasses(classNames);
+  if (language) return highlight(node.value, language);
 
-  const highlights = (language && languageSpecificHighlightLookup[language]) || parentHighlights;
+  if (!classes?.length) // This text node needs no special highlighting
+    return highlights._(node.value);
 
-  if (node.type === 'element')
-    return node.children.map(c => parseHighlightNode(c, node.properties.className, highlights)).join('');
-
-  if (!classes.length) return highlights._(node.value);
-
-  let val = node.value;
-  classes.forEach(className => {
+  // Wrap the effects each class has on the text around one another
+  return classes.reduce((str, className) => {
     const ch = highlights[className];
-    if (ch) val = ch(val);
-    else console.plog(`unknown highlight class: ${className}. Val: ${val}`);
-  });
-  return val;
+    if (ch) return ch(str);
+    console.plog(`unknown highlight class: "${className}". Val: "${str}"`);
+    return str;
+  }, node.value);
 };
 
 export function highlight(part: string, lang: string): string {
   return refractor.highlight(part, lang)
-    .map(c => parseHighlightNode(c))
+    .map(c => parseHighlightNode(c, lang))
     .join('');
 }
 

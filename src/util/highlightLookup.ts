@@ -16,14 +16,14 @@ import * as chalk from "chalk";
 // }
 
 const defaultHighlights: [string[], chalk.Chalk][] = [
-  [['script', 'prolog', 'punctuation', 'charset', 'interpolation'], chalk], // --foreground
+  [['script', 'prolog', 'punctuation', 'charset', 'interpolation', 'char-class'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
-  [['url', 'built-in', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access', 'property'], chalk.cyan], // --cyan
+  [['url', 'built-in', 'builtin', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access', 'property', 'char-class-punctuation'], chalk.cyan], // --cyan
   [['atrule', 'attr-name', 'attr-value', 'function', 'method', 'function-variable'], chalk.greenBright], // --green
-  [['parameter' /*should be italic*/, 'group', 'symbol'], chalk.hex('#FFB86C')], // --orange
-  [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier', 'escape', 'special-escape', 'anchor', 'interpolation-punctuation', 'module', 'regex-flags', 'spread'], chalk.magentaBright], // --pink
-  [['boolean', 'constant', 'number', 'charclass', 'known-class-name', 'null', 'nil', 'range-punctuation', 'range'], chalk.magenta], // --purple
-  [['regex', 'regex-delimiter', 'charset-negation'], chalk.red], // --red
+  [['parameter' /*should be italic*/, 'group', 'symbol', 'method-variable'], chalk.hex('#FFB86C')], // --orange
+  [['entity', 'keyword', 'important', 'selector', 'tag', 'operator', 'arrow', 'alternation', 'quantifier', 'escape', 'special-escape', 'anchor', 'interpolation-punctuation', 'module', 'regex-flags', 'spread', 'backreference'], chalk.magentaBright], // --pink
+  [['boolean', 'constant', 'number', 'char-set', 'known-class-name', 'null', 'nil', 'range-punctuation', 'range'], chalk.magenta], // --purple
+  [['regex', 'regex-delimiter', 'charset-negation', 'control-flow'], chalk.red], // --red
   [['string', 'char', 'template-punctuation'], chalk.yellowBright], // --yellow
 
   // not sure: 'inserted', 'deleted', 'namespace'
@@ -33,7 +33,7 @@ const defaultHighlights: [string[], chalk.Chalk][] = [
 ];
 
 const languageSpecificHighlights: Record<string, typeof defaultHighlights> = {
-  'language-regex': [
+  'regex': [
     [['_', 'escape', 'special-escape', 'charset'], chalk],
   ],
 };
