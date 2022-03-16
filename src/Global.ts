@@ -150,27 +150,28 @@ const globalItemDocs: Partial<Record<keyof typeof globalAdditions, string>> = {
 const typeDocs = {
   FileIteratorCallback: '(ent: DirentWithMetadata, folder: string) => void',
   IGetEntsFilters: '{ entType?: EntityType; filter?: string|RegExp; ext?: string|RegExp; }',
-  IScanOptions: '{ dontLogScanning?: boolean; noMetadata?: boolean; }'
+  IScanOptions: '{ dontLogScanning?: boolean; noMetadata?: boolean; }',
+  DirentWithMetadata: '{ ext: string; nameBase: string; path: string; mm?: IAudioMetadata; em?: exif.Tags; } & Dirent'
 }
 
 const typeDocsTypes = Object.keys(typeDocs);
 const typeDocsTypesMatch = new RegExp(typeDocsTypes.map(escapeRegExp).join('|'))
 
-const globalItemDocsX = Object.fromEntries(Object.entries(globalItemDocs).map(([k,v]) => {
-  while (typeDocsTypesMatch.test(v))
-    v = typeDocsTypes.reduce((str, k) => str.replace(k, typeDocs[k]), v)
-  return [k, v];
-}))
-
 globalAdditions.typeDocs = typeDocs;
 
-const docFn = (doc: string) => {
+const makeDocFn = (doc: string) => {
   const fn = () => console.log(highlight(doc, 'ts'));
   fn._ = doc;
   return fn;
 }
-Object.entries(globalItemDocs).forEach(([key, h]) => globalAdditions[key].doc = docFn(h));
-Object.entries(globalItemDocsX).forEach(([key, h]) => globalAdditions[key].docX = docFn(h));
+const makeDocXFn = (doc: string) => (iter = 100) => {
+  console.log('it', iter)
+  while (typeDocsTypesMatch.test(doc) && --iter >= 0)
+    doc = typeDocsTypes.reduce((str, k) => str.replace(k, typeDocs[k]), doc);
+  return makeDocFn(doc)();
+}
+Object.entries(globalItemDocs).forEach(([key, doc]) => globalAdditions[key].doc = makeDocFn(doc));
+Object.entries(globalItemDocs).forEach(([key, doc]) => globalAdditions[key].docX = makeDocXFn(doc));
 
 type GlobalAdditions = typeof globalAdditions;
 
