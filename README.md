@@ -119,10 +119,8 @@ interface {
   getEntsWithMetadata: (filePath: string) => Promise<DirentWithMetadata[]>; // todo: add options docs
   getEntsNames: // todo
 
-  doForEach:     (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
-  doForEachDir:  (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
-  doForEachFile: (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
-  doForEachDeep: (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void) => Promise<void>;
+  doForEach:     (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts: IGetEntsFilters & IScanOptions = {}) => Promise<void>;
+  doForEachDeep: (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts: IGetEntsFilters & IScanOptions = {}) => Promise<void>;
 
   // The manual version of resolving a relative/absolute path
   resolvePath: (filePath: string) => string;

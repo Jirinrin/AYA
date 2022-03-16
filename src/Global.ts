@@ -14,6 +14,9 @@ import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, h
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
+import { escapeRegExp } from 'lodash';
+import { highlight } from './util/replCustomization';
+import { listLanguages } from 'refractor';
 
 export {};
 
@@ -132,7 +135,42 @@ const globalAdditions = {
 
   setConsoleIndent,
   highlightExp,
+  listlan: listLanguages,
+
+  typeDocs: undefined,
 };
+
+// todo: somehow automatically generate these docs
+const globalItemDocs: Partial<Record<keyof typeof globalAdditions, string>> = {
+  doForEach: '(filePath: string, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) => void',
+  doForEachDeep: '(filePath: string, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) => void',
+};
+
+// todo: somehow automatically generate these docs
+const typeDocs = {
+  FileIteratorCallback: '(ent: DirentWithMetadata, folder: string) => void',
+  IGetEntsFilters: '{ entType?: EntityType; filter?: string|RegExp; ext?: string|RegExp; }',
+  IScanOptions: '{ dontLogScanning?: boolean; noMetadata?: boolean; }'
+}
+
+const typeDocsTypes = Object.keys(typeDocs);
+const typeDocsTypesMatch = new RegExp(typeDocsTypes.map(escapeRegExp).join('|'))
+
+const globalItemDocsX = Object.fromEntries(Object.entries(globalItemDocs).map(([k,v]) => {
+  while (typeDocsTypesMatch.test(v))
+    v = typeDocsTypes.reduce((str, k) => str.replace(k, typeDocs[k]), v)
+  return [k, v];
+}))
+
+globalAdditions.typeDocs = typeDocs;
+
+const docFn = (doc: string) => {
+  const fn = () => console.log(highlight(doc, 'ts'));
+  fn._ = doc;
+  return fn;
+}
+Object.entries(globalItemDocs).forEach(([key, h]) => globalAdditions[key].doc = docFn(h));
+Object.entries(globalItemDocsX).forEach(([key, h]) => globalAdditions[key].docX = docFn(h));
 
 type GlobalAdditions = typeof globalAdditions;
 
