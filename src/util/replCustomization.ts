@@ -229,7 +229,7 @@ function parseHighlightNode(node: refractor.RefractorNode, lang: string, classNa
   return classes.reduce((str, className) => {
     const ch = highlights[className];
     if (ch) return ch(str);
-    console.plog(`unknown highlight class: "${className}". Val: "${str}"`);
+    console.plog(`Unknown highlight class: "${className}". Val: "${str}"`);
     return str;
   }, node.value);
 };

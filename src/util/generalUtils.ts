@@ -90,6 +90,7 @@ export function getHashCode(s: string) {
 };
 
 const regexEscapeRegex = /[-\/\\^$*+?.()|[\]{}]/g
+// todo: could replace this by lodash' escapeRegExp right?
 export function escapeRegex(regexString: string): string {
   return regexString.replace(regexEscapeRegex, '\\$&');
 }
