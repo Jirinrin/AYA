@@ -165,10 +165,10 @@ const makeDocFn = (doc: string) => {
   return fn;
 }
 const makeDocXFn = (doc: string) => (iter = 100) => {
-  console.log('it', iter)
-  while (typeDocsTypesMatch.test(doc) && --iter >= 0)
-    doc = typeDocsTypes.reduce((str, k) => str.replace(k, typeDocs[k]), doc);
-  return makeDocFn(doc)();
+  var d = doc;
+  while (typeDocsTypesMatch.test(d) && --iter >= 0)
+    d = typeDocsTypes.filter(t => d.includes(t)).reduce((str, t) => str.replace(t, typeDocs[t]), d);
+  return makeDocFn(d)();
 }
 Object.entries(globalItemDocs).forEach(([key, doc]) => globalAdditions[key].doc = makeDocFn(doc));
 Object.entries(globalItemDocs).forEach(([key, doc]) => globalAdditions[key].docX = makeDocXFn(doc));
