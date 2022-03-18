@@ -140,6 +140,8 @@ const globalAdditions = {
   typeDocs: undefined,
 };
 
+// todo: rename 'doc' to 'type', and add actual docs that are a sentence or two about the function at hand
+
 // todo: somehow automatically generate these docs
 const globalItemDocs: Partial<Record<keyof typeof globalAdditions, string>> = {
   doForEach: '(filePath: string, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) => void',
@@ -151,7 +153,8 @@ const typeDocs = {
   FileIteratorCallback: '(ent: DirentWithMetadata, folder: string) => void',
   IGetEntsFilters: '{ entType?: EntityType; filter?: string|RegExp; ext?: string|RegExp; }',
   IScanOptions: '{ dontLogScanning?: boolean; noMetadata?: boolean; }',
-  DirentWithMetadata: '{ ext: string; nameBase: string; path: string; mm?: IAudioMetadata; em?: exif.Tags; } & Dirent'
+  DirentWithMetadata: '{ ext: string; nameBase: string; path: string; mm?: IAudioMetadata; em?: exif.Tags; } & Dirent',
+  EntityType: "'file' | 'directory'",
 }
 
 const typeDocsTypes = Object.keys(typeDocs);

@@ -30,18 +30,21 @@ export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
 export interface IScanOptions {
   dontLogScanning?: boolean;
   noMetadata?: boolean;
+  scanExcludeFilter?: string|RegExp;
 }
-export const scanOpt = '--dontLogScanning --noMetadata(-m)';
+export const scanOpt = '--dontLogScanning --noMetadata(-m) --scanExcludeFilter=<>|/<nameRegex>/';
 
 // These options are really hard to pass through the (recursive) chain so we just bodge it like this.
 export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promise<void>) {
-  if (opts.dontLogScanning) ENV.dontLogScanning = true;
-  if (opts.noMetadata)      ENV.noMetadata = true;
+  if (opts.dontLogScanning)   ENV.dontLogScanning = true;
+  if (opts.noMetadata)        ENV.noMetadata = true;
+  if (opts.scanExcludeFilter) ENV.scanExcludeFilter = new RegExp(opts.scanExcludeFilter);
   try {
     return await cb();
   } finally {
     ENV.dontLogScanning = false;
     ENV.noMetadata = false;
+    ENV.scanExcludeFilter = undefined;
   }
 }
 
@@ -79,7 +82,7 @@ export async function doForEachDeep(
     if (invDepth <= 0) {
       return;
     }
-    if (ent.isDirectory()) {
+    if (ent.isDirectory() && !ENV.scanExcludeFilter?.test(ent.name)) {
       return await doForEachDeep(
         path.join(deepFolder, ent.name),
         callback,

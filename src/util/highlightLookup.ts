@@ -16,7 +16,7 @@ import * as chalk from "chalk";
 // }
 
 const defaultHighlights: [string[], chalk.Chalk][] = [
-  [['script', 'prolog', 'punctuation', 'charset', 'interpolation', 'char-class'], chalk], // --foreground
+  [['script', 'prolog', 'punctuation', 'charset', 'interpolation', 'char-class', 'literal-property'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
   [['url', 'built-in', 'builtin', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access', 'property', 'char-class-punctuation'], chalk.cyan], // --cyan
   [['atrule', 'attr-name', 'attr-value', 'function', 'method', 'function-variable'], chalk.greenBright], // --green
