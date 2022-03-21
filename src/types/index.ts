@@ -7,6 +7,7 @@ export interface FileData {
   ext: string;
   nameBase: string; // basename without ext
   path: string;
+  dirPath: string;
 }
 export interface FileMetadata {
   mm?: IAudioMetadata;

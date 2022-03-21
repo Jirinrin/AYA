@@ -178,6 +178,7 @@ interface {
   ext: string;
   nameBase: string; // basename without ext
   path: string;
+  dirPath: string;
 }
 ```
 

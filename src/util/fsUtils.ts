@@ -190,7 +190,8 @@ export function putFileDataOnEntity(ent: fs.Dirent, folder: string): DirentWithD
   const entWithData = clone(ent) as DirentWithData;
   entWithData.ext = ext.replace('.', '');
   entWithData.nameBase = nameBase;
-  entWithData.path = path.resolve(folder, ent.name);
+  entWithData.path = path.join(folder, ent.name);
+  entWithData.dirPath = folder;
   return entWithData;
 }
 
