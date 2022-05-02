@@ -151,6 +151,11 @@ interface {
 
   // setConsoleIndent,
   // highlightExp,
+  // listlan,
+
+  // splitFileName,
+
+  // question,
 }
 
 // todo: tell about r`oijwe\foi`

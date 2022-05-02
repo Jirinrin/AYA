@@ -10,7 +10,7 @@ import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -97,6 +97,7 @@ const globalAdditions = {
   }),
   resolvePath,
   getEnts: wrapResolvePath1(getEnts),
+  getEntsDeep: wrapResolvePath1(getEntsDeep),
   getEntsWithMetadata: wrapResolvePath1(getEntsWithMetadata),
   getEntsNames: wrapResolvePath1((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
 
@@ -136,6 +137,10 @@ const globalAdditions = {
   setConsoleIndent,
   highlightExp,
   listlan: listLanguages,
+
+  splitFileName,
+
+  question: (q: string) => new Promise(res => r.question(chalk.magentaBright(`${q} `), res)),
 
   typeDocs: undefined,
 };

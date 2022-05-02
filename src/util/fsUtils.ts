@@ -113,6 +113,18 @@ export function getEnts(folder: string, opts: IGetEntsFilters = {}): DirentWithD
     .map(ent => putFileDataOnEntity(ent, folder))
     .filter(ent => checkEntFilters(ent, opts));
 }
+
+// todo: maybe add max depth that's passed
+export function getEntsDeep(folder: string, opts: IGetEntsFilters = {}): DirentWithData[] {
+  const allEnts = getEnts(folder);
+  return allEnts
+    .flatMap(e => e.isDirectory()
+      ? [e, ...getEntsDeep(e.path, opts)]
+      : e
+    )
+    .filter(ent => checkEntFilters(ent, opts));
+}
+
 export async function getEntsWithMetadata(folder: string, opts: IGetEntsFilters = {}): Promise<DirentWithMetadata[]> {
   const ents = getEnts(folder, opts);
   return await Promise.all(
