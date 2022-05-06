@@ -111,6 +111,7 @@ const Base: RawModule = {
   'metadata': { run: async (s_file: string) => console.logv(await global.metadata(s_file)) },
   'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
 
+  // todo: expose this as regular global function
   'loadScript': {
     help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from extraScriptsDir',
     run: (s_file: string) => {

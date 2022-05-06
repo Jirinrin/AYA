@@ -7,8 +7,10 @@ import { RawModule } from "../types";
 
 const FolderOperations: RawModule = {
   flatten: {
+    // todo: shorthands for -a / -f ( / -af combined) don't seem to work
     help: 'Flatten folders that only contain one folder | opts: --all(-a), --filesAllowed(-f)',
     noMetadata: true,
+    // todo: refactor to simply use iterate so we can also do it deep etc.
     run: async (opts: {all: boolean, filesAllowed: boolean}) => {
       console.log('Start flattening...');
 

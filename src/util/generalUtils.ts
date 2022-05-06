@@ -219,6 +219,8 @@ export const highlightExp: TemplateTagStringFunction = (strings, ...exps) =>
 export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>
   highlightExpsForCh(ch, strings, ...exps);
 
+  // todo: extra functions to mainly highlight the base path or mainly highlight the dir path
+
 export function matchString(str: string): RegExpMatchArray|null {
   return str.match(/^(")([^"]+)("?)/) ?? str.match(/^(')([^']+)('?)/) ?? str.match(/^(`)([^`]+)(`?)/);
 }
