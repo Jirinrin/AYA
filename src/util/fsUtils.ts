@@ -159,6 +159,12 @@ export function safeCopy(oldPath: string, newPath: string, isDirectory?: boolean
   return safeNewPath;
 }
 
+export function mkdirSafe(dirPath: string): string {
+  const safePath = getSafePath(escPath(dirPath), true);
+  fse.mkdirSync(safePath);
+  return safePath;
+}
+
 export function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string] {
   if (isDirectory) return [fileName, ''];
 
@@ -172,12 +178,10 @@ export function cwdRel(absPath: string) {
 }
 
 export function simpleRename(containerFolder: string, fileName: string, newFileName: string, isDirectory?: boolean): string {
-  return path.basename(
-    safeRename(
-      path.join(containerFolder, fileName),
-      path.join(containerFolder, esc(newFileName)),
-      isDirectory,
-    )
+  return safeRename(
+    path.join(containerFolder, fileName),
+    path.join(containerFolder, esc(newFileName)),
+    isDirectory,
   );
 }
 

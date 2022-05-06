@@ -1,3 +1,4 @@
+import { basename } from 'path';
 import { simpleRename, checkFilter, highlightExp, cwdRel } from '../util';
 import { FileIteratorFunction, FileMetadata, IMetadataFilterOpts, metadataFilterOpt, RawModule } from '../types';
 
@@ -26,9 +27,9 @@ const renameEveryEntry = (iterate: FileIteratorFunction<string>) => (
       : (await rename(ent.nameBase, ent)) + '.'+ent.ext;
 
     if (ent.name !== newName) {
-      const renamedName = simpleRename(folder, ent.name, newName, ent.isDirectory());
-      console.log(highlightExp`Renamed "${cwdRel(ent.path)}" to "${renamedName}"`);
-      return renamedName;
+      const renamedPath = simpleRename(folder, ent.name, newName, ent.isDirectory());
+      console.log(highlightExp`Renamed "${cwdRel(ent.path)}" to "${basename(renamedPath)}"`);
+      return renamedPath;
     }
   });
 

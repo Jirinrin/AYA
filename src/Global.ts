@@ -10,7 +10,7 @@ import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { setConsoleIndent } from './util/consoleExtension';
@@ -61,23 +61,27 @@ const globalAdditions = {
   JSONbig: JSONbig,
 
   mkdir: wrapResolvePath1(path => {
-    fs.mkdirSync(escPath(path));
-    console.log(highlightExp`Made dir "${path}"`);
+    const createdPath = mkdirSafe(path);
+    console.log(highlightExp`Made dir "${cwdRel(createdPath)}"`);
+    return createdPath;
   }),
   exists: wrapResolvePath1(fs.existsSync),
   move: wrapResolvePath2((filePath, moveToFolder, newFileName?: string) => {
-    const moved = simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory(), newFileName);
-    console.log(highlightExp`Moved "${cwdRel(filePath)}" to "${cwdRel(moved)}"`);
+    const movedPath = simpleMove(path.dirname(filePath), path.basename(filePath), moveToFolder, fs.statSync(filePath).isDirectory(), newFileName);
+    console.log(highlightExp`Moved "${cwdRel(filePath)}" to "${cwdRel(movedPath)}"`);
+    return movedPath;
   }),
   copy: wrapResolvePath2((filePath, copyToFolder, newFileName?: string) => {
-    const copied = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
-    console.log(highlightExp`Copied "${cwdRel(filePath)}" to "${cwdRel(copied)}"`);
+    const copiedPath = simpleCopy(path.dirname(filePath), path.basename(filePath), copyToFolder, fs.statSync(filePath).isDirectory(), newFileName);
+    console.log(highlightExp`Copied "${cwdRel(filePath)}" to "${cwdRel(copiedPath)}"`);
+    return copiedPath;
   }),
   rename: wrapResolvePath1((filePath, newFileName: string, withoutExt?: boolean) => {
     const ent = pathToDirent(filePath);
-    const finalName = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
-    if (finalName !== ent.name)
-      console.log(highlightExp`Renamed "${cwdRel(filePath)}" to "${finalName}"`);
+    const renamedpath = simpleRename(path.dirname(filePath), path.basename(filePath), withoutExt ? `${newFileName}.${ent.ext}` : newFileName, fs.statSync(filePath).isDirectory())
+    if (renamedpath !== ent.path)
+      console.log(highlightExp`Renamed "${cwdRel(filePath)}" to "${path.basename(renamedpath)}"`);
+    return renamedpath;
   }),
   remove: wrapResolvePath1(async filePath => {
     await trash(filePath);
@@ -91,7 +95,6 @@ const globalAdditions = {
     await trash(filePaths);
     console.log(`Moved ${verbose(filePaths.map(cwdRel))} to trash`);
   },
-  // todo: delete / rmdir functions
   metadata: wrapResolvePath1(async (filePath) => {
     return putMetadataOnEntity(pathToDirent(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
@@ -130,6 +133,7 @@ const globalAdditions = {
 
   copyClb: writeToClipboard,
   copyClbJSON: (entity: any) => writeToClipboard(JSON.stringify(entity)),
+  // todo: aren't these better suited as commands?
   pasteClb: readFromClipboard,
   pasteClbJS: () => globalEval(readFromClipboard()),
   pasteClbJSON: () => JSON.parse(readFromClipboard()),
