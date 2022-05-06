@@ -309,7 +309,8 @@ function /*REPLServer.*/replaceCurrentLine(replaceBy: string) {
     moveCursor(this.output, 0, -prevRows);
 
   cursorTo(this.output, 0);
-  clearScreenDown(this.output);
+  // (commented this out because it kills the preview completion stuff?)
+  // clearScreenDown(this.output);
   this._writeToOutput(line);
 
   if (lineCols === 0)
