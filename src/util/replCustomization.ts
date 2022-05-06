@@ -1,6 +1,6 @@
 import * as chalk from "chalk";
 import { existsSync, readdirSync } from "fs-extra";
-import { Completer, CompleterResult, cursorTo } from "readline";
+import { clearScreenDown, Completer, CompleterResult, cursorTo, moveCursor } from "readline";
 import * as refractor from "refractor";
 import { REPLServer } from "repl";
 
@@ -295,13 +295,33 @@ export function highlightLine(line: string): string {
   return b.result;
 }
 
-// Bare bones variation on Interface._refreshLine, to facilitate syntax highlighting
-function /*REPLServer.*/refreshCurrentLine(input: string) {
-  const line = this._prompt + input;
+// Variation on Interface._refreshLine, to facilitate syntax highlighting
+function /*REPLServer.*/replaceCurrentLine(replaceBy: string) {
+  const line = this._prompt + replaceBy;
+  const dispPos = this._getDisplayPos(line);
+  const lineCols = dispPos.cols;
+  const lineRows = dispPos.rows;
+
   const cursorPos = this.getCursorPos();
+  
+  const prevRows = this.prevRows || 0;
+  if (prevRows > 0)
+    moveCursor(this.output, 0, -prevRows);
+
   cursorTo(this.output, 0);
+  clearScreenDown(this.output);
   this._writeToOutput(line);
+
+  if (lineCols === 0)
+    this._writeToOutput(' ');
+
   cursorTo(this.output, cursorPos.cols);
+  
+  const diff = lineRows - cursorPos.rows;
+  if (diff > 0)
+    moveCursor(this.output, 0, -diff);
+
+  this.prevRows = cursorPos.rows;
 }
 
 export function setupReplCustomization(r: REPLServer) {
@@ -310,11 +330,11 @@ export function setupReplCustomization(r: REPLServer) {
 
     if (c !== "\"\\u0003\"" && c !== "\"\\r\"") {
       const edited = highlightLine(r.line);
-      r._refreshCurrentLine(edited);
+      r._replaceCurrentLine(edited);
     }
   });
 
-  r._refreshCurrentLine = refreshCurrentLine;
+  r._replaceCurrentLine = replaceCurrentLine;
 
   r._tabComplete = customTabComplete;
 }
