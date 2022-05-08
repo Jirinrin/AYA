@@ -50,7 +50,7 @@ export const cmdInfo: Record<string, CommandInfo> = {};
 function getCmdInfo(help: string): CommandInfo {
   const info: CommandInfo = { help };
   help
-    .match(/--[\w=|\(\)-\./<>]+/g)
+    .match(/--[\w=|\(\)\-\./<>]+/g)
     ?.forEach(o => {
       let [_, opt, alias, val] = o.match(/^--([^\(\)=]+)(?:\(-(\w)\))?(?:=(.+))?$/) ?? [];
       if (!_) return;
