@@ -122,6 +122,8 @@ const globalAdditions = {
   readFile: wrapResolvePath1(readFile),
   writeJson: wrapResolvePath1(writeJson),
   writeFile: wrapResolvePath1(writeFile),
+  editFile: wrapResolvePath1((filePath, editCallback: (fileContents: string) => string) =>
+    writeFile(filePath, editCallback(readFile(filePath)))),
 
   showColor: (hex: string, customStr?: string) => console.log(chalk.bgHex(hex).black(customStr ?? hex)),
 
@@ -136,10 +138,12 @@ const globalAdditions = {
 
   copyClb: writeToClipboard,
   copyClbJSON: (entity: any) => writeToClipboard(JSON.stringify(entity)),
-  // todo: aren't these better suited as commands?
+
   pasteClb: readFromClipboard,
   pasteClbJS: () => globalEval(readFromClipboard()),
   pasteClbJSON: () => JSON.parse(readFromClipboard()),
+  editClb: (editCallback: (oldClb: string) => string) =>
+    writeToClipboard(editCallback(readFromClipboard())),
 
   setConsoleIndent,
   highlightExp,

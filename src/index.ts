@@ -61,6 +61,7 @@ async function startRepl() {
   config.validateJson();
 
   if (config.s.initScriptsDir) {
+    // todo: somehow allow this to expose functions as 'commands'.
     getEnts(config.s.initScriptsDir, { ext: 'js' }).forEach(ent => globalEval(readFileSync(ent.path).toString()));
   }
 

@@ -121,6 +121,10 @@ const Base: RawModule = {
       return globalEval(readFileSync(filePath).toString());
     },
   },
+  'pasteScript': {
+    help: 'Paste some Javascript from your clipboard into the REPL context',
+    run: () => global.pasteClbJS(),
+  },
 
   'ayaStorageDir': {
     help: 'See where the aya\'s local files are stored',

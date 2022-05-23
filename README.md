@@ -137,7 +137,7 @@ interface {
   // todo: docs
   // setTags: wrapResolvePath1(setExifMetadata),
 
-  // readjson, writejson, readfile, writefile
+  // readjson, writejson, readfile, writefile, editFile
 
   // esc
   // escPath
@@ -148,6 +148,7 @@ interface {
   // pasteClb
   // pasteClbJS
   // pasteClbJSON
+  // editClb
 
   // setConsoleIndent,
   // highlightExp,
