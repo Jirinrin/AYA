@@ -149,7 +149,7 @@ export async function runScript(txt: string) {
       await r.commands[cmdName].action.bind(r)(line.slice(cmdMatch.length));
     else if (line !== '')
       try {
-        await globalEval(`() => ${line}`)();
+        await globalEval(`async () => ${line}`)();
       } catch (err) {
         // Thing failed, so just print it without await, whatever. If it still fails we'll get to see the error in the REPL
         r.write(line + '\n')
