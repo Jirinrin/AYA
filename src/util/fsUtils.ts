@@ -105,7 +105,7 @@ export interface IGetEntsFilters {
 export function checkEntFilters(e: DirentWithData, opts: IGetEntsFilters): boolean {
   return ( opts.entType === undefined || (opts.entType === 'file' ? e.isFile() : e.isDirectory()) )
       && ( opts.filter  === undefined || !!e.nameBase.match(opts.filter) )
-      && ( opts.ext     === undefined || !!e.ext.match(opts.ext) )
+      && ( opts.ext     === undefined || !!e.ext.match(new RegExp(opts.ext, 'i')) )
 }
 
 export function getEnts(folder: string, opts: IGetEntsFilters = {}): DirentWithData[] {
