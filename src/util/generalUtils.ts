@@ -1,6 +1,6 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
 import { detect } from 'encoding-japanese';
-import { ModuleKind, transpileModule } from "typescript";
+import { ScriptTarget, transpileModule } from "typescript";
 import { CommandInfo } from "../modules";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
@@ -245,5 +245,5 @@ export function evalRawStrings(str: string) {
 }
 
 export function transformTs(typescriptCode: string): string {
-  return transpileModule(typescriptCode, { compilerOptions: { module: ModuleKind.ES2020 }}).outputText;
+  return transpileModule(typescriptCode, { compilerOptions: { target: ScriptTarget.ES2021 }}).outputText;
 }
