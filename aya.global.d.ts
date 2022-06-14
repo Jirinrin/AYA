@@ -25,7 +25,7 @@ declare function scriptFromHistory(from: number): string;
 // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
 // Exept for exists(), all of these have a command version as well for ease of use.
 declare function mkdir(dirPath: string): void;
-declare function exists(path: string): void;
+declare function exists(path: string): boolean;
 declare function move(filePath: string, moveToDirPath: string): void;
 declare function copy(filePath: string, copyToDirPath: string): void;
 declare function rename(filePath: string, newFileName: string): void;
@@ -48,6 +48,7 @@ declare const env: ENV; // Used for some internal stuff, but also contains e.g. 
 declare const JSONbig: JSONBigInt;
 
 declare const lo: Lodash;
+declare const path: any; // the normal Node path package
 
 // todo: write docs for these functions
 
