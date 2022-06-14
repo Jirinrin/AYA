@@ -107,7 +107,7 @@ function completeJs(line: string): CustomCompleterResult {
   // console.llog('complete js', objKeyMatch, objKey, objSubKey, jsGlobalKeyValues[objKey])
   if (!objKeyMatch)
     // Defined variables will only show up in global when you initialized them with `var`
-    return completeCaseIns(checkString, [...Object.keys(global), ...jsGlobalKeys]);
+    return completeCaseIns(checkString, [...new Set([...Object.keys(global), ...jsGlobalKeys])]);
 
   const keyValues = getObjectKeys(objKey);
   if (keyValues)
