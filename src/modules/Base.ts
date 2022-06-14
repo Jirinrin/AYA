@@ -7,7 +7,7 @@ import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem
 import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
-import { checkFilter, IScanOptions, scanOpt, verbose } from "../util";
+import { checkFilter, IScanOptions, scanOpt, transformTs, verbose } from "../util";
 import { WriteTags } from "exiftool-vendored";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
@@ -118,12 +118,17 @@ const Base: RawModule = {
       const filePath = ENV.extraScriptsDirItems.includes(s_file)
         ? path.join(config.s.extraScriptsDir, s_file)
         : resolvePath(s_file);
-      return globalEval(readFileSync(filePath).toString());
+      const contents = readFileSync(filePath).toString();
+      return filePath.endsWith('.ts') ? transformTs(contents) : contents;
     },
   },
   'pasteScript': {
     help: 'Paste some Javascript from your clipboard into the REPL context',
     run: () => global.pasteClbJS(),
+  },
+  'pasteScriptTS': {
+    help: 'Paste some Javascript from your clipboard into the REPL context',
+    run: () => global.pasteClbTS(),
   },
 
   'ayaStorageDir': {

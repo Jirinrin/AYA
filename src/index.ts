@@ -66,7 +66,7 @@ async function startRepl() {
   }
 
   if (config.s.extraScriptsDir) {
-    ENV.extraScriptsDirItems = getEnts(config.s.extraScriptsDir, { ext: 'js' }).map(e => e.name);
+    ENV.extraScriptsDirItems = getEnts(config.s.extraScriptsDir, { ext: /[jt]s/ }).map(e => e.name);
   }
 
   if (initBody) {

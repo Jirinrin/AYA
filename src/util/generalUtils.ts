@@ -1,5 +1,6 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
 import { detect } from 'encoding-japanese';
+import { ModuleKind, transpileModule } from "typescript";
 import { CommandInfo } from "../modules";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
@@ -219,7 +220,7 @@ export const highlightExp: TemplateTagStringFunction = (strings, ...exps) =>
 export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>
   highlightExpsForCh(ch, strings, ...exps);
 
-  // todo: extra functions to mainly highlight the base path or mainly highlight the dir path
+// todo: extra functions to mainly highlight the base path or mainly highlight the dir path
 
 export function matchString(str: string): RegExpMatchArray|null {
   return str.match(/^(")([^"]+)("?)/) ?? str.match(/^(')([^']+)('?)/) ?? str.match(/^(`)([^`]+)(`?)/);
@@ -241,4 +242,8 @@ export function evalRawStrings(str: string) {
     }
   }
   return str;
+}
+
+export function transformTs(typescriptCode: string): string {
+  return transpileModule(typescriptCode, { compilerOptions: { module: ModuleKind.CommonJS }}).outputText;
 }

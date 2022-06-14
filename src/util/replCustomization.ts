@@ -177,7 +177,7 @@ function getCompletionData(line: string): CustomCompleterResult {
   if (cmdName.match(/^(?:cd|mkdir|rename|metadata|setTags|copy|move|load(?:Script)?)$/) && nthArg===1 || cmdName.match(/copy|move/) && nthArg<=2) {
     const dirLine = lastArg.charAt(0).match(/["'`]/) ? lastArg.slice(1) : lastArg;
     const items = cmdName.match('loadScript')
-      ? [...ENV.currentDirItems.filter(i => i.endsWith('.js')), ...ENV.extraScriptsDirItems]
+      ? [...ENV.currentDirItems.filter(i => i.match(/\.[jt]s$/)), ...ENV.extraScriptsDirItems]
       : ENV.currentDirItems
     return completeCaseIns(dirLine, items);
   }
