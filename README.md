@@ -93,74 +93,7 @@ It is recommended that you use `var` instead of `const`/`let`, because autocompl
 
 ## Available JS globals
 
-```ts
-interface {
-  /**
-   * Execute a command that will be executed in the underlying shell environment.
-   */
-  exec: (cmd: string) => Promise<void>;
-  /**
-   * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
-   * [int]: the total number of lines going back that you want
-   * [int, int]: the range of lines that you want (e.g. [2, 4] gets the last 4 lines except the last line you typed)
-   * [...int[]]: the indices of the lines that you wanted, counting back from the current line
-   */
-  scriptFromHistory(from: number): string;
-
-  // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
-  // Exept for exists(), all of these have a command version as well for ease of use.
-  mkdir: (dirPath: string) => void;
-  exists: (path: string) => void;
-  move: (filePath: string, moveToDirPath: string) => void;
-  copy: (filePath: string, copyToDirPath: string) => void;
-  rename: (filePath: string, newFileName: string) => void;
-  metadata: (filePath: string) => Promise<DirentWithMetadata>;
-  getEnts: (filePath: string) => DirentWithMetadata[]; // todo: add options docs
-  getEntsWithMetadata: (filePath: string) => Promise<DirentWithMetadata[]>; // todo: add options docs
-  getEntsNames: // todo
-
-  doForEach:     (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts: IGetEntsFilters & IScanOptions = {}) => Promise<void>;
-  doForEachDeep: (filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts: IGetEntsFilters & IScanOptions = {}) => Promise<void>;
-
-  // The manual version of resolving a relative/absolute path
-  resolvePath: (filePath: string) => string;
-
-  // Set exif metadata
-  setTags: (filePath: string, tags: Record<string, any>) => Promise<void>;
-
-
-  env: ENV; // Used for some internal stuff, but also contains e.g. cwd
-  JSONbig: JSONBigInt;
-
-  lo: Lodash;
-
-  // todo: docs
-  // setTags: wrapResolvePath1(setExifMetadata),
-
-  // readjson, writejson, readfile, writefile, editFile
-
-  // esc
-  // escPath
-  // cwdRel
-
-  // copyClb
-  // copyClbJSON
-  // pasteClb
-  // pasteClbJS
-  // pasteClbJSON
-  // editClb
-
-  // setConsoleIndent,
-  // highlightExp,
-  // listlan,
-
-  // splitFileName,
-
-  // question,
-}
-
-// todo: tell about r`oijwe\foi`
-```
+Look at [`aya.global.d.ts`](./aya.global.d.ts) for some (probably outdated) docs on the stuff that's available in the global scope of the REPL.
 
 
 ## File metadata
@@ -199,3 +132,4 @@ interface {
 - do exe releases every once in a while? (and for macos and debian would need to do in docker container)
 - be able to give argument to userscripts?
 - some system for deep iteration to e.g. rename a folder and then still be able to go through the items in it
+- publish this on NPM so people can easily install it as CLI `--global`ly
