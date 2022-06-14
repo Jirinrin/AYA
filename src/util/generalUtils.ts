@@ -245,5 +245,5 @@ export function evalRawStrings(str: string) {
 }
 
 export function transformTs(typescriptCode: string): string {
-  return transpileModule(typescriptCode, { compilerOptions: { module: ModuleKind.CommonJS }}).outputText;
+  return transpileModule(typescriptCode, { compilerOptions: { module: ModuleKind.ES2020 }}).outputText;
 }

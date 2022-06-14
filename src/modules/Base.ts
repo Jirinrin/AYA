@@ -119,7 +119,7 @@ const Base: RawModule = {
         ? path.join(config.s.extraScriptsDir, s_file)
         : resolvePath(s_file);
       const contents = readFileSync(filePath).toString();
-      return filePath.endsWith('.ts') ? transformTs(contents) : contents;
+      return globalEval(filePath.endsWith('.ts') ? transformTs(contents) : contents);
     },
   },
   'pasteScript': {
