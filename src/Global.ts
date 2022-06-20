@@ -24,16 +24,16 @@ const globalAdditions = {
   /**
    * Execute a command that will be executed in the underlying shell environment.
    */
-  exec: (cmd: string, printOutput = true) => {
+  exec: (cmd: string, opts: {printOutput?: boolean, cwd?: string} = {}) => {
     console.debug(cmd);
 
     // todo: use execSync/spawnSync or promisify
     return new Promise((res, rej) =>
       // todo: use spawn https://stackoverflow.com/questions/10232192/exec-display-stdout-live
       exec(cmd, {
-        cwd: ENV.cwd,
+        cwd: opts.cwd ?? ENV.cwd,
       }, (error, stdout, stderr) => {
-        if (printOutput)
+        if (opts.printOutput ?? true)
           console.log(stdout);
         if (error) {
           console.error('Error encountered:');

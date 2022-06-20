@@ -6,14 +6,15 @@ type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: s
 type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
 type DirentWithMetadata = { ext: string; nameBase: string; path: string; mm?: any; em?: any; } & Dirent;
 type EntityType = 'file' | 'directory';
-type ENV = any;
+type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
+
 type Lodash = any;
 type JSONBigInt = any;
 
 /**
  * Execute a command that will be executed in the underlying shell environment.
  */
-declare function exec(cmd: string): Promise<void>;
+declare function exec(cmd: string, opts?: {printOutput?: boolean, cwd?: string}): Promise<void>;
 /**
  * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
  * [int]: the total number of lines going back that you want
@@ -84,4 +85,5 @@ declare function splitFileName(fileName: string, isDirectory?: boolean): [nameBa
 
 declare function question(q: string): Promise<string>;
 
-// todo: tell about r`oijwe\foi`
+/** Magically escapes any backslashes in a path you pass to it. Don't worry if the syntax highlighting seems off. */
+declare function r(strings: TemplateStringsArray, ...exps: (string|number)[]): string;
