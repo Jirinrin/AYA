@@ -26,9 +26,11 @@ declare function scriptFromHistory(from: number): string;
 // Exept for exists(), all of these have a command version as well for ease of use.
 declare function mkdir(dirPath: string): string;
 declare function exists(path: string): boolean;
-declare function move(filePath: string, moveToDirPath: string): string;
-declare function copy(filePath: string, copyToDirPath: string): string;
+declare function move(filePath: string, moveToFolder: string, newFileName?: string): string;
+declare function copy(filePath: string, copyToFolder: string, newFileName?: string): string;
 declare function rename(filePath: string, newFileName: string): string;
+declare function remove(filePath: string): Promise<void>;
+declare function removeMulti(filePaths: string|string[]): Promise<void>;
 declare function metadata(filePath: string): Promise<DirentWithMetadata>;
 declare function getEnts(filePath: string, opts?: IGetEntsFilters): DirentWithMetadata[];
 declare function getEntsDeep(filePath: string, opts?: IGetEntsFilters): DirentWithMetadata[];
