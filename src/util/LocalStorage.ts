@@ -71,7 +71,7 @@ class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<
   public validateJson() {
     if (!this.validate(this.state)) {
       this.validate.errors.forEach(err => {
-        const property: keyof T = err.dataPath.slice(1);
+        const property: keyof T & string = err.dataPath.slice(1);
         console.error(`Property "${property}" (current value: ${JSON.stringify(this.state[property])}) in ${this.constructor.name} is invalid: "${err.message}"`);
         const defaultVal = (this.schema.properties[property as string] as JSONSchema7).default as T[typeof property];
         console.warn(`Resetting to default value: ${defaultVal}`);
