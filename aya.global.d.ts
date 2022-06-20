@@ -1,6 +1,6 @@
 // todo: somehow auto-generate this file
 
-type Dirent = {};
+type Dirent = { name: string; isFile(): boolean; isDirectory(): boolean; isBlockDevice(): boolean; isCharacterDevice(): boolean; isSymbolicLink(): boolean; isFIFO(): boolean; isSocket(): boolean }
 type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
 type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
 type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
@@ -24,11 +24,11 @@ declare function scriptFromHistory(from: number): string;
 
 // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
 // Exept for exists(), all of these have a command version as well for ease of use.
-declare function mkdir(dirPath: string): void;
+declare function mkdir(dirPath: string): string;
 declare function exists(path: string): boolean;
-declare function move(filePath: string, moveToDirPath: string): void;
-declare function copy(filePath: string, copyToDirPath: string): void;
-declare function rename(filePath: string, newFileName: string): void;
+declare function move(filePath: string, moveToDirPath: string): string;
+declare function copy(filePath: string, copyToDirPath: string): string;
+declare function rename(filePath: string, newFileName: string): string;
 declare function metadata(filePath: string): Promise<DirentWithMetadata>;
 declare function getEnts(filePath: string, opts?: IGetEntsFilters): DirentWithMetadata[];
 declare function getEntsDeep(filePath: string, opts?: IGetEntsFilters): DirentWithMetadata[];
