@@ -24,7 +24,7 @@ console.llogv = logger.logv;
 console.llogl = logger.logl;
 console.plog = pLogger.log;
 
-export function indent(indents: number): string {
+export function indent(indents: number = currentIndents): string {
   return '  '.repeat(indents);
 }
 

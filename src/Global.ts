@@ -13,7 +13,7 @@ import { changeDirectory, globalEval, resolvePath, wrapResolvePath1, wrapResolve
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
-import { setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
+import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
 import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { listLanguages } from 'refractor';
@@ -163,7 +163,7 @@ const globalAdditions = {
 
   splitFileName,
 
-  question: (q: string) => new Promise(res => r.question(chalk.magentaBright(`${q} `), res)),
+  question: (q: string) => new Promise(res => r.question(indent() + chalk.magentaBright(`${q} `), res)),
 
   typeDocs: undefined,
 };
