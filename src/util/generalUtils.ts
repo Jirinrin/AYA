@@ -247,3 +247,15 @@ export function evalRawStrings(str: string) {
 export function transformTs(typescriptCode: string): string {
   return transpileModule(typescriptCode, { compilerOptions: { target: ScriptTarget.ES2021 }}).outputText;
 }
+
+/** Wrapper to call a 'finally' after a block of code while still keeping the return type of the original callback (regardless of async) */
+export const withFinally = <T>(callback: () => T, after: () => void): T => {
+  const doStuff = (async (cb) => {
+    try {
+      return await cb();
+    } finally {
+      after();
+    }
+  }) as (<T>(callback: () => T) => T);
+  return doStuff(callback);
+};

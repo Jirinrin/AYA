@@ -40,6 +40,9 @@ declare function getEntsNames(filePath: string, opts?: IGetEntsFilters): string[
 declare function doForEach(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
 declare function doForEachDeep(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
 
+declare function cd(toDir: string): void;
+declare function withCwd<T>(tempCwd: string, callback: () => T): T;
+
 // The manual version of resolving a relative/absolute path
 declare function resolvePath(filePath: string): string;
 

@@ -1,5 +1,5 @@
 import * as chalk from "chalk";
-import { formatMsg } from ".";
+import { formatMsg, withFinally } from ".";
 import ENV from "../ENV";
 import {logger, Logger, PersistentLogger, pLogger } from "./LocalStorage";
 
@@ -61,10 +61,16 @@ export function setConsole(indents: number = 0) {
 
 let currentIndents = 0;
 export function setConsoleIndentRel(indentsDiff: number) {
+  // todo: this is irrelevant when you want to manually set the indentation regardless of 'scanning' text
   if (ENV.dontLogScanning) return indentsDiff;
   currentIndents = Math.max(currentIndents + indentsDiff, 0);
   setConsole(currentIndents);
   return currentIndents;
+}
+
+export const withDeeperIndentation = <T>(callback: () => T): T => {
+  const indents = setConsoleIndentRel(1);
+  return withFinally(callback, () => setConsoleIndent(indents-1));
 }
 export function setConsoleIndent(indents: number) {
   if (currentIndents === indents) return;

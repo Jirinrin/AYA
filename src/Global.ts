@@ -9,11 +9,11 @@ import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
-import { globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs } from "./util";
+import { changeDirectory, globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
-import { setConsoleIndent } from './util/consoleExtension';
+import { setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
 import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { listLanguages } from 'refractor';
@@ -117,6 +117,17 @@ const globalAdditions = {
       doForEachDeep(filePath, (e, f) => checkEntFilters(e, opts) ? callback(e, f) : null)
     )
   ),
+
+  cd: (toDir: string): void => {
+    const result = changeDirectory(toDir);
+    if (result == false)
+      throw new Error("Change directory failed");
+  },
+  withCwd: wrapResolvePath1(<T>(tempCwd: string, callback: () => T): T => {
+    const originalCwd = ENV.cwd;
+    if (!changeDirectory(tempCwd)) return;
+    return withFinally(() => withDeeperIndentation(callback), () => changeDirectory(originalCwd))
+  }),
 
   readJson: wrapResolvePath1(readJson),
   readFile: wrapResolvePath1(readFile),
