@@ -1,11 +1,12 @@
 import * as repl from 'repl';
 import { createInterface } from 'readline';
 import minimist = require('minimist');
+import { join as joinPath } from 'path';
 
 import Modules from './modules';
 import { Module } from './types';
 import './Global';
-import { config } from './util/LocalStorage';
+import { config, ayaStorageDir } from './util/LocalStorage';
 import { changeDirectory, globalEval } from './util/replUtils';
 import { completer, setupReplCustomization } from './util/replCustomization';
 import { setConsole } from './util/consoleExtension';
@@ -44,6 +45,9 @@ async function startRepl() {
     completer,
     useColors: true,
   });
+
+  r.setupHistory(joinPath(ayaStorageDir, 'aya-history.txt'), (err => err && console.warn('Error loading history:', err)))
+
   const originalEval = r.eval;
   const newEval: REPLEval = (code, ...etc) => originalEval.call(r, evalRawStrings(code), ...etc);
   (r as any).eval = newEval;
