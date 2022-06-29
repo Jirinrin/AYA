@@ -4,7 +4,8 @@ type Dirent = { name: string; isFile(): boolean; isDirectory(): boolean; isBlock
 type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
 type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
 type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
-type DirentWithMetadata = { ext: string; nameBase: string; path: string; mm?: any; em?: any; } & Dirent;
+type DirentWithData = { ext: string; nameBase: string; path: string } & Dirent;
+type DirentWithMetadata = { mm?: any; em?: any; } & DirentWithData;
 type EntityType = 'file' | 'directory';
 type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
 
