@@ -163,7 +163,10 @@ const globalAdditions = {
 
   splitFileName,
 
-  question: (q: string) => new Promise(res => r.question(indent() + chalk.magentaBright(`${q} `), res)),
+  question: async (q: string) => {
+    const answer = await new Promise<string>(res => r.question(indent() + chalk.magentaBright(`${q} `), res));
+    return answer.trim();
+  },
 
   typeDocs: undefined,
 };
