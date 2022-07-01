@@ -10,6 +10,7 @@ type EntityType = 'file' | 'directory';
 type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
 
 type Lodash = any;
+type SuperAgentStatic = any;
 type JSONBigInt = any;
 
 /**
@@ -55,6 +56,7 @@ declare const env: ENV; // Used for some internal stuff, but also contains e.g. 
 declare const JSONbig: JSONBigInt;
 
 declare const lo: Lodash;
+declare const req: SuperAgentStatic;
 declare const path: any; // the normal Node path package
 
 // todo: write docs for these functions
@@ -88,3 +90,14 @@ declare function question(q: string): Promise<string>;
 
 /** Magically escapes any backslashes in a path you pass to it. Don't worry if the syntax highlighting seems off. */
 declare function r(strings: TemplateStringsArray, ...exps: (string|number)[]): string;
+
+declare interface Console {
+  llogv: Console['log'];
+  llog: Console['log'];
+  llogl: Console['log'];
+  plog: Console['log'];
+  logPurple: Console['log'];
+  logPink: Console['log'];
+  logv: Console['log'];
+  logsl: Console['log'];
+}
