@@ -81,6 +81,7 @@ declare function pasteClbJSON(): any;
 declare function editClb(editCallback: (oldClb: string) => string): void;
 
 declare function setConsoleIndent(indents: number): void;
+declare function withDeeperIndentation<T>(callback: () => T): T;
 declare function highlightExp(strings: TemplateStringsArray, ...exps: (string | number)[]): string;
 declare function listlan(): string[]; // list languages
 

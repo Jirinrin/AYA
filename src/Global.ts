@@ -158,6 +158,7 @@ const globalAdditions = {
     writeToClipboard(editCallback(readFromClipboard())),
 
   setConsoleIndent,
+  withDeeperIndentation,
   highlightExp,
   listlan: listLanguages,
 
