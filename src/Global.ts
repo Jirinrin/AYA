@@ -11,7 +11,7 @@ import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { changeDirectory, globalEval, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
-import { FileIteratorCallback } from "./types";
+import { DirentWithData, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
 import { escapeRegExp } from 'lodash';
@@ -103,9 +103,11 @@ const globalAdditions = {
   }),
   resolvePath,
   getEnts: wrapResolvePath1(getEnts),
+  getFirstEnt: wrapResolvePath1((filePath): DirentWithData|undefined => getEnts(filePath)[0]),
   getEntsDeep: wrapResolvePath1(getEntsDeep),
   getEntsWithMetadata: wrapResolvePath1(getEntsWithMetadata),
   getEntsNames: wrapResolvePath1((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
+  getFirstEntName: wrapResolvePath1((filePath, opts): string|undefined => getEnts(filePath, opts).map(e => e.name)[0]),
 
   doForEach: wrapResolvePath1(async (filePath, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) =>
     wrapScanOptions(opts, () => 

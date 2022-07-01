@@ -35,10 +35,12 @@ declare function rename(filePath: string, newFileName: string): string;
 declare function remove(filePath: string): Promise<void>;
 declare function removeMulti(filePaths: string|string[]): Promise<void>;
 declare function metadata(filePath: string): Promise<DirentWithMetadata>;
-declare function getEnts(filePath: string, opts?: IGetEntsFilters): DirentWithMetadata[];
-declare function getEntsDeep(filePath: string, opts?: IGetEntsFilters): DirentWithMetadata[];
-declare function getEntsWithMetadata(filePath: string, opts?: IGetEntsFilters): Promise<DirentWithMetadata[]>;
-declare function getEntsNames(filePath: string, opts?: IGetEntsFilters): string[];
+declare function getEnts(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata[];
+declare function getFirstEnt(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata|undefined;
+declare function getEntsDeep(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata[];
+declare function getEntsWithMetadata(filePath?: string, opts?: IGetEntsFilters): Promise<DirentWithMetadata[]>;
+declare function getEntsNames(filePath?: string, opts?: IGetEntsFilters): string[];
+declare function getFirstEntNames(filePath?: string, opts?: IGetEntsFilters): string|undefined;
 
 declare function doForEach(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
 declare function doForEachDeep(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
