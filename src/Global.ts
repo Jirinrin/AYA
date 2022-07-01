@@ -9,7 +9,7 @@ import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
-import { changeDirectory, globalEval, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
+import { changeDirectory, globalEval, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
 import { FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
@@ -167,6 +167,8 @@ const globalAdditions = {
     const answer = await new Promise<string>(res => r.question(indent() + chalk.magentaBright(`${q} `), res));
     return answer.trim();
   },
+
+  loadScript,
 
   typeDocs: undefined,
 };

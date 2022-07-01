@@ -4,7 +4,7 @@ import { REPLServer } from 'repl';
 import { getFunctionData, ValidationError } from '.';
 import { r } from '..';
 import ENV from '../ENV';
-import { evalRawStrings, highlightExp, matchString, ParamData, parseStringAsRaw } from './generalUtils';
+import { evalRawStrings, highlightExp, matchString, ParamData, parseStringAsRaw, transformTs } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
 import { ActionFunctionEvall, OperationFunction } from '../types';
 import { CommandInfo } from '../modules';
@@ -113,4 +113,12 @@ export function getCommandHelp(r: REPLServer, commandName: string) {
 export function setConfigItem<K extends keyof IConfig>(key: K, ss_val: IConfig[K]) {
   if (config.set(key, ss_val))
     console.info(`Successfully set config item "${key}" to ${ss_val}`);
+}
+
+export function loadScript(s_file: string) {
+  const filePath = ENV.extraScriptsDirItems.includes(s_file)
+    ? path.join(config.s.extraScriptsDir, s_file)
+    : resolvePath(s_file);
+  const contents = fs.readFileSync(filePath).toString();
+  return globalEval(filePath.endsWith('.ts') ? transformTs(contents) : contents);
 }

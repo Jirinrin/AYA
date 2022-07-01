@@ -3,7 +3,7 @@ import * as path from 'path';
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
-import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem } from "../util/replUtils";
+import { changeDirectory, getCommandHelp, globalEval, loadScript, resolvePath, setConfigItem } from "../util/replUtils";
 import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
@@ -111,16 +111,9 @@ const Base: RawModule = {
   'metadata': { run: async (s_file: string) => console.logv(await global.metadata(s_file)) },
   'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
 
-  // todo: expose this as regular global function
   'loadScript': {
     help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from extraScriptsDir',
-    run: (s_file: string) => {
-      const filePath = ENV.extraScriptsDirItems.includes(s_file)
-        ? path.join(config.s.extraScriptsDir, s_file)
-        : resolvePath(s_file);
-      const contents = readFileSync(filePath).toString();
-      return globalEval(filePath.endsWith('.ts') ? transformTs(contents) : contents);
-    },
+    run: (s_file: string) => loadScript(s_file),
   },
   'pasteScript': {
     help: 'Paste some Javascript from your clipboard into the REPL context',

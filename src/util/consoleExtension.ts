@@ -19,6 +19,8 @@ declare global {
   }
 }
 
+// todo: add a thing (?) that will automatically highlight paths that are arguments in a console call. e.g. by detecting that is has path separators or ends with an extension etc.
+
 console.llog = logger.log;
 console.llogv = logger.logv;
 console.llogl = logger.logl;

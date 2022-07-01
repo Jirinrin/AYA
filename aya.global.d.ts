@@ -86,7 +86,11 @@ declare function listlan(): string[]; // list languages
 
 declare function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string];
 
+/** Ask for input in classic CLI-style. Response will be trimmed and returned in a promise. This will deadlock the REPL if you top-level await it so don't do that. */
 declare function question(q: string): Promise<string>;
+
+/** Call the .loadScript command from JS */
+declare function loadScript(q: string): Promise<any>;
 
 /** Magically escapes any backslashes in a path you pass to it. Don't worry if the syntax highlighting seems off. */
 declare function r(strings: TemplateStringsArray, ...exps: (string|number)[]): string;
