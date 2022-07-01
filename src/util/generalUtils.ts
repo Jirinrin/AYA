@@ -252,7 +252,8 @@ export function transformTs(typescriptCode: string): string {
 export const withFinally = <T>(callback: () => T, after: () => void): T => {
   const doStuff = (async (cb) => {
     try {
-      return await cb();
+      const returned = cb();
+      return returned instanceof Promise ? await returned : returned
     } finally {
       after();
     }
