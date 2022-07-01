@@ -40,7 +40,7 @@ declare function getFirstEnt(filePath?: string, opts?: IGetEntsFilters): DirentW
 declare function getEntsDeep(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata[];
 declare function getEntsWithMetadata(filePath?: string, opts?: IGetEntsFilters): Promise<DirentWithMetadata[]>;
 declare function getEntsNames(filePath?: string, opts?: IGetEntsFilters): string[];
-declare function getFirstEntNames(filePath?: string, opts?: IGetEntsFilters): string|undefined;
+declare function getFirstEntName(filePath?: string, opts?: IGetEntsFilters): string|undefined;
 
 declare function doForEach(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
 declare function doForEachDeep(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
