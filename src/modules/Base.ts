@@ -115,6 +115,7 @@ const Base: RawModule = {
     help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from extraScriptsDir',
     run: (s_file: string) => loadScript(s_file),
   },
+  'scr': {help: 'Shorthand for .loadScript', run: (s_file: string) => loadScript(s_file)},
   'pasteScript': {
     help: 'Paste some Javascript from your clipboard into the REPL context',
     run: () => global.pasteClbJS(),

@@ -174,9 +174,9 @@ function getCompletionData(line: string): CustomCompleterResult {
     return completeCaseIns(lastArg, config.s);
   if (cmdName === 'helpp')
     return completeCaseIns(lastArg, r.commands);
-  if (cmdName.match(/^(?:cd|mkdir|rename|metadata|setTags|copy|move|load(?:Script)?)$/) && nthArg===1 || cmdName.match(/copy|move/) && nthArg<=2) {
+  if (cmdName.match(/^(?:cd|mkdir|rename|metadata|setTags|copy|move|load(?:Script)?|scr)$/) && nthArg===1 || cmdName.match(/copy|move/) && nthArg<=2) {
     const dirLine = lastArg.charAt(0).match(/["'`]/) ? lastArg.slice(1) : lastArg;
-    const items = cmdName.match('loadScript')
+    const items = cmdName.match(/loadScript|scr/)
       ? [...ENV.currentDirItems.filter(i => i.match(/\.[jt]s$/)), ...ENV.extraScriptsDirItems]
       : ENV.currentDirItems
     return completeCaseIns(dirLine, items);
