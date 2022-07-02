@@ -3,9 +3,10 @@
 import { LoDashStatic } from 'lodash';
 import { SuperAgentStatic } from 'superagent';
 import JSONBigInt from 'json-bigint';
+import { Dirent } from 'fs';
+import { PlatformPath } from 'path';
 
 declare global {
-  type Dirent = { name: string; isFile(): boolean; isDirectory(): boolean; isBlockDevice(): boolean; isCharacterDevice(): boolean; isSymbolicLink(): boolean; isFIFO(): boolean; isSocket(): boolean }
   type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
   type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
   type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
@@ -60,7 +61,7 @@ declare global {
   
   const lo: LoDashStatic;
   const req: SuperAgentStatic;
-  const path: any; // the normal Node path package
+  const path: PlatformPath;
   
   // todo: write docs for these functions
   
