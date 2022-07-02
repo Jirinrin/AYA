@@ -35,7 +35,7 @@ declare global {
   function exists(path: string): boolean;
   function move(filePath: string, moveToFolder: string, newFileName?: string): string;
   function copy(filePath: string, copyToFolder: string, newFileName?: string): string;
-  function rename(filePath: string, newFileName: string): string;
+  function rename(filePath: string, newFileName: string, withoutExt?: boolean): string;
   function remove(filePath: string): Promise<void>;
   function removeMulti(filePaths: string|string[]): Promise<void>;
   function metadata(filePath: string): Promise<DirentWithMetadata>;

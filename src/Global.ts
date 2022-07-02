@@ -9,7 +9,7 @@ import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
-import { changeDirectory, globalEval, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath2 } from "./util/replUtils";
+import { changeDirectory, globalEval, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath1Folder, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
 import { DirentWithData, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
@@ -102,12 +102,12 @@ const globalAdditions = {
     return putMetadataOnEntity(pathToDirent(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
   resolvePath,
-  getEnts: wrapResolvePath1(getEnts),
-  getFirstEnt: wrapResolvePath1((filePath): DirentWithData|undefined => getEnts(filePath)[0]),
-  getEntsDeep: wrapResolvePath1(getEntsDeep),
-  getEntsWithMetadata: wrapResolvePath1(getEntsWithMetadata),
-  getEntsNames: wrapResolvePath1((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
-  getFirstEntName: wrapResolvePath1((filePath, opts): string|undefined => getEnts(filePath, opts).map(e => e.name)[0]),
+  getEnts: wrapResolvePath1Folder(getEnts),
+  getFirstEnt: wrapResolvePath1Folder((filePath): DirentWithData|undefined => getEnts(filePath)[0]),
+  getEntsDeep: wrapResolvePath1Folder(getEntsDeep),
+  getEntsWithMetadata: wrapResolvePath1Folder(getEntsWithMetadata),
+  getEntsNames: wrapResolvePath1Folder((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
+  getFirstEntName: wrapResolvePath1Folder((filePath, opts): string|undefined => getEnts(filePath, opts).map(e => e.name)[0]),
 
   doForEach: wrapResolvePath1(async (filePath, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) =>
     wrapScanOptions(opts, () => 
