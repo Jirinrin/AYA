@@ -1,5 +1,5 @@
 import * as chalk from 'chalk';
-import { exec } from "child_process";
+import { execSync } from "child_process";
 import { r } from ".";
 import ENV from "./ENV";
 import * as JSONbig from 'json-bigint';
@@ -20,31 +20,31 @@ import { listLanguages } from 'refractor';
 
 export {};
 
+interface Exec {
+  (cmd: string, opts?: {cwd?: string}): null;
+  (cmd: string, opts?: {cwd?: string, printOutput?: true, getOutput?: false}): null;
+  (cmd: string, opts?: {cwd?: string, printOutput?: true, getOutput: true}): string;
+  (cmd: string, opts?: {cwd?: string, printOutput: false, getOutput?: true}): string;
+}
+
 const globalAdditions = {
-  /**
-   * Execute a command that will be executed in the underlying shell environment.
-   */
-  exec: (cmd: string, opts: {printOutput?: boolean, cwd?: string} = {}) => {
+  /** Execute a command that will be executed in the underlying shell environment. */
+  exec: ((cmd: string, opts: {printOutput?: boolean, getOutput?: boolean, cwd?: string} = {}) => {
     console.debug(cmd);
 
-    // todo: use execSync/spawnSync or promisify
-    return new Promise((res, rej) =>
-      // todo: use spawn https://stackoverflow.com/questions/10232192/exec-display-stdout-live
-      exec(cmd, {
-        cwd: opts.cwd ?? ENV.cwd,
-      }, (error, stdout, stderr) => {
-        if (opts.printOutput ?? true)
-          console.log(stdout);
-        if (error) {
-          console.error('Error encountered:');
-          console.error(stderr);
-          rej(stderr);
-        } else {
-          res(stdout);
-        }
-      })
-    );
-  },
+    // todo: this outputs annoying gibberish when there are non-ascii characters in the output. (See https://stackoverflow.com/a/59635209 but that doesn't even seem to work)
+    const output = execSync(cmd, {
+      cwd: opts.cwd ?? ENV.cwd,
+      stdio: opts.printOutput === false || opts.getOutput ? 'pipe' : 'inherit',
+    })?.toString();
+
+    fs.createWriteStream(ENV.cwd+'/blabla.txt', {encoding: 'binary', flags: 'w'}).write(output)
+
+    if (opts.printOutput !== false && opts.getOutput)
+      console.log(output);
+    return output
+  }) as Exec,
+
   /**
    * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
    * [int]: the total number of lines going back that you want
