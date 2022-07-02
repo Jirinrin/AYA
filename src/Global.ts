@@ -165,6 +165,7 @@ const globalAdditions = {
   listlan: listLanguages,
 
   splitFileName,
+  basenameBase: (filePathOrName: string) => splitFileName(path.basename(filePathOrName))[0],
 
   question: async (q: string) => {
     const answer = await new Promise<string>(res => r.question(indent() + chalk.magentaBright(`${q} `), res));

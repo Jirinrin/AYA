@@ -94,6 +94,8 @@ declare global {
   function listlan(): string[]; // list languages
   
   function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string];
+  /** Returns name of a file without its extension */
+  function basenameBase(filePathOrName: string): string;
   
   /** Ask for input in classic CLI-style. Response will be trimmed and returned in a promise. This will deadlock the REPL if you top-level await it so don't do that. */
   function question(q: string): Promise<string>;
