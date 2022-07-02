@@ -38,8 +38,6 @@ const globalAdditions = {
       stdio: opts.printOutput === false || opts.getOutput ? 'pipe' : 'inherit',
     })?.toString();
 
-    fs.createWriteStream(ENV.cwd+'/blabla.txt', {encoding: 'binary', flags: 'w'}).write(output)
-
     if (opts.printOutput !== false && opts.getOutput)
       console.log(output);
     return output
