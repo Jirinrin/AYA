@@ -5,13 +5,15 @@ import { SuperAgentStatic } from 'superagent';
 import JSONBigInt from 'json-bigint';
 import { Dirent } from 'fs';
 import { PlatformPath } from 'path';
+import { IAudioMetadata } from 'music-metadata';
+import { Tags as ExifTags } from 'exiftool-vendored';
 
 declare global {
   type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
   type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
   type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
   type DirentWithData = { ext: string; nameBase: string; path: string } & Dirent;
-  type DirentWithMetadata = { mm?: any; em?: any; } & DirentWithData;
+  type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; } & DirentWithData;
   type EntityType = 'file' | 'directory';
   type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
   
