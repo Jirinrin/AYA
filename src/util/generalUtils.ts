@@ -250,12 +250,16 @@ export function transformTs(typescriptCode: string): string {
 
 /** Wrapper to call a 'finally' after a block of code while still keeping the return type of the original callback (regardless of async) */
 export const withFinally = <T>(callback: () => T, after: () => void): T => {
-  const doStuff = (async (cb) => {
+  const doStuff = (cb => {
     try {
       const returned = cb();
-      return returned instanceof Promise ? await returned : returned
-    } finally {
+      if (returned instanceof Promise)
+        return returned.finally(after)
       after();
+      return returned;
+    } catch (err) {
+      after();
+      throw err;
     }
   }) as (<T>(callback: () => T) => T);
   return doStuff(callback);
