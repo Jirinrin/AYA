@@ -7,7 +7,7 @@ import Modules from './modules';
 import { Module } from './types';
 import './Global';
 import { config, ayaStorageDir } from './util/LocalStorage';
-import { changeDirectory, globalEval } from './util/replUtils';
+import { changeDirectory, loadScript } from './util/replUtils';
 import { completer, setupReplCustomization } from './util/replCustomization';
 import { setConsole } from './util/consoleExtension';
 import { runScript } from './modules/Base';
@@ -66,7 +66,7 @@ async function startRepl() {
 
   if (config.s.initScriptsDir) {
     // todo: somehow allow this to expose functions as 'commands'.
-    getEnts(config.s.initScriptsDir, { ext: 'js' }).forEach(ent => globalEval(readFileSync(ent.path).toString()));
+    getEnts(config.s.initScriptsDir, { ext: /[jt]s/ }).forEach(ent => loadScript(ent.path));
   }
 
   if (config.s.extraScriptsDir) {
