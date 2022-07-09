@@ -5,7 +5,7 @@ import { clone } from 'lodash';
 
 import { config } from './LocalStorage';
 import { getExifMetadata } from './exif';
-import { getMusicFileMetadata } from '../modules/Music';
+import { getMusicFileMetadata } from './music';
 import { DirentWithData, DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 import ENV from '../ENV';
@@ -109,6 +109,7 @@ export function checkEntFilters(e: DirentWithData, opts: IGetEntsFilters): boole
 }
 
 export function getEnts(folder: string, opts: IGetEntsFilters = {}): DirentWithData[] {
+  // todo: get ents through a glob (with globby)
   return fs.readdirSync(folder, { withFileTypes: true })
     .map(ent => putFileDataOnEntity(ent, folder))
     .filter(ent => checkEntFilters(ent, opts));

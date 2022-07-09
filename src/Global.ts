@@ -17,6 +17,7 @@ import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleE
 import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { listLanguages } from 'refractor';
+import { getTrackInfoFromMetadata, writeMusicMetadataToFile } from './util/music';
 
 export {};
 
@@ -99,7 +100,6 @@ const globalAdditions = {
   metadata: wrapResolvePath1(async (filePath) => {
     return putMetadataOnEntity(pathToDirent(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
-  resolvePath,
   getEnts: wrapResolvePath1Folder(getEnts),
   getFirstEnt: wrapResolvePath1Folder((filePath): DirentWithData|undefined => getEnts(filePath)[0]),
   getEntsDeep: wrapResolvePath1Folder(getEntsDeep),
@@ -129,6 +129,10 @@ const globalAdditions = {
     return withFinally(() => withDeeperIndentation(callback), () => changeDirectory(originalCwd))
   }),
 
+  setTags: wrapResolvePath1(setExifMetadata),
+  getTrackInfoFromMetadata,
+  writeMusicMetadataToFile: wrapResolvePath1(writeMusicMetadataToFile),
+
   readJson: wrapResolvePath1(readJson),
   readFile: wrapResolvePath1(readFile),
   writeJson: wrapResolvePath1(writeJson),
@@ -141,11 +145,10 @@ const globalAdditions = {
   lo: lodash,
   req,
 
-  setTags: wrapResolvePath1(setExifMetadata),
-
+  resolvePath,
+  cwdRel,
   esc,
   escPath,
-  cwdRel,
 
   copyClb: writeToClipboard,
   copyClbJSON: (entity: any) => writeToClipboard(JSON.stringify(entity)),

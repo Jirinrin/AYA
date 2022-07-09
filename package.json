@@ -40,7 +40,8 @@
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
     "moment": "^2.29.2",
-    "music-metadata": "^4.1.0",
+    "music-metadata": "7",
+    "node-id3": "^0.2.3",
     "refractor": "^3.1.0",
     "superagent": "^6.1.0",
     "trash": "^7.1.1"

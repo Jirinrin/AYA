@@ -3,7 +3,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
 import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
 import * as Ajv from 'ajv';
-import * as moment from 'moment';
+import * as moment from 'moment'; // todo: do I really need moment for this?
 
 export const ayaStorageDir = process.pkg
   ? path.resolve(process.execPath, '../.ayaStorage')

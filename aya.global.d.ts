@@ -5,8 +5,9 @@ import { SuperAgentStatic } from 'superagent';
 import JSONBigInt from 'json-bigint';
 import { Dirent } from 'fs';
 import { PlatformPath } from 'path';
-import { IAudioMetadata } from 'music-metadata';
+import { IAudioMetadata, IPicture } from 'music-metadata';
 import { Tags as ExifTags } from 'exiftool-vendored';
+import { Tags as ID3Tags } from 'node-id3';
 
 declare global {
   type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
@@ -31,8 +32,11 @@ declare global {
    */
   function scriptFromHistory(from: number): string;
   
+  const env: ENV; // Used for some internal stuff, but also contains e.g. cwd
+  const JSONbig: typeof JSONBigInt;
+  
   // For these fs-like methods, for args with the word 'path' in them you can use relative (to the cwd) or absolute paths
-  // Exept for exists(), all of these have a command version as well for ease of use.
+  // Except for exists(), all of these have a command version as well for ease of use.
   function mkdir(dirPath: string): string;
   function exists(path: string): boolean;
   function move(filePath: string, moveToFolder: string, newFileName?: string): string;
@@ -41,45 +45,45 @@ declare global {
   function remove(filePath: string): Promise<void>;
   function removeMulti(filePaths: string|string[]): Promise<void>;
   function metadata(filePath: string): Promise<DirentWithMetadata>;
-  function getEnts(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata[];
-  function getFirstEnt(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata|undefined;
-  function getEntsDeep(filePath?: string, opts?: IGetEntsFilters): DirentWithMetadata[];
+
+  // Functions to easily retrieve the entities in a directory.
+  function getEnts(filePath?: string, opts?: IGetEntsFilters): DirentWithData[];
+  function getFirstEnt(filePath?: string, opts?: IGetEntsFilters): DirentWithData|undefined;
+  function getEntsDeep(filePath?: string, opts?: IGetEntsFilters): DirentWithData[];
   function getEntsWithMetadata(filePath?: string, opts?: IGetEntsFilters): Promise<DirentWithMetadata[]>;
   function getEntsNames(filePath?: string, opts?: IGetEntsFilters): string[];
   function getFirstEntName(filePath?: string, opts?: IGetEntsFilters): string|undefined;
-  
+
+  // todo: write docs for a lot of these functions
+
   function doForEach(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
   function doForEachDeep(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
   
   function cd(toDir: string): void;
   function withCwd<T>(tempCwd: string, callback: () => T): T;
-  
-  // The manual version of resolving a relative/absolute path
-  function resolvePath(filePath: string): string;
-  
+
   // Set exif metadata
   function setTags(filePath: string, tags: Record<string, any>): Promise<void>;
-  
-  const env: ENV; // Used for some internal stuff, but also contains e.g. cwd
-  const JSONbig: typeof JSONBigInt;
-  
-  const lo: LoDashStatic;
-  const req: SuperAgentStatic;
-  const path: PlatformPath;
-  
-  // todo: write docs for these functions
-  
+  function getTrackInfoFromMetadata(metadata: DirentWithMetadata): MusicTrackInfo;
+  function writeMusicMetadataToFile(filePath: string, tags: ID3Tags): void;
+
   function readJson(filePath: string): any;
   function readFile(filePath: string, encoding?: string): string;
   function writeJson(filePath: string, data: any, log?: boolean): void;
   function writeFile(filePath: string, data: any, opts?: { log?: boolean, encoding?: string }): void;
   function editFile(filePath: string, editCallback: (fileContents: string) => string): void;
+
+  function showColor(hex: string, customStr?: string): void;
+
+  const lo: LoDashStatic;
+  const req: SuperAgentStatic;
+  const path: PlatformPath;
   
-  // setTags: wrapResolvePath1(setExifMetadata);
-  
+  // The manual version of resolving a relative/absolute path
+  function resolvePath(relOrAbsPath: string): string;
+  function cwdRel(path: string): string;
   function esc(str: string): string;
   function escPath(str: string): string;
-  function cwdRel(path: string): string;
   
   function copyClb(str: string): void;
   function copyClbJSON(entity: any): void;
@@ -116,4 +120,21 @@ declare global {
     logv: Console['log'];
     logsl: Console['log'];
   }
+}
+
+interface MusicTrackInfo {
+  title: string;
+  track?: number;
+  disk?: number;
+  artist?: string;
+  albumArtist?: string;
+  album?: string;
+  year?: number;
+  date?: string;
+  picture?: IPicture[];
+  unsyncedLyrics?: string;
+  syncedLyrics?: string;
+  bpm?: number;
+  totalTracks?: number;
+  totalDisks?: number;
 }

@@ -1,4 +1,6 @@
 import { IPicture } from "music-metadata";
+import NodeID3 = require("node-id3");
+import { PartOfCollectionNumber } from "./declarations";
 
 const metadataFilters = [
   'file',
@@ -13,13 +15,28 @@ type MetadataFilter = typeof metadataFilters[number];
 export interface IMetadataFilterOpts { filter?: MetadataFilter }
 export const metadataFilterOpt = '--filter=' + metadataFilters.join('|');
 
-export interface ITrackInfo {
+export interface MusicTrackInfo {
   title: string;
-  trackNo?: number;
+  track?: number;
+  disk?: number;
   artist?: string;
-  // Not necessary for filename
   albumArtist?: string;
   album?: string;
+  year?: number;
   date?: string;
   picture?: IPicture[];
+  unsyncedLyrics?: string;
+  syncedLyrics?: string;
+  bpm?: number;
+  totalTracks?: number;
+  totalDisks?: number;
 }
+
+export const userDefinedTags = [['unsyncedLyrics', 'UNSYNCED LYRICS'], ['syncedLyrics', 'SYNCED LYRICS']] as const;
+type UserDefinedField = typeof userDefinedTags[number][0]
+
+export type ID3TrackInfo = NodeID3.Tags & {
+  trackNumber?: PartOfCollectionNumber;
+  partOfSet?: PartOfCollectionNumber;
+  // todo: what can you do with the "image" field here? Because it seems it only contains 1 image
+} & { [K in UserDefinedField]?: string; }
