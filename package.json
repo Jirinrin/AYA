@@ -39,7 +39,7 @@
     "json-bigint": "^1.0.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "music-metadata": "7",
     "node-id3": "^0.2.3",
     "refractor": "^3.1.0",
