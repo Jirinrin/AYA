@@ -17,6 +17,7 @@ declare global {
   type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; } & DirentWithData;
   type EntityType = 'file' | 'directory';
   type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
+  type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; }
   
   /**
    * Execute a command that will be executed in the underlying shell environment.
@@ -65,7 +66,7 @@ declare global {
   // Set exif metadata
   function setTags(filePath: string, tags: Record<string, any>): Promise<void>;
   function getTrackInfoFromMetadata(metadata: DirentWithMetadata): MusicTrackInfo;
-  function writeMusicMetadataToFile(filePath: string, tags: ID3Tags): void;
+  function writeMp3Metadata(filePath: string, tags: Partial<ID3Tags & {}>): void;
 
   function readJson(filePath: string): any;
   function readFile(filePath: string, encoding?: string): string;

@@ -17,7 +17,7 @@ import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleE
 import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { listLanguages } from 'refractor';
-import { getTrackInfoFromMetadata, writeMusicMetadataToFile } from './util/music';
+import { getTrackInfoFromMetadata, writeMp3Metadata } from './util/music';
 
 export {};
 
@@ -131,7 +131,7 @@ const globalAdditions = {
 
   setTags: wrapResolvePath1(setExifMetadata),
   getTrackInfoFromMetadata,
-  writeMusicMetadataToFile: wrapResolvePath1(writeMusicMetadataToFile),
+  writeMp3Metadata: wrapResolvePath1(writeMp3Metadata),
 
   readJson: wrapResolvePath1(readJson),
   readFile: wrapResolvePath1(readFile),

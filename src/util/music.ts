@@ -32,7 +32,7 @@ export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
   else if (typeof year === 'string' && year.length > 4)
     year = (year+'').match(/\d{4}/)?.[0] ?? year;
   // todo: make this functional (like I currently have it in aya-scripts)
-  const [track, totalTracks] = mm ? [mm.track.no, mm.track.of] : parseCollectionNumber(em?.Track);
+  const [track, totalTracks] = mm ? [mm.track.no, mm.track.of] : parseCollectionNumber(em?.Track ?? em?.TrackNumber);
   const [disk, totalDisks] = mm ? [mm.disk.no, mm.disk.of] : parseCollectionNumber(em?.PartOfSet);
 
   return {
@@ -53,7 +53,7 @@ export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
   }
 }
 
-export function writeMusicMetadataToFile(filePath: string, tags: Partial<ID3TrackInfo>) {
+export function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>) {
   userDefinedTags.forEach(([field, tagName]) => {
     if (tags[field])
       // lib typing is incorrect for this one, it should just be an array of multiple items instead of a tuple of one item

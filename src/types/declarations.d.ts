@@ -27,6 +27,7 @@ declare module 'exiftool-vendored' {
     Album?: string;
     PartOfSet?: PartOfCollectionNumber;
     Track?: PartOfCollectionNumber;
+    TrackNumber?: PartOfCollectionNumber;
     Year?: string;
     Band?: string;
     Albumartist?: string;
