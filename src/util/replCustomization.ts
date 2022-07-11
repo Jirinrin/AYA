@@ -98,8 +98,8 @@ function completeJs(line: string): CustomCompleterResult {
     }
   }
 
-  // User input is read from a space or opening bracket
-  const [, checkString] = line.match(/[ \(\[{!?=,]?([^ \(\[{]*)$/) ?? [];
+  // User input is read from a space or opening bracket or some other character
+  const [, checkString] = line.match(/[ \(\[{!?=,]?([^ \(\[{!?=,]*)$/) ?? [];
   if (!checkString)
     return emptyCompl;
 
