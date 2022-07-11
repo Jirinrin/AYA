@@ -47,7 +47,7 @@ export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
     totalDisks,
     albumArtist: em?.Albumartist ?? em?.AlbumArtist ?? em?.Band ?? mm?.albumartist,
     syncedLyrics: em?.SyncedLyrics ?? em?.UserDefinedText?.match(/\(SYNCED LYRICS\) (.+)/s)?.[1],
-    unsyncedLyrics: em?.UnsyncedLyrics ?? em?.Lyrics ?? mm?.lyrics?.join('\n'),
+    unsyncedLyrics: em?.UnsyncedLyrics ?? em?.Lyrics ?? mm?.lyrics?.join('\n') ?? em?.UserDefinedText?.match(/\(UNSYNCED LYRICS\) (.+)/s)?.[1],
     bpm: em?.Bpm ?? em?.BeatsPerMinute ?? mm?.bpm,
     picture: /* todo: `em?.Picture ||` */ mm?.picture,
   }
