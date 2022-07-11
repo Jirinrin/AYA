@@ -143,6 +143,12 @@ export function verbose(msg: any) {
   return formatMsg(true, msg);
 }
 
+export const FILE_EXT_PATTERNS = {
+  music: /mp3|m4a|ogg|flac|wav|wma|aac/i,
+  image: /jpg|png|gif|jfif|exif|bmp|webp/i,
+  video: /mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i,
+} as const;
+
 /** Util function to check if an entity applies for a given operation */
 export function checkFilter(ent: DirentWithMetadata, { filter }: IMetadataFilterOpts): boolean {
   if (!filter)
@@ -158,9 +164,9 @@ export function checkFilter(ent: DirentWithMetadata, { filter }: IMetadataFilter
   switch (filter) {
     case 'file': return ent.isFile();
     case 'directory': return ent.isDirectory();
-    case 'musicFiles': return !!((mm || em) && ent.ext.match(/mp3|m4a|ogg|flac|wav|wma|aac/i));
-    case 'imageFiles': return !!(em && ent.ext.match(/jpg|png|gif|jfif|exif|bmp|webp/i));
-    case 'videoFiles': return !!(em && ent.ext.match(/mp4|mov|wmv|flv|avi|webm|mkv|vob|avi|wmv|mpg|m4v/i));
+    case 'musicFiles': return !!((mm || em) && ent.ext.match(FILE_EXT_PATTERNS.music));
+    case 'imageFiles': return !!(em && ent.ext.match(FILE_EXT_PATTERNS.image));
+    case 'videoFiles': return !!(em && ent.ext.match(FILE_EXT_PATTERNS.video));
     default:
       console.warn('Unknown filter:', filter);
       return true;
