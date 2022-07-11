@@ -10,15 +10,6 @@ import { Tags as ExifTags } from 'exiftool-vendored';
 import { Tags as ID3Tags } from 'node-id3';
 
 declare global {
-  type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
-  type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
-  type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
-  type DirentWithData = { ext: string; nameBase: string; path: string } & Dirent;
-  type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; } & DirentWithData;
-  type EntityType = 'file' | 'directory';
-  type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
-  type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; }
-  
   /**
    * Execute a command that will be executed in the underlying shell environment.
    */
@@ -66,7 +57,7 @@ declare global {
   // Set exif metadata
   function setTags(filePath: string, tags: Record<string, any>): Promise<void>;
   function getTrackInfoFromMetadata(metadata: DirentWithMetadata): MusicTrackInfo;
-  function writeMp3Metadata(filePath: string, tags: Partial<ID3Tags & {}>): void;
+  function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>): void;
 
   function readJson(filePath: string): any;
   function readFile(filePath: string, encoding?: string): string;
@@ -121,21 +112,30 @@ declare global {
     logv: Console['log'];
     logsl: Console['log'];
   }
-}
-
-interface MusicTrackInfo {
-  title: string;
-  track?: number;
-  disk?: number;
-  artist?: string;
-  albumArtist?: string;
-  album?: string;
-  year?: number;
-  date?: string;
-  picture?: IPicture[];
-  unsyncedLyrics?: string;
-  syncedLyrics?: string;
-  bpm?: number;
-  totalTracks?: number;
-  totalDisks?: number;
+  
+  type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
+  type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
+  type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
+  type DirentWithData = { ext: string; nameBase: string; path: string } & Dirent;
+  type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; trackInfo?: MusicTrackInfo } & DirentWithData;
+  type EntityType = 'file' | 'directory';
+  type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
+  type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; }
+  
+  interface MusicTrackInfo {
+    title: string;
+    track?: number;
+    disk?: number;
+    artist?: string;
+    albumArtist?: string;
+    album?: string;
+    year?: number;
+    date?: string;
+    picture?: IPicture[];
+    unsyncedLyrics?: string;
+    syncedLyrics?: string;
+    bpm?: number;
+    totalTracks?: number;
+    totalDisks?: number;
+  }
 }
