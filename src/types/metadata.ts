@@ -32,11 +32,11 @@ export interface MusicTrackInfo {
   totalDisks?: number;
 }
 
-export const userDefinedTags = [['unsyncedLyrics', 'UNSYNCED LYRICS'], ['syncedLyrics', 'SYNCED LYRICS']] as const;
-type UserDefinedField = typeof userDefinedTags[number][0]
+export const userDefinedID3Tags = {unsyncedLyrics: 'UNSYNCED LYRICS', syncedLyrics: 'SYNCED LYRICS'} as const;
+export type UserDefinedID3Field = keyof typeof userDefinedID3Tags;
 
 export type ID3TrackInfo = NodeID3.Tags & {
   trackNumber?: PartOfCollectionNumber;
   partOfSet?: PartOfCollectionNumber;
   // todo: what can you do with the "image" field here? Because it seems it only contains 1 image
-} & { [K in UserDefinedField]?: string; }
+} & Partial<Record<UserDefinedID3Field, string>>;

@@ -57,7 +57,7 @@ declare global {
   // Set exif metadata
   function setTags(filePath: string, tags: Record<string, any>): Promise<void>;
   function getTrackInfoFromMetadata(metadata: DirentWithMetadata): MusicTrackInfo;
-  function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>): void;
+  function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>, writeMode?: boolean): void;
 
   function readJson(filePath: string): any;
   function readFile(filePath: string, encoding?: string): string;
