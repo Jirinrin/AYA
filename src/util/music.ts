@@ -14,7 +14,7 @@ function parseCollectionNumber(num: PartOfCollectionNumber|undefined): [] | [no:
   const [, no, of] = num.match(/(\d+)/) ?? [];
   if (no === undefined)
     return [];
-  return of === undefined ? [parseInt(no), parseInt(of)] : [parseInt(no)];
+  return of !== undefined ? [parseInt(no), parseInt(of)] : [parseInt(no)];
 }
 
 export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
