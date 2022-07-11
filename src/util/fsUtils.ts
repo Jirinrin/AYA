@@ -5,10 +5,11 @@ import { clone } from 'lodash';
 
 import { config } from './LocalStorage';
 import { getExifMetadata } from './exif';
-import { getMusicFileMetadata } from './music';
+import { getMusicFileMetadata, getTrackInfoFromMetadata } from './music';
 import { DirentWithData, DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 import ENV from '../ENV';
+import { checkFilter } from './generalUtils';
 
 export function doForEachAsync(folder: string, callback: FileIteratorCallback) {
   if (typeof callback !== 'function') {
@@ -216,6 +217,7 @@ export async function putMetadataOnEntity(ent: DirentWithData): Promise<DirentWi
   const entWithMetadata = clone(ent) as DirentWithMetadata;
   if (config.s.musicMetadata && !ENV.noMetadata) entWithMetadata.mm = await getMusicFileMetadata(ent.path);
   if (config.s.exifMetadata  && !ENV.noMetadata) entWithMetadata.em = await getExifMetadata(ent.path);
+  if (checkFilter(ent, {filter: 'musicFiles'}))  entWithMetadata.trackInfo = getTrackInfoFromMetadata(entWithMetadata);
   return entWithMetadata;
 }
 

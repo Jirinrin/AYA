@@ -2,6 +2,7 @@ import { Dirent } from "fs";
 import { IAudioMetadata } from "music-metadata";
 import * as exif from "exiftool-vendored";
 import { CustomFunction } from "../util";
+import { MusicTrackInfo } from "./metadata";
 
 export interface FileData {
   ext: string;
@@ -12,6 +13,7 @@ export interface FileData {
 export interface FileMetadata {
   mm?: IAudioMetadata;
   em?: exif.Tags;
+  trackInfo?: MusicTrackInfo; // Present if this is a music file
 }
 
 export interface DirentWithData extends Dirent, FileData {}
