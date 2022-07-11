@@ -18,6 +18,7 @@ import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { listLanguages } from 'refractor';
 import { getTrackInfoFromMetadata, writeMp3Metadata } from './util/music';
+import NodeID3 = require('node-id3');
 
 export {};
 
@@ -132,6 +133,7 @@ const globalAdditions = {
   setTags: wrapResolvePath1(setExifMetadata),
   getTrackInfoFromMetadata,
   writeMp3Metadata: wrapResolvePath1(writeMp3Metadata),
+  readMp3Metadata: wrapResolvePath1(filePath => NodeID3.read(filePath)),
 
   readJson: wrapResolvePath1(readJson),
   readFile: wrapResolvePath1(readFile),

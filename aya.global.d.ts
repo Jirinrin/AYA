@@ -58,6 +58,7 @@ declare global {
   function setTags(filePath: string, tags: Record<string, any>): Promise<void>;
   function getTrackInfoFromMetadata(metadata: DirentWithMetadata): MusicTrackInfo;
   function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>, writeMode?: boolean): void;
+  function readMp3Metadata(filePath: string): ID3Tags;
 
   function readJson(filePath: string): any;
   function readFile(filePath: string, encoding?: string): string;
