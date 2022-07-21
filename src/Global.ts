@@ -8,6 +8,7 @@ import * as path from "path";
 import * as lodash from "lodash";
 import * as req from 'superagent';
 import * as trash from 'trash';
+import NodeID3 = require('node-id3');
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { changeDirectory, globalEval, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath1Folder, wrapResolvePath2 } from "./util/replUtils";
 import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
@@ -18,7 +19,7 @@ import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { listLanguages } from 'refractor';
 import { getTrackInfoFromMetadata, writeMp3Metadata } from './util/music';
-import NodeID3 = require('node-id3');
+import { userStorage } from './util/LocalStorage';
 
 export {};
 
@@ -166,6 +167,8 @@ const globalAdditions = {
   withDeeperIndentation,
   highlightExp,
   listlan: listLanguages,
+
+  userStorage,
 
   splitFileName,
   basenameBase: (filePathOrName: string) => splitFileName(path.basename(filePathOrName))[0],

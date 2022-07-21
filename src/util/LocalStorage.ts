@@ -43,6 +43,10 @@ class LocalStorage<T extends Record<string, any> = any> {
     writeJson(this.filePath, this.state, false);
   }
 
+  public get<K extends keyof T>(key: K): T[K] {
+    return this.state[key];
+  }
+
   public set<K extends keyof T>(key: K, val: T[K]): boolean {
     if (this.state[key] === val) {
       console.warn('Nothing changed.');
@@ -72,7 +76,7 @@ class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<
     if (!this.validate(this.state)) {
       this.validate.errors.forEach(err => {
         const property: keyof T & string = err.dataPath.slice(1);
-        console.error(`Property "${property}" (current value: ${JSON.stringify(this.state[property])}) in ${this.constructor.name} is invalid: "${err.message}"`);
+        console.error(`Property "${property}" (current value: ${JSON.stringify(this.get(property))}) in ${this.constructor.name} is invalid: "${err.message}"`);
         const defaultVal = (this.schema.properties[property as string] as JSONSchema7).default as T[typeof property];
         console.warn(`Resetting to default value: ${defaultVal}`);
         this.set(property, defaultVal);
@@ -130,7 +134,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 
   private keyExists(key: string): boolean {
-    if (!this.state[key]) {
+    if (!this.get(key)) {
       console.warn(`Script with key "${key}" was not found`);
       return false;
     }
@@ -138,7 +142,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 
   public getScript(key: string): UserScript | null {
-    return this.keyExists(key) ? this.state[key] : null;
+    return this.keyExists(key) ? this.get(key) : null;
   }
 
   public delete(key: string) {
@@ -200,7 +204,7 @@ export class PersistentLogger extends LocalStorage {
   public log = (...message: any[]) => {
     const msg = message.join(' ');
     const key = getHashCode(msg);
-    if (!this.state[key]) {
+    if (!this.get(key)) {
       this.set(key, `[${moment().locale('en-gb').format('L LTS')}] ` + msg)
       this.writeState();
     }
@@ -209,6 +213,7 @@ export class PersistentLogger extends LocalStorage {
 
 export const config = new Config();
 export const userScripts = new UserScripts();
+export const userStorage = new LocalStorage('user-storage.json', {});
 
 export const logger = new Logger();
 export const pLogger = new PersistentLogger();

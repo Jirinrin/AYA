@@ -89,6 +89,11 @@ declare global {
   function withDeeperIndentation<T>(callback: () => T): T;
   function highlightExp(strings: TemplateStringsArray, ...exps: (string | number)[]): string;
   function listlan(): string[]; // list languages
+
+  const userStorage: {
+    get<T>(key: string): T | undefined;
+    set(key: string, data: any): boolean;
+  };
   
   function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string];
   /** Returns name of a file without its extension */
