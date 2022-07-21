@@ -142,6 +142,7 @@ const globalAdditions = {
   writeFile: wrapResolvePath1(writeFile),
   editFile: wrapResolvePath1((filePath, editCallback: (fileContents: string) => string) =>
     writeFile(filePath, editCallback(readFile(filePath)))),
+  createWriteStream: wrapResolvePath1(fs.createWriteStream),
 
   showColor: (hex: string, customStr?: string) => console.log(chalk.bgHex(hex).black(customStr ?? hex)),
 

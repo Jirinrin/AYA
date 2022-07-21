@@ -3,7 +3,7 @@
 import { LoDashStatic } from 'lodash';
 import { SuperAgentStatic } from 'superagent';
 import JSONBigInt from 'json-bigint';
-import { Dirent } from 'fs';
+import { Dirent, createWriteStream as fsCreateWriteStream } from 'fs';
 import { PlatformPath } from 'path';
 import { IAudioMetadata, IPicture } from 'music-metadata';
 import { Tags as ExifTags } from 'exiftool-vendored';
@@ -65,6 +65,7 @@ declare global {
   function writeJson(filePath: string, data: any, log?: boolean): void;
   function writeFile(filePath: string, data: any, opts?: { log?: boolean, encoding?: string }): void;
   function editFile(filePath: string, editCallback: (fileContents: string) => string): void;
+  const createWriteStream: typeof fsCreateWriteStream;
 
   function showColor(hex: string, customStr?: string): void;
 
