@@ -251,7 +251,8 @@ export function evalRawStrings(str: string) {
 }
 
 export function transformTs(typescriptCode: string): string {
-  return transpileModule(typescriptCode, { compilerOptions: { target: ScriptTarget.ES2021 }}).outputText;
+  const filteredTypescriptCode = typescriptCode.replace(/\/\/ *aya-ignore[\n\r]+.+/, '').replace(/.+\/\/ *aya-ignore/g, '')
+  return transpileModule(filteredTypescriptCode, { compilerOptions: { target: ScriptTarget.ES2021 }}).outputText;
 }
 
 /** Wrapper to call a 'finally' after a block of code while still keeping the return type of the original callback (regardless of async) */
