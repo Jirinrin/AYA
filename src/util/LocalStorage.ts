@@ -4,6 +4,7 @@ import * as path from 'path';
 import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
 import * as Ajv from 'ajv';
 import * as moment from 'moment'; // todo: do I really need moment for this?
+import { cloneDeep } from 'lodash';
 
 export const ayaStorageDir = process.pkg
   ? path.resolve(process.execPath, '../.ayaStorage')
@@ -44,7 +45,7 @@ class LocalStorage<T extends Record<string, any> = any> {
   }
 
   public get<K extends keyof T>(key: K): T[K] {
-    return this.state[key];
+    return cloneDeep(this.state[key]);
   }
 
   public set<K extends keyof T>(key: K, val: T[K]): boolean {
@@ -52,7 +53,7 @@ class LocalStorage<T extends Record<string, any> = any> {
       console.warn('Nothing changed.');
       return false;
     }
-    this.state[key] = val;
+    this.state[key] = cloneDeep(val);
     this.writeState();
     return true;
   }
@@ -76,7 +77,7 @@ class ValidatedLocalStorage<T extends Record<string, any>> extends LocalStorage<
     if (!this.validate(this.state)) {
       this.validate.errors.forEach(err => {
         const property: keyof T & string = err.dataPath.slice(1);
-        console.error(`Property "${property}" (current value: ${JSON.stringify(this.get(property))}) in ${this.constructor.name} is invalid: "${err.message}"`);
+        console.error(`Property "${property}" (current value: ${JSON.stringify(this.state[property])}) in ${this.constructor.name} is invalid: "${err.message}"`);
         const defaultVal = (this.schema.properties[property as string] as JSONSchema7).default as T[typeof property];
         console.warn(`Resetting to default value: ${defaultVal}`);
         this.set(property, defaultVal);
@@ -134,7 +135,7 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 
   private keyExists(key: string): boolean {
-    if (!this.get(key)) {
+    if (!this.state[key]) {
       console.warn(`Script with key "${key}" was not found`);
       return false;
     }
