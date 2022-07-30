@@ -64,13 +64,13 @@ async function startRepl() {
 
   config.validateJson();
 
+  if (config.s.extraScriptsDir) {
+    ENV.extraScriptsDirItems = getEnts(config.s.extraScriptsDir, { ext: /[jt]s/ }).map(e => e.name);
+  }
+
   if (config.s.initScriptsDir) {
     // todo: somehow allow this to expose functions as 'commands'.
     getEnts(config.s.initScriptsDir, { ext: /[jt]s/ }).forEach(ent => loadScript(ent.path));
-  }
-
-  if (config.s.extraScriptsDir) {
-    ENV.extraScriptsDirItems = getEnts(config.s.extraScriptsDir, { ext: /[jt]s/ }).map(e => e.name);
   }
 
   if (initBody) {
