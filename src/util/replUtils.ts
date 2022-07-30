@@ -78,8 +78,8 @@ export function evall(func: OperationFunction, info?: CommandInfo): ActionFuncti
 /**
  * @return boolean indicating whether it was succesful
  */
-export function changeDirectory(s_dirPath: string, relative?: boolean): boolean {
-  const newDirectory = resolvePath(s_dirPath);
+export function changeDirectory(dirPath: string, relative?: boolean): boolean {
+  const newDirectory = resolvePath(dirPath);
   if (fs.existsSync(newDirectory)) {
     const printedDir = relative ? path.relative(ENV.cwd, newDirectory) : newDirectory;
     ENV.cwd = newDirectory;

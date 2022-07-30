@@ -31,7 +31,7 @@ const Base: RawModule = {
 
   'cd': {
     help: 'Change current directory',
-    run: changeDirectory,
+    run: (s_dirPath: string) => changeDirectory(s_dirPath),
   },
   'cwd': {
     help: 'Get current working directory',
