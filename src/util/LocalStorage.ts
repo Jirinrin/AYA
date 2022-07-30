@@ -48,7 +48,7 @@ class LocalStorage<T extends Record<string, any> = any> {
   }
 
   public set<K extends keyof T>(key: K, val: T[K]): boolean {
-    if (this.state[key] === val) {
+    if (JSON.stringify(this.state[key]) === JSON.stringify(val) && this.state[key] === val) {
       console.warn('Nothing changed.');
       return false;
     }
