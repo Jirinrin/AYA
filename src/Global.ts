@@ -23,27 +23,32 @@ import { userStorage } from './util/LocalStorage';
 
 export {};
 
+type ExecSharedOpts = {cwd?: string, allowFail?: boolean}
 interface Exec {
-  (cmd: string, opts?: {cwd?: string}): null;
-  (cmd: string, opts?: {cwd?: string, printOutput?: true, getOutput?: false}): null;
-  (cmd: string, opts?: {cwd?: string, printOutput?: true, getOutput: true}): string;
-  (cmd: string, opts?: {cwd?: string, printOutput: false, getOutput?: true}): string;
+  (cmd: string, opts?: ExecSharedOpts): null;
+  (cmd: string, opts?: ExecSharedOpts & {printOutput?: true, getOutput?: false}): null;
+  (cmd: string, opts?: ExecSharedOpts & {printOutput?: true, getOutput: true}): string;
+  (cmd: string, opts?: ExecSharedOpts & {printOutput: false, getOutput?: true}): string;
 }
 
 const globalAdditions = {
   /** Execute a command that will be executed in the underlying shell environment. */
-  exec: ((cmd: string, opts: {printOutput?: boolean, getOutput?: boolean, cwd?: string} = {}) => {
+  exec: ((cmd: string, opts: {printOutput?: boolean, getOutput?: boolean, cwd?: string, allowFail?: boolean} = {}) => {
     console.debug(cmd);
 
-    // todo: this outputs annoying gibberish when there are non-ascii characters in the output. (See https://stackoverflow.com/a/59635209 but that doesn't even seem to work)
-    const output = execSync(cmd, {
-      cwd: opts.cwd ?? ENV.cwd,
-      stdio: opts.printOutput === false || opts.getOutput ? 'pipe' : 'inherit',
-    })?.toString();
-
-    if (opts.printOutput !== false && opts.getOutput)
-      console.log(output);
-    return output
+    try {
+      // todo: this outputs annoying gibberish when there are non-ascii characters in the output. (See https://stackoverflow.com/a/59635209 but that doesn't even seem to work)
+      const output = execSync(cmd, {
+        cwd: opts.cwd ?? ENV.cwd,
+        stdio: opts.printOutput === false || opts.getOutput ? 'pipe' : 'inherit',
+      })?.toString();
+  
+      if (opts.printOutput !== false && opts.getOutput)
+        console.log(output);
+      return output;
+    } catch (err) {
+      if (!opts.allowFail) throw err;
+    }
   }) as Exec,
 
   /**

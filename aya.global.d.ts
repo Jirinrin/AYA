@@ -10,12 +10,14 @@ import { Tags as ExifTags } from 'exiftool-vendored';
 import { Tags as ID3Tags } from 'node-id3';
 
 declare global {
+  type ExecSharedOpts = {cwd?: string, allowFail?: boolean};
+
   /**
    * Execute a command that will be executed in the underlying shell environment.
    */
-  function exec(cmd: string, opts?: {cwd?: string, printOutput?: true, getOutput?: false}): null;
-  function exec(cmd: string, opts?: {cwd?: string, printOutput?: true, getOutput: true}): string;
-  function exec(cmd: string, opts?: {cwd?: string, printOutput: false, getOutput?: true}): string;
+  function exec(cmd: string, opts?: ExecSharedOpts & {printOutput?: true, getOutput?: false}): null;
+  function exec(cmd: string, opts?: ExecSharedOpts & {printOutput?: true, getOutput: true}): string;
+  function exec(cmd: string, opts?: ExecSharedOpts & {printOutput: false, getOutput?: true}): string;
   /**
    * Generates a script based on the history of what you typed in the REPL. Three alternatives for specifying this in the params:
    * [int]: the total number of lines going back that you want
