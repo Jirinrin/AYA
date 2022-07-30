@@ -78,12 +78,13 @@ export function evall(func: OperationFunction, info?: CommandInfo): ActionFuncti
 /**
  * @return boolean indicating whether it was succesful
  */
-export function changeDirectory(s_dirPath: string): boolean {
+export function changeDirectory(s_dirPath: string, relative?: boolean): boolean {
   const newDirectory = resolvePath(s_dirPath);
   if (fs.existsSync(newDirectory)) {
+    const printedDir = relative ? path.relative(ENV.cwd, newDirectory) : newDirectory;
     ENV.cwd = newDirectory;
     ENV.currentDirItems = fs.readdirSync(newDirectory);
-    console.log(highlightExp`Current directory was set to "${newDirectory}"`);
+    console.log(highlightExp`Current directory was set to "${printedDir}"`);
     return true;
   } else {
     console.error('Provided folder name appears to be invalid. Please try again');

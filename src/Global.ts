@@ -132,8 +132,8 @@ const globalAdditions = {
   },
   withCwd: wrapResolvePath1(<T>(tempCwd: string, callback: () => T): T => {
     const originalCwd = ENV.cwd;
-    if (!changeDirectory(tempCwd)) return;
-    return withFinally(() => withDeeperIndentation(callback), () => changeDirectory(originalCwd))
+    if (!changeDirectory(tempCwd, true)) return;
+    return withFinally(() => withDeeperIndentation(callback), () => changeDirectory(originalCwd, true))
   }),
 
   setTags: wrapResolvePath1(setExifMetadata),
