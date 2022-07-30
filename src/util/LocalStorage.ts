@@ -15,7 +15,7 @@ class LocalStorage<T extends Record<string, any> = any> {
 
   public get s() { return this.state };
 
-  constructor(fileName: string, initState: T, reset?: boolean) {
+  constructor(fileName: string, initState: T, reset = false) {
     if (!fs.existsSync(ayaStorageDir))
       fs.mkdirSync(ayaStorageDir);
     
@@ -155,6 +155,24 @@ class UserScripts extends LocalStorage<IUserScripts> {
   }
 }
 
+class UserStorage extends LocalStorage {
+  constructor() {
+    super('user-storage.json', {});
+  }
+
+  public get keys(): string[] {
+    return Object.keys(this.state);
+  }
+
+  public get<T>(key: keyof any): T | undefined {
+    return super.get(key);
+  }
+
+  public edit<T>(key: keyof any, cb: (prev: T|undefined) => T): boolean {
+    return this.set(key, cb(this.get(key)));
+  }
+}
+
 export class Logger extends LocalStorage {
   constructor() {
     super('aya.log', null, true);
@@ -213,7 +231,7 @@ export class PersistentLogger extends LocalStorage {
 
 export const config = new Config();
 export const userScripts = new UserScripts();
-export const userStorage = new LocalStorage('user-storage.json', {});
+export const userStorage = new UserStorage();
 
 export const logger = new Logger();
 export const pLogger = new PersistentLogger();

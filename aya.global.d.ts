@@ -60,7 +60,7 @@ declare global {
   function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>, writeMode?: boolean): void;
   function readMp3Metadata(filePath: string): ID3Tags;
 
-  function readJson(filePath: string): any;
+  function readJson<T = any>(filePath: string): T;
   function readFile(filePath: string, encoding?: string): string;
   function writeJson(filePath: string, data: any, log?: boolean): void;
   function writeFile(filePath: string, data: any, opts?: { log?: boolean, encoding?: string }): void;
@@ -92,8 +92,10 @@ declare global {
   function listlan(): string[]; // list languages
 
   const userStorage: {
-    get<T>(key: string): T | undefined;
-    set(key: string, data: any): boolean;
+    get<T>(key: string|number): T | undefined;
+    set(key: string|number, data: any): boolean;
+    edit<T>(key: string|number, cb: (prev: T|undefined) => T): boolean;
+    get keys(): string[];
   };
   
   function splitFileName(fileName: string, isDirectory?: boolean): [nameBase: string, ext: string];
