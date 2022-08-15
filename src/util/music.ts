@@ -42,7 +42,7 @@ export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
     title,
     album: em?.Album ?? mm?.album,
     date: (em?.Date ?? em?.DateTime ?? mm?.date ?? em?.Year ?? mm?.year)?.toString(),
-    year: typeof year == 'number' ? year : parseInt(year),
+    year: typeof year === 'number' ? year : year && parseInt(year),
     track,
     totalTracks,
     disk,
