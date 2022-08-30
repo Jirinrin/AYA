@@ -88,13 +88,16 @@ There are some arguments available to pass to Aya:
 
 ## Random info about the REPL
 
-It is recommended that you use `var` instead of `const`/`let`, because autocompletion only works with the former.
+- It is recommended that you use `var` instead of `const`/`let`, because autocompletion only works with the former.
+- Essentially all functions that operate on your local file system are quite smart about resolving paths you pass to them. So e.g. you can do `copy('C:\Users\Someone\Documents\bla.txt', 'myProject/random_txts')`, in which case it will resolve the first path absolutely and the second path relative to the current CWD that AYA is in.
 
 
 ## Available JS globals
 
 Look at [`aya.global.d.ts`](./aya.global.d.ts) for some (probably outdated) docs on the stuff that's available in the global scope of the REPL.
 
+You can also use the `type` and `doc` properties on most global functions: e.g. just enter `doForEach.type` or `question.doc`.
+(There's also the secret `typeX` property, which will substitute type aliases used in the `type` by their actual definition. e.g. entering `doForEach.typeX(2)` will go 2 layers deep in doing this substitution)
 
 ## File metadata
 
