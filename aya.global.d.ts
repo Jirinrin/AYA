@@ -12,9 +12,7 @@ import { Tags as ID3Tags } from 'node-id3';
 declare global {
   type ExecSharedOpts = {cwd?: string, allowFail?: boolean};
 
-  /**
-   * Execute a command that will be executed in the underlying shell environment.
-   */
+  /** Execute a command that will be executed in the underlying shell environment. */
   function exec(cmd: string, opts?: ExecSharedOpts & {printOutput?: true, getOutput?: false}): null;
   function exec(cmd: string, opts?: ExecSharedOpts & {printOutput?: true, getOutput: true}): string;
   function exec(cmd: string, opts?: ExecSharedOpts & {printOutput: false, getOutput?: true}): string;
@@ -129,8 +127,8 @@ declare global {
   type DirentWithData = { ext: string; nameBase: string; path: string; dirPath: string } & Dirent;
   type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; trackInfo?: MusicTrackInfo } & DirentWithData;
   type EntityType = 'file' | 'directory';
-  type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; }
-  type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; }
+  type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; };
+  type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; };
   
   interface MusicTrackInfo {
     title: string;

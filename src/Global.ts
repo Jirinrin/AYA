@@ -19,6 +19,7 @@ import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { getTrackInfoFromMetadata, writeMp3Metadata } from './util/music';
 import { userStorage } from './util/LocalStorage';
+import { getAyaRootDir } from './util/localUtils';
 
 export {};
 
@@ -187,41 +188,49 @@ const globalAdditions = {
   typeDocs: undefined,
 };
 
-// todo: rename 'doc' to 'type', and add actual docs that are a sentence or two about the function at hand
+(() => {
+  const globalDeclarationsContents = readFile(path.join(getAyaRootDir(), 'aya.global.d.ts'));
 
-// todo: somehow automatically generate these docs
-const globalItemDocs: Partial<Record<keyof typeof globalAdditions, string>> = {
-  doForEach: '(filePath: string, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) => void',
-  doForEachDeep: '(filePath: string, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) => void',
-};
+  const typeDefRgx = /type (\w+) = (.+);/;
+  const typeDocs: Record<string, string> = {};
+  globalDeclarationsContents.match(new RegExp(typeDefRgx, 'g')).forEach(line => {
+    const [, name, def] = line.match(typeDefRgx);
+    typeDocs[name] = def;
+  });
 
-// todo: somehow automatically generate these docs
-const typeDocs = {
-  FileIteratorCallback: '(ent: DirentWithMetadata, folder: string) => void',
-  IGetEntsFilters: '{ entType?: EntityType; filter?: string|RegExp; ext?: string|RegExp; }',
-  IScanOptions: '{ dontLogScanning?: boolean; noMetadata?: boolean; }',
-  DirentWithMetadata: '{ ext: string; nameBase: string; path: string; mm?: IAudioMetadata; em?: exif.Tags; } & Dirent',
-  EntityType: "'file' | 'directory'",
-}
+  globalAdditions.typeDocs = typeDocs;
 
-const typeDocsTypes = Object.keys(typeDocs);
-const typeDocsTypesMatch = new RegExp(typeDocsTypes.map(escapeRegExp).join('|'))
+  const typeDocsTypes = Object.keys(typeDocs);
+  const typeDocsTypesMatch = new RegExp(typeDocsTypes.map(escapeRegExp).join('|'));
+  
+  const makeTypeDefFn = (decl: string) => {
+    const fn = () => console.log(highlight(decl, 'ts'));
+    fn._ = decl;
+    return fn;
+  }
+  const makeTypeDefFnX = (decl: string) => (iter = 100) => {
+    var d = decl;
+    while (typeDocsTypesMatch.test(d) && --iter >= 0)
+      d = typeDocsTypes.filter(t => d.includes(t)).reduce((str, t) => str.replace(t, typeDocs[t]), d);
+    return makeTypeDefFn(d)();
+  }
 
-globalAdditions.typeDocs = typeDocs;
+  // todo: maybe match multi-line jsdoc comments
+  const declRgx = /(?:\/\*\* (.+) \*\/[\n\r]+)? *function (\w+)(\(.+\):.+);/;
+  globalDeclarationsContents.match(new RegExp(declRgx, 'g')).forEach(line => {
+    const [, doc, fnName, decl] = line.match(declRgx);
+    // console.log('decl', line, fnName, decl)
+    const actualFunction = globalAdditions[fnName];
+    if (!actualFunction || 'type' in actualFunction) return;
 
-const makeDocFn = (doc: string) => {
-  const fn = () => console.log(highlight(doc, 'ts'));
-  fn._ = doc;
-  return fn;
-}
-const makeDocXFn = (doc: string) => (iter = 100) => {
-  var d = doc;
-  while (typeDocsTypesMatch.test(d) && --iter >= 0)
-    d = typeDocsTypes.filter(t => d.includes(t)).reduce((str, t) => str.replace(t, typeDocs[t]), d);
-  return makeDocFn(d)();
-}
-Object.entries(globalItemDocs).forEach(([key, doc]) => globalAdditions[key].doc = makeDocFn(doc));
-Object.entries(globalItemDocs).forEach(([key, doc]) => globalAdditions[key].docX = makeDocXFn(doc));
+    const tp = decl.replace(/\):/g, ') =>');
+
+    if (doc) actualFunction.doc = doc;
+    Object.defineProperty(actualFunction, 'type', {get: makeTypeDefFn(tp) });
+    actualFunction.typeS = tp;
+    actualFunction.typeX = makeTypeDefFnX(tp);
+  });
+})();
 
 type GlobalAdditions = typeof globalAdditions;
 
