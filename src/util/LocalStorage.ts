@@ -1,14 +1,13 @@
 import * as fs from 'fs';
 import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
-import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
 import * as Ajv from 'ajv';
-import * as moment from 'moment'; // todo: do I really need moment for this?
+import * as moment from 'moment'; // todo: do I really need moment for this? (no! At least use luxon)
 import { cloneDeep } from 'lodash';
+import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
+import { getAyaBuildDir } from './localUtils';
 
-export const ayaStorageDir = process.pkg
-  ? path.resolve(process.execPath, '../.ayaStorage')
-  : path.resolve(path.dirname(require.main.filename), './.ayaStorage');
+export const ayaStorageDir = path.join(getAyaBuildDir(), '.ayaStorage')
 
 class LocalStorage<T extends Record<string, any> = any> {
   protected filePath: string;
