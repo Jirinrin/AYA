@@ -17,7 +17,6 @@ import { setExifMetadata } from "./util/exif";
 import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
 import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
-import { listLanguages } from 'refractor';
 import { getTrackInfoFromMetadata, writeMp3Metadata } from './util/music';
 import { userStorage } from './util/LocalStorage';
 
@@ -172,7 +171,6 @@ const globalAdditions = {
   setConsoleIndent,
   withDeeperIndentation,
   highlightExp,
-  listlan: listLanguages,
 
   userStorage,
 

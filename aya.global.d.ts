@@ -50,8 +50,8 @@ declare global {
 
   // todo: write docs for a lot of these functions
 
-  function doForEach(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
-  function doForEachDeep(filePath: string, callback: (ent: DirentWithMetadata, folder: string) => void, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
+  function doForEach(filePath: string, callback: FileIteratorCallback, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
+  function doForEachDeep(filePath: string, callback: FileIteratorCallback, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
   
   function cd(toDir: string): void;
   function withCwd<T>(tempCwd: string, callback: () => T): T;
@@ -91,7 +91,6 @@ declare global {
   function setConsoleIndent(indents: number): void;
   function withDeeperIndentation<T>(callback: () => T): T;
   function highlightExp(strings: TemplateStringsArray, ...exps: (string | number)[]): string;
-  function listlan(): string[]; // list languages
 
   const userStorage: {
     get<T>(key: string|number): T | undefined;

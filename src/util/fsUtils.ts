@@ -6,7 +6,7 @@ import { clone } from 'lodash';
 import { config } from './LocalStorage';
 import { getExifMetadata } from './exif';
 import { getMusicFileMetadata, getTrackInfoFromMetadata } from './music';
-import { DirentWithData, DirentWithMetadata, EntityType, FileIteratorCallback } from '../types';
+import { DirentWithData, DirentWithMetadata, EntityType, FileData, FileIteratorCallback } from '../types';
 import { setConsoleIndent, setConsoleIndentRel } from './consoleExtension';
 import ENV from '../ENV';
 import { FILE_EXT_PATTERNS } from './generalUtils';
@@ -175,6 +175,7 @@ export function splitFileName(fileName: string, isDirectory?: boolean): [nameBas
   return [nameBase, ext];
 }
 
+// todo: move to generalUtils (so that generalUtils doesn't have to import fsUtils)
 export function cwdRel(absPath: string) {
   return path.relative(ENV.cwd, absPath);
 }
@@ -203,9 +204,9 @@ export function simpleCopy(containerFolder: string, fileName: string, newFolderP
   );
 }
 
-export function putFileDataOnEntity(ent: fs.Dirent, folder: string): DirentWithData {
+export function putFileDataOnEntity<D extends fs.Dirent>(ent: D, folder: string): D & FileData {
   const [nameBase, ext] = splitFileName(ent.name, ent.isDirectory());
-  const entWithData = clone(ent) as DirentWithData;
+  const entWithData = clone(ent) as D & FileData;
   entWithData.ext = ext.replace('.', '');
   entWithData.nameBase = nameBase;
   entWithData.path = path.join(folder, ent.name);
@@ -221,7 +222,7 @@ export async function putMetadataOnEntity(ent: DirentWithData): Promise<DirentWi
   return entWithMetadata;
 }
 
-export function pathToDirent(entPath: string): DirentWithData {
+export function pathToDirent(entPath: string): (DirentWithData & fs.Stats) {
   const ent = fs.statSync(entPath) as (fs.Stats & { name: string });
   ent.name = path.basename(entPath);
   return putFileDataOnEntity(ent, path.dirname(entPath));

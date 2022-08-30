@@ -112,7 +112,7 @@ const Base: RawModule = {
   'setTags': { run: async (s_file: string, tags: WriteTags) => global.setTags(s_file, tags) },
 
   'loadScript': {
-    help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from extraScriptsDir',
+    help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from config.extraScriptsDir',
     run: (s_file: string) => loadScript(s_file),
   },
   'scr': {help: 'Shorthand for .loadScript', run: (s_file: string) => loadScript(s_file)},
@@ -121,7 +121,7 @@ const Base: RawModule = {
     run: () => global.pasteClbJS(),
   },
   'pasteScriptTS': {
-    help: 'Paste some Javascript from your clipboard into the REPL context',
+    help: 'Paste some Typescript from your clipboard into the REPL context',
     run: () => global.pasteClbTS(),
   },
 
