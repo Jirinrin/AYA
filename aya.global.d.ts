@@ -39,19 +39,29 @@ declare global {
   function metadata(filePath: string): Promise<DirentWithMetadata>;
 
   // Functions to easily retrieve the entities in a directory.
-  function getEnts(filePath?: string, opts?: IGetEntsFilters): DirentWithData[];
-  function getFirstEnt(filePath?: string, opts?: IGetEntsFilters): DirentWithData|undefined;
-  function getEntsDeep(filePath?: string, opts?: IGetEntsFilters): DirentWithData[];
-  function getEntsWithMetadata(filePath?: string, opts?: IGetEntsFilters): Promise<DirentWithMetadata[]>;
-  function getEntsNames(filePath?: string, opts?: IGetEntsFilters): string[];
-  function getFirstEntName(filePath?: string, opts?: IGetEntsFilters): string|undefined;
+  /** Returns all entities within a given {@link dirPath}, constrained by {@link opts} */
+  function getEnts(dirPath?: string, opts?: IGetEntsFilters): DirentWithData[];
+  /** Returns the first ent (or undefined) within a given {@link dirPath}, constrained by {@link opts} */
+  function getFirstEnt(dirPath?: string, opts?: IGetEntsFilters): DirentWithData|undefined;
+  /** Returns all ents within a given {@link dirPath} recursively drilling down, constrained by {@link opts} */
+  function getEntsDeep(dirPath?: string, opts?: IGetEntsFilters): DirentWithData[];
+  /** Returns all ents within a given {@link dirPath} with their extra file metadata (asynchronously), constrained by {@link opts} */
+  function getEntsWithMetadata(dirPath?: string, opts?: IGetEntsFilters): Promise<DirentWithMetadata[]>;
+  /** Returns the names of all entities within a given {@link dirPath}, constrained by {@link opts} */
+  function getEntsNames(dirPath?: string, opts?: IGetEntsFilters): string[];
+  /** Returns the name of the first entity within a given {@link dirPath}, constrained by {@link opts} */
+  function getFirstEntName(dirPath?: string, opts?: IGetEntsFilters): string|undefined;
 
   // todo: write docs for a lot of these functions
 
-  function doForEach(filePath: string, callback: FileIteratorCallback, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
-  function doForEachDeep(filePath: string, callback: FileIteratorCallback, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
+  /** Run {@link callback} for each entry in {@link dirPath}, constrained by {@link opts} */
+  function doForEach(dirPath: string, callback: FileIteratorCallback, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
+  /** Run {@link callback} for each entry in {@link dirPath} recursively until the max recursion depth, constrained by {@param opts} */
+  function doForEachDeep(dirPath: string, callback: FileIteratorCallback, opts?: IGetEntsFilters & IScanOptions): Promise<void>;
   
+  /** Change the CWD to a new path */
   function cd(toDir: string): void;
+  /** Run a callback with a temporary different CWD */
   function withCwd<T>(tempCwd: string, callback: () => T): T;
 
   // Set exif metadata
@@ -60,10 +70,15 @@ declare global {
   function writeMp3Metadata(filePath: string, tags: Partial<ID3TrackInfo>, writeMode?: boolean): void;
   function readMp3Metadata(filePath: string): ID3Tags;
 
+  /** Read a given file, directly parsing it as JSON */
   function readJson<T = any>(filePath: string): T;
+  /** Read a given file, returning the contents as string */
   function readFile(filePath: string, encoding?: string): string;
+  /** Write an object to a given file, as a formatted JSON string */
   function writeJson(filePath: string, data: any, log?: boolean): void;
+  /** Write a string to a given file */
   function writeFile(filePath: string, data: any, opts?: { log?: boolean, encoding?: string }): void;
+  /** Shorthand to edit (read&write) the contents of a file using {@link editCallback} */
   function editFile(filePath: string, editCallback: (fileContents: string) => string): void;
   const createWriteStream: typeof fsCreateWriteStream;
 
@@ -73,21 +88,31 @@ declare global {
   const req: SuperAgentStatic;
   const path: PlatformPath;
   
-  // The manual version of resolving a relative/absolute path
+  /** The manual version of resolving a relative/absolute path */
   function resolvePath(relOrAbsPath: string): string;
+  /** Return a path as it would look relative to the CWD (useful for overseeable logging) */
   function cwdRel(path: string): string;
+  /** Replace characters illegal in your filesystem by ugly full-width unicode versions */
   function esc(str: string): string;
+  /** Replace characters illegal in your filesystem by ugly full-width unicode versions, at the last part of a given path */
   function escPath(str: string): string;
   
+  /** Copy a string value to your clipboard */
   function copyClb(str: string): void;
+  /** Copy an object to your clipboard as a formatted JSON string */
   function copyClbJSON(entity: any): void;
+  /** Returns whatever is on your clipboard as a string */
   function pasteClb(): string;
+  /** Runs whatever is on your clipboard, evaluating it as JS in the context of the REPL */
   function pasteClbJS(): void;
+  /** Returns whatever is on your clipboard, parsing it as JSON */
   function pasteClbJSON(): any;
+  /** Edits the string that is on your clipboard using {@param editCallback}, writing it back to the clipboard */
   function editClb(editCallback: (oldClb: string) => string): void;
   
   function setConsoleIndent(indents: number): void;
   function withDeeperIndentation<T>(callback: () => T): T;
+  /** Template string operator function which highlights all template args inserted (useful for logging) */
   function highlightExp(strings: TemplateStringsArray, ...exps: (string | number)[]): string;
 
   const userStorage: {
@@ -111,13 +136,21 @@ declare global {
   function r(strings: TemplateStringsArray, ...exps: (string|number)[]): string;
   
   interface Console {
+    /** Log to the aya.log file instead of the terminal -- verbose */
     llogv: Console['log'];
+    /** Log to the aya.log file instead of the terminal */
     llog: Console['log'];
+    /** Log to the aya.log file and to the terminal */
     llogl: Console['log'];
+    /** Log to the file p-log.json, which persists between aya sessions */
     plog: Console['log'];
+    /** Log in a fancy purple color */
     logPurple: Console['log'];
+    /** Log in a fancy pink color */
     logPink: Console['log'];
+    /** Log verbosely (i.e. object arguments are written out over multiple lines) */
     logv: Console['log'];
+    /** Log directly to process.stdout */
     logsl: Console['log'];
   }
   
