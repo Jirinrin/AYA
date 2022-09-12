@@ -20,6 +20,7 @@
     "type": "git",
     "url": "git+https://github.com/Jirinrin/ayayatsuri.git"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -30,7 +31,7 @@
   "dependencies": {
     "@types/json-bigint": "^1.0.0",
     "ajv": "^6.12.5",
-    "chalk": "^4.1.0",
+    "chalk": "^5.0.1",
     "clipboardy": "^2.3.0",
     "encoding-japanese": "^1.0.30",
     "exiftool-vendored": "^14.3.0",

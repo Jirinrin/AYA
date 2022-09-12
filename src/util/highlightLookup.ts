@@ -1,6 +1,6 @@
-import * as chalk from "chalk";
-
 // Based on https://github.com/dracula/prism
+
+import chalk, { ChalkInstance } from "chalk";
 
 // const originalColors = {
 //   '--foreground': '#F8F8F2',
@@ -15,7 +15,7 @@ import * as chalk from "chalk";
 //   not sure        '#e2777a',
 // }
 
-const defaultHighlights: [string[], chalk.Chalk][] = [
+const defaultHighlights: [string[], ChalkInstance][] = [
   [['script', 'prolog', 'punctuation', 'charset', 'interpolation', 'char-class', 'literal-property'], chalk], // --foreground
   [['comment', 'variable'], chalk.gray], // --comment
   [['url', 'built-in', 'builtin', 'class-name', 'maybe-class-name', 'console', 'charset-punctuation', 'property-access', 'property', 'char-class-punctuation'], chalk.cyan], // --cyan
@@ -38,8 +38,8 @@ const languageSpecificHighlights: Record<string, typeof defaultHighlights> = {
   ],
 };
 
-export type IHighlightLookup = Record<string, chalk.Chalk> & {_: chalk.Chalk};
-const toLookup = (h: typeof defaultHighlights): Record<string, chalk.Chalk> => Object.fromEntries( h.flatMap(([colors, ch]) => colors.map(c => [c, ch])) );
+export type IHighlightLookup = Record<string, ChalkInstance> & {_: ChalkInstance};
+const toLookup = (h: typeof defaultHighlights): Record<string, ChalkInstance> => Object.fromEntries( h.flatMap(([colors, ch]) => colors.map(c => [c, ch])) );
 
 export const defaultHighlightLookup: IHighlightLookup = {_: chalk, ...toLookup(defaultHighlights)};
 

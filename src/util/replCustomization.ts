@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk from "chalk";
 import { existsSync, readdirSync } from "fs-extra";
 import { clearScreenDown, Completer, CompleterResult, cursorTo, moveCursor } from "readline";
 import * as refractor from "refractor";
@@ -6,7 +6,7 @@ import { REPLServer } from "repl";
 
 import { r } from "..";
 import ENV from "../ENV";
-import { cmdInfo, getCommand } from "../modules";
+import { cmdInfo, getCommand } from "../modules/index";
 import { escapeRegex, matchString, parseArgs, splitArgsString } from "./generalUtils";
 import { defaultHighlightLookup, IHighlightLookup, languageSpecificHighlightLookup } from "./highlightLookup";
 import { jsKeywords } from "./input/javascriptKeywords";

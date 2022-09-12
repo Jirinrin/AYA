@@ -1,15 +1,15 @@
 import { JSONSchema7, JSONSchema7Definition, JSONSchema7TypeName } from "json-schema";
 import { detect } from 'encoding-japanese';
 import { ScriptTarget, transpileModule } from "typescript";
-import { CommandInfo } from "../modules";
+import { CommandInfo } from "../modules/index";
 import { DirentWithMetadata, IMetadataFilterOpts } from "../types";
 import minimist from "./minimistStringBody";
 import { highlight } from "./replCustomization";
 import { readFileSync, readJsonSync, writeFileSync, writeJsonSync } from "fs-extra";
-import * as chalk from "chalk";
 import { config } from "./LocalStorage";
 import ENV from "../ENV";
 import { cwdRel } from "./fsUtils";
+import chalk, { ChalkInstance } from "chalk";
 
 export enum ParamData {
   Any,
@@ -213,7 +213,7 @@ export function writeFile(filePath: string, data: any, opts: {log?: boolean, enc
     console.log(highlightExp`Successfully wrote data to ${cwdRel(filePath)}`);
 }
 
-function highlightExpsForCh(ch: chalk.Chalk, strings: TemplateStringsArray, ...exps: (string|number)[]) {
+function highlightExpsForCh(ch: ChalkInstance, strings: TemplateStringsArray, ...exps: (string|number)[]) {
   const highlightedExps = exps.map(e => ch(e));
   return strings.reduce((acc, s, i) => acc + s + (highlightedExps[i] ?? ''), '');
 }
@@ -223,7 +223,7 @@ type TemplateTagStringFunction = (strings: TemplateStringsArray, ...exps: (strin
 export const highlightExp: TemplateTagStringFunction = (strings, ...exps) =>
   highlightExpsForCh(chalk.blue, strings, ...exps);
 
-export const highlightExpsC = (ch: chalk.Chalk): TemplateTagStringFunction => (strings, ...exps) =>
+export const highlightExpsC = (ch: ChalkInstance): TemplateTagStringFunction => (strings, ...exps) =>
   highlightExpsForCh(ch, strings, ...exps);
 
 // todo: extra functions to mainly highlight the base path or mainly highlight the dir path

@@ -1,6 +1,6 @@
 import { ExifDate, ExifDateTime } from 'exiftool-vendored';
 import { IAudioMetadata, parseFile } from 'music-metadata';
-import NodeID3 = require('node-id3');
+import * as NodeID3 from 'node-id3';
 import { FileMetadata, ID3TrackInfo, MusicTrackInfo, UserDefinedID3Field, userDefinedID3Tags } from '../types';
 import { PartOfCollectionNumber } from '../types/declarations';
 import { cwdRel } from './fsUtils';

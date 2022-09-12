@@ -1,5 +1,5 @@
 import { IPicture } from "music-metadata";
-import NodeID3 = require("node-id3");
+import * as NodeID3 from 'node-id3';
 import { PartOfCollectionNumber } from "./declarations";
 
 const metadataFilters = [

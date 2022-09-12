@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import { JSONSchema7 } from 'json-schema';
 import * as path from 'path';
-import * as Ajv from 'ajv';
-import * as moment from 'moment'; // todo: do I really need moment for this? (no! At least use luxon)
+import Ajv from 'ajv';
+import moment from 'moment'; // todo: do I really need moment for this? (no! At least use luxon)
 import { cloneDeep } from 'lodash';
 import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
 import { getAyaBuildDir } from './localUtils';

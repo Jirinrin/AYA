@@ -1,9 +1,9 @@
 import * as repl from 'repl';
 import { createInterface } from 'readline';
-import minimist = require('minimist');
+import minimist from 'minimist';
 import { join as joinPath } from 'path';
 
-import Modules from './modules';
+import Modules from './modules/index';
 import { Module } from './types';
 import './Global';
 import { config, ayaStorageDir } from './util/LocalStorage';

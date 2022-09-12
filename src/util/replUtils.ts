@@ -7,7 +7,7 @@ import ENV from '../ENV';
 import { evalRawStrings, highlightExp, matchString, ParamData, parseStringAsRaw, transformTs } from './generalUtils';
 import { config, IConfig } from './LocalStorage';
 import { ActionFunctionEvall, OperationFunction } from '../types';
-import { CommandInfo } from '../modules';
+import { CommandInfo } from '../modules/index';
 import { setConsoleIndent } from './consoleExtension';
 
 export const globalEval = eval;

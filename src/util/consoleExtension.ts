@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk, { ChalkInstance } from "chalk";
 import { formatMsg, withFinally } from ".";
 import ENV from "../ENV";
 import {logger, Logger, PersistentLogger, pLogger } from "./LocalStorage";
@@ -36,7 +36,7 @@ export function getTrace() {
   return (err as Error).stack.trim().slice(1);
 }
 
-type ConsolePairing<K extends keyof Console = any> = [log: Console[K], ch: chalk.Chalk, verbose?: boolean];
+type ConsolePairing<K extends keyof Console = any> = [log: Console[K], ch: ChalkInstance, verbose?: boolean];
 const consolePairings: Partial<{[K in keyof Console]: ConsolePairing<K>}> = {
   log: [console.log, chalk.green],
   warn: [console.warn, chalk.yellow],
