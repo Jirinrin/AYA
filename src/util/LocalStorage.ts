@@ -160,6 +160,9 @@ class UserStorage extends LocalStorage {
     super('user-storage.json', {});
   }
 
+  public key: Record<string,string> =
+    Object.fromEntries(Object.keys(this.state).map(k => [k,k]));
+
   public get keys(): string[] {
     return Object.keys(this.state);
   }
