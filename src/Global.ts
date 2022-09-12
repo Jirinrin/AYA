@@ -151,6 +151,7 @@ const globalAdditions = {
 
   showColor: (hex: string, customStr?: string) => console.log(chalk.bgHex(hex).black(customStr ?? hex)),
 
+  ch: chalk,
   lo: lodash,
   req,
 

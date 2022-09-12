@@ -1,5 +1,6 @@
 // todo: somehow auto-generate this file
 
+import chalk from 'chalk';
 import { LoDashStatic } from 'lodash';
 import { SuperAgentStatic } from 'superagent';
 import JSONBigInt from 'json-bigint';
@@ -84,6 +85,7 @@ declare global {
 
   function showColor(hex: string, customStr?: string): void;
 
+  const ch: chalk.Chalk;
   const lo: LoDashStatic;
   const req: SuperAgentStatic;
   const path: PlatformPath;
