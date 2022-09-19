@@ -111,6 +111,7 @@ const defaultConfig = {
   alwaysStart: false,
   initScriptsDir: '',
   extraScriptsDir: '',
+  logInitLoadedScripts: false,
 };
 export const configSchema = recordToSchema(defaultConfig, {recursionDepth: 'integer'});
 export type IConfig = typeof defaultConfig;

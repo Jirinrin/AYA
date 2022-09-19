@@ -70,7 +70,7 @@ async function startRepl() {
 
   if (config.s.initScriptsDir) {
     // todo: somehow allow this to expose functions as 'commands'.
-    getEnts(config.s.initScriptsDir, { ext: /[jt]s/ }).forEach(ent => loadScript(ent.path));
+    getEnts(config.s.initScriptsDir, { ext: /[jt]s/ }).forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts));
   }
 
   if (initBody) {
