@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { LoDashStatic } from 'lodash';
 import { SuperAgentStatic } from 'superagent';
 import JSONBigInt from 'json-bigint';
-import { Dirent, createWriteStream as fsCreateWriteStream } from 'fs';
+import { Dirent, createWriteStream as fsCreateWriteStream, Stats } from 'fs';
 import { PlatformPath } from 'path';
 import { IAudioMetadata, IPicture } from 'music-metadata';
 import { Tags as ExifTags } from 'exiftool-vendored';
@@ -42,6 +42,8 @@ declare global {
   // Functions to easily retrieve the entities in a directory.
   /** Returns all entities within a given {@link dirPath}, constrained by {@link opts} */
   function getEnts(dirPath?: string, opts?: IGetEntsFilters): DirentWithData[];
+  /** Returns all entities with extra file stats within a given {@link dirPath}, constrained by {@link opts} */
+  function getEntsWithStats(filePath?: string, opts?: IGetEntsFilters): (DirentWithData & Stats)[];
   /** Returns the first ent (or undefined) within a given {@link dirPath}, constrained by {@link opts} */
   function getFirstEnt(dirPath?: string, opts?: IGetEntsFilters): DirentWithData|undefined;
   /** Returns all ents within a given {@link dirPath} recursively drilling down, constrained by {@link opts} */

@@ -11,7 +11,7 @@ import * as trash from 'trash';
 import NodeID3 = require('node-id3');
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { changeDirectory, loadCoad, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath1Folder, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, withFinally } from "./util";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, withFinally, getEntsWithStats } from "./util";
 import { DirentWithData, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
@@ -108,6 +108,7 @@ const globalAdditions = {
     return putMetadataOnEntity(pathToDirent(filePath)).catch(err => console.error('Error with getting metadata:', err));
   }),
   getEnts: wrapResolvePath1Folder(getEnts),
+  getEntsWithStats: wrapResolvePath1Folder(getEntsWithStats),
   getFirstEnt: wrapResolvePath1Folder((filePath): DirentWithData|undefined => getEnts(filePath)[0]),
   getEntsDeep: wrapResolvePath1Folder(getEntsDeep),
   getEntsWithMetadata: wrapResolvePath1Folder(getEntsWithMetadata),

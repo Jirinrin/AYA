@@ -116,6 +116,12 @@ export function getEnts(folder: string, opts: IGetEntsFilters = {}): DirentWithD
     .filter(ent => checkEntFilters(ent, opts));
 }
 
+export function getEntsWithStats(folder: string, opts: IGetEntsFilters = {}): (DirentWithData & fs.Stats)[] {
+  return fs.readdirSync(folder)
+    .map(p => pathToDirent(path.join(folder, p)))
+    .filter(ent => checkEntFilters(ent, opts));
+}
+
 // todo: maybe add max depth that's passed
 export function getEntsDeep(folder: string, opts: IGetEntsFilters = {}): DirentWithData[] {
   const allEnts = getEnts(folder);
