@@ -119,10 +119,23 @@ export function setConfigItem<K extends keyof IConfig>(key: K, ss_val: IConfig[K
     console.info(`Successfully set config item "${key}" to ${ss_val}`);
 }
 
-export function loadScript(s_file: string) {
+export function loadScript(s_file: string, log = false) {
+  if (log)
+    console.log('Loading script:', s_file);
   const filePath = ENV.extraScriptsDirItems.includes(s_file)
     ? path.join(config.s.extraScriptsDir, s_file)
     : resolvePath(s_file);
   const contents = fs.readFileSync(filePath).toString();
-  return globalEval(filePath.endsWith('.ts') ? transformTs(contents) : contents);
+  return loadCoad(contents, log);
+}
+
+export function loadCoad(code: string, log = false) {
+  const globalKeysBeforeLoad = new Set(log ? Object.keys(global) : []);
+  try {
+    return globalEval(transformTs(code));
+  } finally {
+    if (!log) return;
+    console.log('Globals added:', Object.keys(global).filter(k => !globalKeysBeforeLoad.has(k)));
+    // todo: somehow also find which keys were overwritten / which were actually changed
+  }
 }

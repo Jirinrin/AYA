@@ -10,8 +10,8 @@ import * as req from 'superagent';
 import * as trash from 'trash';
 import NodeID3 = require('node-id3');
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
-import { changeDirectory, globalEval, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath1Folder, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, transformTs, withFinally } from "./util";
+import { changeDirectory, loadCoad, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath1Folder, wrapResolvePath2 } from "./util/replUtils";
+import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, withFinally } from "./util";
 import { DirentWithData, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
@@ -164,8 +164,7 @@ const globalAdditions = {
   copyClbJSON: (entity: any) => writeToClipboard(JSON.stringify(entity)),
 
   pasteClb: readFromClipboard,
-  pasteClbJS: () => globalEval(readFromClipboard()),
-  pasteClbTS: () => globalEval(transformTs(readFromClipboard())),
+  pasteScript: () => loadCoad(readFromClipboard(), true),
   pasteClbJSON: () => JSON.parse(readFromClipboard()),
   editClb: (editCallback: (oldClb: string) => string) =>
     writeToClipboard(editCallback(readFromClipboard())),
@@ -184,7 +183,7 @@ const globalAdditions = {
     return answer.trim();
   },
 
-  loadScript,
+  loadScript: (file: string, logAdded = false) => loadScript(file, logAdded),
 
   typeDocs: undefined,
 };

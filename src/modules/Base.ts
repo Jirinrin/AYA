@@ -1,13 +1,12 @@
 import { readdirSync, readFileSync } from "fs";
-import * as path from 'path';
 import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
-import { changeDirectory, getCommandHelp, globalEval, loadScript, resolvePath, setConfigItem } from "../util/replUtils";
+import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem } from "../util/replUtils";
 import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
-import { checkFilter, IScanOptions, scanOpt, transformTs, verbose } from "../util";
+import { checkFilter, IScanOptions, scanOpt, verbose } from "../util";
 import { WriteTags } from "exiftool-vendored";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
@@ -113,16 +112,12 @@ const Base: RawModule = {
 
   'loadScript': {
     help: 'Load a script from the path {$1} you specify into the REPL context (silent version of .load), or directly from config.extraScriptsDir',
-    run: (s_file: string) => loadScript(s_file),
+    run: (s_file: string) => global.loadScript(s_file, true),
   },
-  'scr': {help: 'Shorthand for .loadScript', run: (s_file: string) => loadScript(s_file)},
+  'scr': {help: 'Shorthand for .loadScript', run: (s_file: string) => global.loadScript(s_file, true)},
   'pasteScript': {
     help: 'Paste some Javascript from your clipboard into the REPL context',
-    run: () => global.pasteClbJS(),
-  },
-  'pasteScriptTS': {
-    help: 'Paste some Typescript from your clipboard into the REPL context',
-    run: () => global.pasteClbTS(),
+    run: () => global.pasteScript(),
   },
 
   'ayaStorageDir': {

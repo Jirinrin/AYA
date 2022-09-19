@@ -105,8 +105,8 @@ declare global {
   function copyClbJSON(entity: any): void;
   /** Returns whatever is on your clipboard as a string */
   function pasteClb(): string;
-  /** Runs whatever is on your clipboard, evaluating it as JS in the context of the REPL */
-  function pasteClbJS(): void;
+  /** Runs whatever is on your clipboard, evaluating it as JS (Typescript code also gets accepted) in the context of the REPL */
+  function pasteScript(): void;
   /** Returns whatever is on your clipboard, parsing it as JSON */
   function pasteClbJSON(): any;
   /** Edits the string that is on your clipboard using {@param editCallback}, writing it back to the clipboard */
