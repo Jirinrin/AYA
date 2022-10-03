@@ -135,7 +135,9 @@ export function loadCoad(code: string, log = false) {
     return globalEval(transformTs(code));
   } finally {
     if (!log) return;
-    console.log('Globals added:', Object.keys(global).filter(k => !globalKeysBeforeLoad.has(k)));
+    const globalsAdded = Object.keys(global).filter(k => !globalKeysBeforeLoad.has(k))
+    if (globalsAdded.length)
+      console.log('Globals added:', globalsAdded);
     // todo: somehow also find which keys were overwritten / which were actually changed
   }
 }
