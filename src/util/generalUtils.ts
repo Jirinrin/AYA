@@ -190,6 +190,7 @@ export function writeJson(filePath: string, data: any, log = true): void {
 export function readFile(filePath: string, encoding = 'utf8'): string {
   if (encoding === 'auto') {
     const det = detect(readFileSync(filePath));
+    
     switch (det) {
       case 'SJIS':
         // return convert(bf, {to: 'UTF8', from: 'SJIS', type: 'string'});
@@ -197,6 +198,7 @@ export function readFile(filePath: string, encoding = 'utf8'): string {
       case 'UNICODE':
         encoding = 'latin1'; break;
       case false:
+        console.error('Failed to auto-detect encoding:', filePath)
         break;
       default:
         encoding = det.toLowerCase();
