@@ -1,7 +1,7 @@
 import { ExifDate, ExifDateTime } from 'exiftool-vendored';
 import { IAudioMetadata, parseFile } from 'music-metadata';
 import NodeID3 = require('node-id3');
-import { FileMetadata, ID3TrackInfo, MusicTrackInfo, UserDefinedID3Field, userDefinedID3Tags } from '../types';
+import { DirentWithMetadata, ID3TrackInfo, MusicTrackInfo, UserDefinedID3Field, userDefinedID3Tags } from '../types';
 import { PartOfCollectionNumber } from '../types/declarations';
 import { cwdRel } from './fsUtils';
 import { highlightExp } from './generalUtils';
@@ -17,7 +17,7 @@ function parseCollectionNumber(num: PartOfCollectionNumber|undefined): [] | [no:
   return of !== undefined ? [parseInt(no), parseInt(of)] : [parseInt(no)];
 }
 
-export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
+export function getTrackInfoFromMetadata(e: DirentWithMetadata): MusicTrackInfo {
   if (!e.em && !e.mm)
     throw new Error('Must turn on either exifMetadata or musicMetadata');
 
@@ -26,7 +26,7 @@ export function getTrackInfoFromMetadata(e: FileMetadata): MusicTrackInfo {
 
   const title = em?.Title ?? mm?.title;
   if (!title)
-    throw new Error('Track metadata does not even have a title');
+    throw new Error(highlightExp`Track metadata does not even have a title (${cwdRel(e.path)})`);
 
   let year = em?.Year ?? em?.Date ?? em?.DateTime ?? em?.DateTimeOriginal ?? mm?.year ?? mm?.date ?? mm?.originalyear ?? mm?.originaldate;
   if (year instanceof ExifDate || year instanceof ExifDateTime)
