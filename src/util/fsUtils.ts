@@ -225,7 +225,8 @@ export async function putMetadataOnEntity(ent: DirentWithData): Promise<DirentWi
   if (config.s.musicMetadata && !ENV.noMetadata) entWithMetadata.mm = await getMusicFileMetadata(ent.path);
   if (config.s.exifMetadata  && !ENV.noMetadata) entWithMetadata.em = await getExifMetadata(ent.path);
   if ((entWithMetadata.em || entWithMetadata.mm) && ent.ext.match(FILE_EXT_PATTERNS.music)) entWithMetadata.trackInfo = getTrackInfoFromMetadata(entWithMetadata);
-  return entWithMetadata;
+  const stats = fs.statSync(ent.path);
+  return Object.assign(entWithMetadata, stats)
 }
 
 export function pathToDirent(entPath: string): (DirentWithData & fs.Stats) {

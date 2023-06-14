@@ -163,7 +163,7 @@ declare global {
   type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
   type Dirent = { isFile(): boolean; isDirectory(): boolean; name: string; }
   type DirentWithData = { ext: string; nameBase: string; path: string; dirPath: string } & Dirent;
-  type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; trackInfo?: MusicTrackInfo } & DirentWithData;
+  type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; trackInfo?: MusicTrackInfo } & Stats & DirentWithData;
   type EntityType = 'file' | 'directory';
   type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; };
   type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; };
