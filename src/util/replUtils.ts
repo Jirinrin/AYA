@@ -125,6 +125,10 @@ export function loadScript(s_file: string, log = false) {
   const filePath = ENV.extraScriptsDirItems.includes(s_file)
     ? path.join(config.s.extraScriptsDir, s_file)
     : resolvePath(s_file);
+  if (!fs.existsSync(filePath)) {
+    console.debug('Script not loaded (file does not exist):', filePath);
+    return;
+  }
   const contents = fs.readFileSync(filePath).toString();
   return loadCoad(contents, log);
 }

@@ -124,6 +124,16 @@ interface {
 }
 ```
 
+## Portable aya setup
+It's desireable to be able to give someone who doesn't have AYA installed a portable exe to run aya and init it with a couple scripts you supply. This is how it's done:
+- Grab an aya binary from the releases or build it through `yarn compile` and grab it from the generated `bin` folder
+- Package a folder like this:
+  - `aya.exe` (or other binary)
+  - Possibly one or more shell/batch scripts that invoke e.g. `aya myUserScript()`
+  - `_aya/` folder
+    - All JS/TS scripts in this will be auto-loaded at init and exposed as 'extraScriptsDir' to load
+    - Optionally `config.json` to init AYA with a given config
+    - Optionally `userscripts.json` to init AYA with a selection of userscripts
 
 ## TODO
 - go through todos in code

@@ -5,15 +5,15 @@ import * as Ajv from 'ajv';
 import * as moment from 'moment'; // todo: do I really need moment for this? (no! At least use luxon)
 import { cloneDeep } from 'lodash';
 import { getHashCode, highlightExp, readJson, recordToSchema, writeJson } from './generalUtils';
-import { getAyaBuildDir } from './localUtils';
-
-export const ayaStorageDir = path.join(getAyaBuildDir(), '.ayaStorage')
+import { ayaStorageDir } from './localUtils';
 
 class LocalStorage<T extends Record<string, any> = any> {
   protected filePath: string;
   protected state: T;
 
   public get s() { return this.state };
+
+  protected dontWrite = false;
 
   constructor(fileName: string, initState: T, reset = false) {
     if (!fs.existsSync(ayaStorageDir))
@@ -40,7 +40,8 @@ class LocalStorage<T extends Record<string, any> = any> {
   }
 
   protected writeState() {
-    writeJson(this.filePath, this.state, false);
+    if (!this.dontWrite)
+      writeJson(this.filePath, this.state, false);
   }
 
   public get<K extends keyof T>(key: K): T[K] {
@@ -55,6 +56,16 @@ class LocalStorage<T extends Record<string, any> = any> {
     this.state[key] = cloneDeep(val);
     this.writeState();
     return true;
+  }
+
+  public neverWriteAgain() {
+    this.dontWrite = true;
+  }
+
+  public useLocalFile(filePath: string) {
+    this.neverWriteAgain();
+    this.filePath = filePath;
+    this.readState();
   }
 }
 

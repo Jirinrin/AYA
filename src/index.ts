@@ -1,20 +1,20 @@
 import * as repl from 'repl';
 import { createInterface } from 'readline';
 import minimist = require('minimist');
-import { join as joinPath } from 'path';
+import { join, join as joinPath } from 'path';
 
 import Modules from './modules';
 import { Module } from './types';
 import './Global';
-import { config, ayaStorageDir } from './util/LocalStorage';
+import { config, userScripts } from './util/LocalStorage';
 import { changeDirectory, loadScript } from './util/replUtils';
 import { completer, setupReplCustomization } from './util/replCustomization';
 import { setConsole } from './util/consoleExtension';
 import { runScript } from './modules/Base';
-import { readFileSync } from 'fs-extra';
 import { evalRawStrings, getEnts } from './util';
 import { REPLEval } from 'repl';
 import ENV from './ENV';
+import { ayaStorageDir } from './util/localUtils';
 
 setConsole();
 
@@ -37,6 +37,14 @@ const rawInitArgs = process.argv.slice(2);
 const initOpts: InitOpts & minimist.ParsedArgs = minimist(rawInitArgs, {alias: initOptsAliasReverse, boolean: initOptBools as any, string: initOptStrings as any}) as InitOpts & minimist.ParsedArgs;
 const initBody = initOpts._.join(' ');
 
+function preStart() {
+  if (global.exists(join( '_aya', 'config.json'))) {
+    config.useLocalFile(join( '_aya', 'config.json'));
+  }
+  if (global.exists(join( '_aya', 'userscripts.json'))) {
+    userScripts.useLocalFile(join( '_aya', 'userscripts.json'));
+  }
+}
 
 async function startRepl() {
   r = repl.start({
@@ -71,6 +79,16 @@ async function startRepl() {
   if (config.s.initScriptsDir) {
     // todo: somehow allow this to expose functions as 'commands'.
     getEnts(config.s.initScriptsDir, { ext: /[jt]s/ }).forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts));
+  }
+  
+  if (global.exists('_aya')) {
+    config.neverWriteAgain()
+    const extraScriptsDir = global.resolvePath('_aya')
+    const extraScrpts = getEnts(extraScriptsDir, { ext: /[jt]s/ })
+    extraScrpts.forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts))
+
+    config.set('extraScriptsDir', extraScriptsDir)
+    ENV.extraScriptsDirItems = extraScrpts.map(e => e.name)
   }
 
   if (initBody) {
@@ -112,6 +130,7 @@ function setFolderRecursive(repeatTimes: number, rootResolve?: () => void): Prom
     console.log('Available options:\n' + initOptsAll.map(k => `--${k}` + (initOptsAlias[k] ? ` (-${initOptsAlias[k]})` : ``)).join('\n'));
     process.exit();
   }
+  preStart();
   if (rawInitArgs[0] || config.s.alwaysStart)
     changeDirectory(initOpts.dir ?? process.cwd());
   else  

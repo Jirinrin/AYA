@@ -3,11 +3,12 @@ import { r } from "..";
 import ENV from "../ENV";
 import { FileIteratorCallback, IMetadataFilterOpts, metadataFilterOpt, RawModule } from "../types";
 import { changeDirectory, getCommandHelp, globalEval, resolvePath, setConfigItem } from "../util/replUtils";
-import { ayaStorageDir, config, IConfig, userScripts } from "../util/LocalStorage";
+import { config, IConfig, userScripts } from "../util/LocalStorage";
 import { highlightLine } from "../util/replCustomization";
 import { getCommand } from ".";
 import { checkFilter, IScanOptions, scanOpt, verbose } from "../util";
 import { WriteTags } from "exiftool-vendored";
+import { ayaStorageDir } from "../util/localUtils";
 
 const withCheckUserScriptKey = (fn: (key: string) => any) => (key: string) => {
   if (!userScripts.s[key])

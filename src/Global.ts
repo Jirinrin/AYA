@@ -19,7 +19,7 @@ import { escapeRegExp } from 'lodash';
 import { highlight } from './util/replCustomization';
 import { getTrackInfoFromMetadata, writeMp3Metadata } from './util/music';
 import { userStorage } from './util/LocalStorage';
-import { getAyaRootDir } from './util/localUtils';
+import { getAyaExecDir } from './util/localUtils';
 
 export {};
 
@@ -190,7 +190,11 @@ const globalAdditions = {
 };
 
 (() => {
-  const globalDeclarationsContents = readFile(path.join(getAyaRootDir(), 'aya.global.d.ts'));
+  const declPath = path.join(getAyaExecDir(), 'aya.global.d.ts')
+  if (!fs.existsSync(declPath))
+    return
+
+  const globalDeclarationsContents = readFile(declPath);
 
   const typeDefRgx = /type (\w+) = (.+);/;
   const typeDocs: Record<string, string> = {};
