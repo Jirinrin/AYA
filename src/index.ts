@@ -89,10 +89,9 @@ async function startRepl() {
     config.neverWriteAgain()
     const extraScriptsDir = global.resolvePath('_aya')
     const extraScrpts = getEnts(extraScriptsDir, { ext: /[jt]s/ })
-    extraScrpts.forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts))
-
     config.set('extraScriptsDir', extraScriptsDir)
     ENV.extraScriptsDirItems = extraScrpts.map(e => e.name)
+    extraScrpts.forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts))
   }
 
   if (initBody) {
