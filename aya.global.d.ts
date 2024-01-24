@@ -91,6 +91,7 @@ declare global {
   const lo: LoDashStatic;
   const req: SuperAgentStatic;
   const path: PlatformPath;
+  const fs: FileSystem;
   
   /** The manual version of resolving a relative/absolute path */
   function resolvePath(relOrAbsPath: string): string;
@@ -159,13 +160,13 @@ declare global {
   }
   
   type FileIteratorCallback = (ent: DirentWithMetadata, folder: string) => void;
-  type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; };
-  type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; };
+  type IGetEntsFilters = { entType?: EntityType; filter?: string | RegExp; ext?: string | RegExp; progressUpdates?: boolean; };
+  type IScanOptions = { dontLogScanning?: boolean; noMetadata?: boolean; scanExcludeFilter?: string|RegExp; };
   type Dirent = { isFile(): boolean; isDirectory(): boolean; name: string; }
   type DirentWithData = { ext: string; nameBase: string; path: string; dirPath: string } & Dirent;
   type DirentWithMetadata = { mm?: IAudioMetadata; em?: ExifTags; trackInfo?: MusicTrackInfo } & Stats & DirentWithData;
   type EntityType = 'file' | 'directory';
-  type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, extraScriptsDirItems: string[]; };
+  type ENV = { cwd: string, currentDirItems: string[], dontLogScanning: boolean, noMetadata: boolean, scanExcludeFilter: RegExp, progressUpdates: boolean, extraScriptsDirItems: string[]; };
   type ID3TrackInfo = ID3Tags & { [K in 'unsyncedLyrics'|'syncedLyrics']?: string; };
   
   interface MusicTrackInfo {

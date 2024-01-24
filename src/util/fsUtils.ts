@@ -32,6 +32,7 @@ export interface IScanOptions {
   dontLogScanning?: boolean;
   noMetadata?: boolean;
   scanExcludeFilter?: string|RegExp;
+  progressUpdates?: boolean;
 }
 export const scanOpt = '--dontLogScanning --noMetadata(-m) --scanExcludeFilter=<>|/<nameRegex>/';
 
@@ -39,6 +40,7 @@ export const scanOpt = '--dontLogScanning --noMetadata(-m) --scanExcludeFilter=<
 export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promise<void>) {
   if (opts.dontLogScanning)   ENV.dontLogScanning = true;
   if (opts.noMetadata)        ENV.noMetadata = true;
+  if (opts.progressUpdates)   ENV.progressUpdates = true;
   if (opts.scanExcludeFilter) ENV.scanExcludeFilter = new RegExp(opts.scanExcludeFilter);
   try {
     return await cb();
@@ -46,6 +48,7 @@ export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promi
     ENV.dontLogScanning = false;
     ENV.noMetadata = false;
     ENV.scanExcludeFilter = undefined;
+    if (opts.progressUpdates)   ENV.progressUpdates = false;
   }
 }
 
@@ -57,7 +60,11 @@ export async function doForEach(folder: string, callback: FileIteratorCallback):
       throw new Error('Callback should be a function');
     const mEnts = await getEntsWithMetadata(folder);
 
+    let i = 0;
     for (const ent of mEnts) {
+      if (ENV.progressUpdates)
+        console.info(`Progress: ${++i}/${mEnts.length} (${Math.round(i/mEnts.length*100)}%)`);
+
       try {
         await callback(ent, folder);
       } catch (err) {
@@ -136,7 +143,7 @@ export function getEntsDeep(folder: string, opts: IGetEntsFilters = {}): DirentW
 export async function getEntsWithMetadata(folder: string, opts: IGetEntsFilters = {}): Promise<DirentWithMetadata[]> {
   const ents = getEnts(folder, opts);
   return await Promise.all(
-    ents?.map(putMetadataOnEntity) ?? [],
+    ents?.map(e => putMetadataOnEntity(e)) ?? [],
   );
 }
 
@@ -222,9 +229,12 @@ export function putFileDataOnEntity<D extends fs.Dirent>(ent: D, folder: string)
 
 export async function putMetadataOnEntity(ent: DirentWithData): Promise<DirentWithMetadata> {
   const entWithMetadata = clone(ent) as DirentWithMetadata;
-  if (config.s.musicMetadata && !ENV.noMetadata) entWithMetadata.mm = await getMusicFileMetadata(ent.path);
-  if (config.s.exifMetadata  && !ENV.noMetadata) entWithMetadata.em = await getExifMetadata(ent.path);
-  if ((entWithMetadata.em || entWithMetadata.mm) && ent.ext.match(FILE_EXT_PATTERNS.music)) entWithMetadata.trackInfo = getTrackInfoFromMetadata(entWithMetadata);
+  if (config.s.musicMetadata && !ENV.noMetadata) 
+    entWithMetadata.mm = await getMusicFileMetadata(ent.path);
+  if (config.s.exifMetadata && !ENV.noMetadata)
+    entWithMetadata.em = await getExifMetadata(ent.path);
+  if ((entWithMetadata.em || entWithMetadata.mm) && ent.ext.match(FILE_EXT_PATTERNS.music))
+    entWithMetadata.trackInfo = getTrackInfoFromMetadata(entWithMetadata);
   const stats = fs.statSync(ent.path);
   return Object.assign(entWithMetadata, stats)
 }

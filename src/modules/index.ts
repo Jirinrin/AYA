@@ -92,7 +92,7 @@ function makeOperation(op: RawOperation, cmdName: string): Operation {
 
       return wrapScanOptions(
         // If the passed args happen to have these options, they're simply included without asking more
-        {noMetadata: opts.noMetadata || (isShd && op.noMetadata), dontLogScanning: opts.dontLogScanning, scanExcludeFilter: opts.scanExcludeFilter},
+        {noMetadata: opts.noMetadata || (isShd && op.noMetadata), dontLogScanning: opts.dontLogScanning, scanExcludeFilter: opts.scanExcludeFilter, progressUpdates: opts.progressUpdates},
         () => action(rawArgs, opts)
       );
     },

@@ -5,5 +5,6 @@ export default {
   dontLogScanning: false,
   noMetadata: false,
   scanExcludeFilter: undefined as RegExp,
+  progressUpdates: false,
   extraScriptsDirItems: [] as string[],
 };
