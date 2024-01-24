@@ -11,7 +11,7 @@ function parseCollectionNumber(num: PartOfCollectionNumber|undefined): [] | [no:
     return [];
   if (typeof num === 'number')
     return [num];
-  const [, no, of] = num.match(/(\d+)/) ?? [];
+  const [, no, of] = num.match(/(\d+)(?:\/(\d+))?/) ?? [];
   if (no === undefined)
     return [];
   return of !== undefined ? [parseInt(no), parseInt(of)] : [parseInt(no)];
