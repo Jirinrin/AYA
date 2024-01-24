@@ -25,7 +25,7 @@ const rl = createInterface({
 export let r: repl.REPLServer;
 
 const initOptBools = ['start', 'continueAfterCmd', 'help'] as const;
-const initOptStrings = ['dir'] as const;
+const initOptStrings = ['dir','loglevel'] as const;
 const initOptsAll = [...initOptBools, ...initOptStrings];
 type InitOptBools = typeof initOptBools[number];
 type InitOptStrings = typeof initOptStrings[number];
@@ -53,6 +53,10 @@ async function startRepl() {
     completer,
     useColors: true,
   });
+
+  if (['info'].includes(initOpts.loglevel)) {
+    console.debug = () => {};
+  }
 
   r.setupHistory(joinPath(ayaStorageDir, 'aya-history.txt'), (err => err && console.warn('Error loading history:', err)))
 
@@ -85,10 +89,9 @@ async function startRepl() {
     config.neverWriteAgain()
     const extraScriptsDir = global.resolvePath('_aya')
     const extraScrpts = getEnts(extraScriptsDir, { ext: /[jt]s/ })
-    extraScrpts.forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts))
-
     config.set('extraScriptsDir', extraScriptsDir)
     ENV.extraScriptsDirItems = extraScrpts.map(e => e.name)
+    extraScrpts.forEach(ent => loadScript(ent.path, config.s.logInitLoadedScripts))
   }
 
   if (initBody) {
