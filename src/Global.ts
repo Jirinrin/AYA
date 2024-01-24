@@ -11,7 +11,7 @@ import * as trash from 'trash';
 import NodeID3 = require('node-id3');
 import { readSync as readFromClipboard, writeSync as writeToClipboard } from 'clipboardy';
 import { changeDirectory, loadCoad, loadScript, resolvePath, wrapResolvePath1, wrapResolvePath1Folder, wrapResolvePath2 } from "./util/replUtils";
-import { doForEach, doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, withFinally, getEntsWithStats } from "./util";
+import { doForEachDeep, getEnts, getEntsWithMetadata, highlightExp, highlightExpsC, esc, pathToDirent, putMetadataOnEntity, readJson, simpleCopy, simpleMove, simpleRename, verbose, writeFile, writeJson, readFile, escPath, cwdRel, checkEntFilters, IGetEntsFilters, IScanOptions, wrapScanOptions, getEntsDeep, splitFileName, mkdirSafe, withFinally, getEntsWithStats, doForEacho } from "./util";
 import { DirentWithData, FileIteratorCallback } from "./types";
 import { setExifMetadata } from "./util/exif";
 import { indent, setConsoleIndent, withDeeperIndentation } from './util/consoleExtension';
@@ -115,9 +115,12 @@ const globalAdditions = {
   getEntsNames: wrapResolvePath1Folder((filePath, opts) => getEnts(filePath, opts).map(e => e.name)),
   getFirstEntName: wrapResolvePath1Folder((filePath, opts): string|undefined => getEnts(filePath, opts).map(e => e.name)[0]),
 
+  doForEacho: wrapResolvePath1(async (filePath, opts: IGetEntsFilters & IScanOptions = {}, callback: FileIteratorCallback) =>
+    wrapScanOptions(opts, () => doForEacho(filePath, opts, callback))
+  ),
   doForEach: wrapResolvePath1(async (filePath, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) =>
     wrapScanOptions(opts, () => 
-      doForEach(filePath, (e, f) => checkEntFilters(e, opts) ? callback(e, f) : null)
+      doForEacho(filePath, opts, (e, f) => checkEntFilters(e, opts) ? callback(e, f) : null)
     )
   ),
   doForEachDeep: wrapResolvePath1(async (filePath, callback: FileIteratorCallback, opts: IGetEntsFilters & IScanOptions = {}) =>

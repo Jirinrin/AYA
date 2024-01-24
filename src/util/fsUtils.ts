@@ -34,7 +34,7 @@ export interface IScanOptions {
   scanExcludeFilter?: string|RegExp;
   progressUpdates?: boolean;
 }
-export const scanOpt = '--dontLogScanning --noMetadata(-m) --scanExcludeFilter=<>|/<nameRegex>/';
+export const scanOpt = '--dontLogScanning --noMetadata(-m) --progressUpdates --scanExcludeFilter=<>|/<nameRegex>/';
 
 // These options are really hard to pass through the (recursive) chain so we just bodge it like this.
 export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promise<void>) {
@@ -48,59 +48,45 @@ export async function wrapScanOptions(opts: IScanOptions, cb: () => void | Promi
     ENV.dontLogScanning = false;
     ENV.noMetadata = false;
     ENV.scanExcludeFilter = undefined;
-    if (opts.progressUpdates)   ENV.progressUpdates = false;
+    ENV.progressUpdates = false;
   }
 }
 
-export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
-  if (!ENV.dontLogScanning) console.info(`Scanning ${folder}...`);
-  const indents = setConsoleIndentRel(1);
+async function _doForEach(rootPath: string, ents: DirentWithData[], callback: FileIteratorCallback) {
+  let i = 0;
   try {
-    if (typeof callback !== 'function')
-      throw new Error('Callback should be a function');
-    const mEnts = await getEntsWithMetadata(folder);
-
-    let i = 0;
-    for (const ent of mEnts) {
+    for (const ent of ents) {
       if (ENV.progressUpdates)
-        console.info(`Progress: ${++i}/${mEnts.length} (${Math.round(i/mEnts.length*100)}%)`);
-
-      try {
-        await callback(ent, folder);
-      } catch (err) {
-        console.error('Error during callback:', err);
-      }
+        console.info(`Progress: ${++i}/${ents.length} (${Math.round(i/ents.length*100)}%)`);
+      const mEnt = await putMetadataOnEntity(ent);
+      const levelsBelowRoot = path.relative(rootPath, ent.path).split(path.sep).length - 1;
+      setConsoleIndent(levelsBelowRoot);
+      await callback(mEnt, rootPath);
     }
-
   } catch (err) {
     console.error('An error occurred:', err);
   } finally {
-    setConsoleIndent(indents-1);
-    if (!ENV.dontLogScanning) console.info('Done!');
+    setConsoleIndent(0);
   }
 }
 
-export async function doForEachDeep(
-  folder: string, 
-  callback: FileIteratorCallback,
-  invDepth: number = config.s.recursionDepth,
-): Promise<void> {
-  await doForEach(folder, async (ent, deepFolder) => {
-    await callback(ent, deepFolder);
-    if (invDepth <= 0) {
-      return;
-    }
-    if (ent.isDirectory() && !ENV.scanExcludeFilter?.test(ent.name)) {
-      return await doForEachDeep(
-        path.join(deepFolder, ent.name),
-        callback,
-        invDepth - 1,
-      );
-    }
-  });
+type DoForEachOpts = IGetEntsFilters & IScanOptions & { deep?: boolean, invDepth?: number };
 
-  if (invDepth === config.s.recursionDepth)
-    console.info('Recursive action done!');
+export async function doForEacho(folder: string, opts: DoForEachOpts, callback: FileIteratorCallback): Promise<void> {
+  if (!opts.dontLogScanning) console.info(`Scanning ${folder}...`);
+  if (typeof callback !== 'function')
+    throw new Error('Callback should be a function');
+  const ents = opts.deep ? getEntsDeep(folder, opts, opts.invDepth) : getEnts(folder, opts);
+  if (!ENV.dontLogScanning) console.info('Done!');
+  await _doForEach(folder, ents, callback);
+}
+
+export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
+  return doForEacho(folder, {}, callback);
+}
+
+export async function doForEachDeep(folder: string, callback: FileIteratorCallback, invDepth: number = config.s.recursionDepth): Promise<void> {
+  return doForEacho(folder, { deep: true, invDepth }, callback);
 }
 
 export interface IGetEntsFilters {
@@ -129,14 +115,14 @@ export function getEntsWithStats(folder: string, opts: IGetEntsFilters = {}): (D
     .filter(ent => checkEntFilters(ent, opts));
 }
 
-// todo: maybe add max depth that's passed
-export function getEntsDeep(folder: string, opts: IGetEntsFilters = {}): DirentWithData[] {
+export function getEntsDeep(folder: string, opts: IGetEntsFilters = {}, invDepth = config.s.recursionDepth): DirentWithData[] {
+  if (invDepth <= 0) {
+    console.debug('invDepth reached 0, getEntsDeep will return empty array');
+    return [];
+  }
   const allEnts = getEnts(folder);
   return allEnts
-    .flatMap(e => e.isDirectory()
-      ? [e, ...getEntsDeep(e.path, opts)]
-      : e
-    )
+    .flatMap(e => e.isDirectory() ? [e, ...getEntsDeep(e.path, opts, invDepth - 1)] : e)
     .filter(ent => checkEntFilters(ent, opts));
 }
 
