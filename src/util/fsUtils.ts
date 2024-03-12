@@ -77,8 +77,8 @@ export async function doForEacho(folder: string, opts: DoForEachOpts, callback: 
   if (typeof callback !== 'function')
     throw new Error('Callback should be a function');
   const ents = opts.deep ? getEntsDeep(folder, opts, opts.invDepth) : getEnts(folder, opts);
-  if (!ENV.dontLogScanning) console.info('Done!');
   await _doForEach(folder, ents, callback);
+  if (!ENV.dontLogScanning) console.info('Done!');
 }
 
 export async function doForEach(folder: string, callback: FileIteratorCallback): Promise<void> {
