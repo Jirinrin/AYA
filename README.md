@@ -136,6 +136,7 @@ It's desireable to be able to give someone who doesn't have AYA installed a port
     - Optionally `userscripts.json` to init AYA with a selection of userscripts
 
 ## TODO
+- pkg to newer node version
 - go through todos in code
 - refresh ENV.currentDirItems on more occasions / use in all places where you can use relative paths / implement fancier hash-based recursive system or sth
 - add to readme some gameplay footage
